@@ -11,6 +11,12 @@ class GamesDB:
         self.folderPath = "./DB/databases/games/"
         self.deleteAfterNDays = 30
     
+    def __createFolderIfNotExistsDecorator__(func):
+        def wrapper(self, *args, **kwargs):
+            Path(self.folderPath).mkdir(parents=True, exist_ok=True)
+            return func(self, *args, **kwargs)
+        return wrapper
+
     def __deleteOldGamesDecorator__(func):
         def wrapper(self, *args, **kwargs):
             games = self.listGames(suppress_logger=True)
@@ -35,6 +41,7 @@ class GamesDB:
         gamePath = folderPath / fileName
         return folderName, fileName, folderPath, gamePath
     
+    @__createFolderIfNotExistsDecorator__
     @__deleteOldGamesDecorator__
     def save(self, game):
         self.logger.info(f"Saving game '{game.ts}.{game.version}' to database")
@@ -50,6 +57,7 @@ class GamesDB:
         with open(gamePath, 'wb') as f:
             pickle.dump(game, f)
     
+    @__createFolderIfNotExistsDecorator__
     @__deleteOldGamesDecorator__
     def load(self, gameTs, gameVersion):
         self.logger.info(f"Loading game '{gameTs}.{gameVersion}' from database")
@@ -65,6 +73,7 @@ class GamesDB:
         
         return game
     
+    @__createFolderIfNotExistsDecorator__
     @__deleteOldGamesDecorator__
     def deleteVersion(self, gameTs, gameVersion):
         self.logger.info(f"Deleting version '{gameTs}.{gameVersion}' from database")
@@ -77,6 +86,7 @@ class GamesDB:
         
         gamePath.unlink()
     
+    @__createFolderIfNotExistsDecorator__
     def deleteGame(self, gameTs):
         self.logger.info(f"Deleting game '{gameTs}' from database")
         folderPath = Path(self.folderPath) / gameTs
@@ -90,6 +100,7 @@ class GamesDB:
             version.unlink()
         folderPath.rmdir()
     
+    @__createFolderIfNotExistsDecorator__
     def listGames(self, suppress_logger=False):
         if not suppress_logger:
             self.logger.info(f"Listing all games from database")
@@ -98,6 +109,7 @@ class GamesDB:
             gameFolders.append(folder.parts[-1])
         return gameFolders
     
+    @__createFolderIfNotExistsDecorator__
     def listVersions(self, gameTs):
         self.logger.info(f"Listing all versions of game '{gameTs}' from database")
 

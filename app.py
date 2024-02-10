@@ -1,15 +1,12 @@
 import dash
 from dash import html, dcc
 import dash_bootstrap_components as dbc
-from dash_bootstrap_templates import load_figure_template
 
 from Logging.Logger import Logger
 
 import Callbacks
 
 logger = Logger(__name__)
-
-load_figure_template("darkly")
 
 app = dash.Dash(
     __name__, 
@@ -28,6 +25,8 @@ app.layout = html.Div([
     html.Div(id = "page-content"),
     dcc.Location(id = "url", refresh = False)
 ])
+
+server = app.server
 
 logger.info("Inizialized Dash App")
 
