@@ -173,7 +173,7 @@ class ThrowDart(CallbackBase):
                 currentRound = currentLeg.getCurrentRound()
                 currentRound.beginNextTurn()
                 currentTurn = currentRound.getCurrentTurn()
-                self.game.save()
+            self.game.save()
             dartIcons = self.generateDartsIcons(currentTurn)
             avgLegScore = self.calculateAvg(currentLeg, currentTurn.player)
 
