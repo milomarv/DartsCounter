@@ -146,6 +146,20 @@ class Set:
                             if score.score == number:
                                 nHits += 1
         return nHits
+
+    def getPossibleCheckouts(self, player: Player):
+        nPossibleCheckouts, nSuccessfullCheckouts = 0, 0
+        for leg in self.legs:
+            for round in leg.rounds:
+                playerTurn = round.turns[player]
+                if playerTurn:
+                    for score in playerTurn.scores.values():
+                        if not type(score) == type(None) and not score.NoDart:
+                            if score.checkOutPossible:
+                                nPossibleCheckouts += 1
+                            if score.checkOutSuccess:
+                                nSuccessfullCheckouts += 1
+        return nPossibleCheckouts, nSuccessfullCheckouts
     
     def finish(self):
         if not self.winner:

@@ -251,9 +251,6 @@ class ThrowDart(CallbackBase):
             openScoreConfirmModal = False
             scoreConfirmModalBody = None
             updateInterval = 1000
-        
-        if not prop_id == "typer-interval":
-            print("FINISH")
 
         return [
             str(currentLeg.getPointsLeft(currentTurn.player)),

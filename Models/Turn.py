@@ -1,7 +1,7 @@
 from Errors import *
 from Models.Player import Player
 from Logging.Logger import Logger
-from Models.DartScore import DartScore, MISS, NODART
+from Models.DartScore import DartScore, MISS, NODART, POSSIBLESCORES
 
 class Turn:
     def __init__(self, player: Player, leg):
@@ -24,6 +24,16 @@ class Turn:
                 turnString += f"{dart}: Pending\n"
         turnString += f"Total Score: {self.getScore()}\n"
         return turnString
+
+    def __getPossibleCheckouts__(self, outVal: int = 2):
+        checkouts = []
+        if outVal == 1:
+            checkouts = POSSIBLESCORES[1:]
+        if outVal == 2 or outVal == 1:
+            checkouts += [x * 2 for x in POSSIBLESCORES[1:]]
+        if outVal == 3 or outVal == 1:
+            checkouts += [x * 3 for x in POSSIBLESCORES[1:-1]]
+        return checkouts
     
     def __overshoot__(self):
         self.logger.info(f"Player {self.player.name} overshoots the points left ({self.leg.getPointsLeft(self.player)}). All Scores of this turn are set to 0.")
@@ -31,7 +41,7 @@ class Turn:
             if not score:
                 self.scores[dart] = DartScore(0, NODART, NoDart=True)
             else:
-                self.scores[dart] = DartScore(0, MISS)
+                self.scores[dart] = DartScore(0, MISS, checkOutPossible=score.checkOutPossible)
         self.overshooted = True
     
     def getNextDart(self):
@@ -56,14 +66,19 @@ class Turn:
         nextDart = self.getNextDart()
         if nextDart:
             self.logger.info(f"Player {self.player.name} threw {nextDart}: {score}")
+            possibleCheckouts = self.__getPossibleCheckouts__(self.leg.out.value)
+            if self.leg.getPointsLeft(self.player) in possibleCheckouts:
+                score.checkOutPossible = True
+                score.checkOutSuccess = False
             if score.total == self.leg.getPointsLeft(self.player):
-                if score.multiplier == self.leg.out.value:
+                if score.multiplier == self.leg.out.value or self.leg.out.value == 1:
                     self.checkout = True
                     self.leg.winner = self.player
                     self.scores[nextDart] = score
-                    for dart, score in self.scores.items():
-                        if not score:
+                    for dart, dartScore in self.scores.items():
+                        if not dartScore:
                             self.scores[dart] = DartScore(0, NODART, NoDart=True)
+                    score.checkOutSuccess = True
                     self.logger.info(f"Player {self.player.name} finished the leg with a checkout on {score}")
                     return
                 else:

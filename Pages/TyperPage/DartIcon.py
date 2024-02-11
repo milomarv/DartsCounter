@@ -2,8 +2,10 @@ from dash import html
 import dash_bootstrap_components as dbc
 
 class DartIcon:
-    def __init__(self):
-        pass
+    def __init__(self, flexDirection = "column", iconSize: float = 1.0, paddingBottom = None):
+        self.flexDirection = flexDirection
+        self.iconSize = iconSize
+        self.paddingBottom = paddingBottom
 
     def Build(self, color = "grey", score = "0"):
         return html.Div(
@@ -11,19 +13,26 @@ class DartIcon:
                 html.Img(
                     src = f"./assets/dart-{color}.svg",
                     style={
-                        'height': '7.5vh',
-                        'margin-bottom': '1vh'
+                        'height': f'{7.5*self.iconSize}vh',
+                        'margin-bottom': '1vh',
+                        "margin-left": "1rem",
+                        "margin-right": "1rem"
                     }
                 ),
                 dbc.Badge(
-                    html.H4(score),
-                    style = {"width": "5rem"},
+                    score,
+                    style = {
+                        "width": "5rem",
+                        "fontSize": "1.5rem",
+                        "fontWeight": "bold"
+                    },
                 )
             ],
             style = {
                 'display': 'flex',
                 'justifyContent': 'center',
                 'alignItems': 'center',
-                'flexDirection': 'column'
+                'flexDirection': self.flexDirection,
+                "padding-bottom": self.paddingBottom
             }
         )

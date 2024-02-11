@@ -80,6 +80,15 @@ class Leg:
                 pass
         return pointsLeft
     
+    def getLastTurn(self, player: Player):
+        lastTurn = None
+        for round in self.rounds[::-1]:
+            if not type(round.turns[player]) == type(None):
+                lastTurn = round.turns[player]
+            if lastTurn:
+                break
+        return lastTurn
+    
     def getAvgScore(self, player: Player):
         scoreCount = 0
         nRounds = 0
@@ -119,6 +128,19 @@ class Leg:
                         if score.score == number:
                             nHits += 1
         return nHits
+    
+    def getPossibleCheckouts(self, player: Player):
+        nPossibleCheckouts, nSuccessfullCheckouts = 0, 0
+        for round in self.rounds:
+            playerTurn = round.turns[player]
+            if playerTurn:
+                for score in playerTurn.scores.values():
+                    if not type(score) == type(None) and not score.NoDart:
+                        if score.checkOutPossible:
+                            nPossibleCheckouts += 1
+                        if score.checkOutSuccess:
+                            nSuccessfullCheckouts += 1
+        return nPossibleCheckouts, nSuccessfullCheckouts
             
     def beginNewRound(self):
         try:

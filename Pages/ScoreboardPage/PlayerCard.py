@@ -2,6 +2,8 @@ from dash import html, dcc
 import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
 
+from Pages.TyperPage.DartIcon import DartIcon
+
 class PlayerCard:
     def __init__(self):
         self.textStyle = {
@@ -15,8 +17,15 @@ class PlayerCard:
         self.polarTickVals = [f"Score {n}" for n in self.polarVals]
         self.polarTickText = [f"{n}" for n in self.polarVals]
 
+        self.dartIcon = DartIcon(
+            flexDirection="row",
+            iconSize=0.5,
+            paddingBottom="1.5vh"
+        )
+
     def Build(
         self, 
+        active = False,
         name: str = "Name", 
         pointsLeft: int = "N/A", 
         avg: float = "N/A",
@@ -31,12 +40,30 @@ class PlayerCard:
         doublePerc: int = 0,
         triplePerc: int = 0,
         missPerc: int = 0,
-        nHits: list = []
+        nHits: list = [],
+        dartIcon1: DartIcon = None,
+        dartIcon2: DartIcon = None,
+        dartIcon3: DartIcon = None,
+        totalScore: int = 0,
+        checkoutRate: str = "N/A",
+        checkoutCounter: str = "N/A"
     ):
+        if active:
+            cardHeaderColor = "#375a7f"
+        else:
+            cardHeaderColor = "#444444"
+
+        if not dartIcon1:
+            dartIcon1 = self.dartIcon.Build()
+        if not dartIcon2:
+            dartIcon2 = self.dartIcon.Build()
+        if not dartIcon3:
+            dartIcon3 = self.dartIcon.Build()
+
         return dbc.Card(
             children = [
                 dbc.CardHeader(
-                    html.H1(
+                    html.Div(
                         name,
                         id = "typer-player-name",
                         style={
@@ -45,7 +72,10 @@ class PlayerCard:
                             'fontSize': '3vh',
                             'fontWeight': 'bold'
                         }
-                    )
+                    ),
+                    style={
+                        "backgroundColor": cardHeaderColor,
+                    }
                 ),
                 dbc.CardBody(
                     children = [
@@ -102,6 +132,28 @@ class PlayerCard:
                                 dbc.Col(
                                     children = [
                                         html.H5(
+                                            "Checkouts:",
+                                            style = {
+                                                **self.textStyle,
+                                                'color': 'grey'
+                                            }
+                                        ),
+                                        html.H4(
+                                            checkoutCounter,
+                                            style = {
+                                                **self.textStyle,
+                                                'fontWeight': 'bold'
+                                            }
+                                        )
+                                    ]
+                                )
+                            ]
+                        ),
+                        dbc.Row(
+                            children = [
+                                dbc.Col(
+                                    children = [
+                                        html.H5(
                                             "Set Wins:",
                                             style = {
                                                 **self.textStyle,
@@ -128,6 +180,24 @@ class PlayerCard:
                                         ),
                                         html.H4(
                                             legWins,
+                                            style = {
+                                                **self.textStyle,
+                                                'fontWeight': 'bold'
+                                            }
+                                        )
+                                    ]
+                                ),
+                                dbc.Col(
+                                    children = [
+                                        html.H5(
+                                            "Checkout Rate:",
+                                            style = {
+                                                **self.textStyle,
+                                                'color': 'grey'
+                                            }
+                                        ),
+                                        html.H4(
+                                            checkoutRate,
                                             style = {
                                                 **self.textStyle,
                                                 'fontWeight': 'bold'
@@ -181,53 +251,104 @@ class PlayerCard:
                                 "height": "25vh"
                             }
                         ),
-                        dcc.Graph(
-                            figure={
-                                'data': [
-                                    go.Scatterpolar(
-                                        r=nHits,
-                                        theta = self.polarTickVals,
-                                        fill='toself',
-                                        name='Example Data',
-                                        text = [f"{score}:<br>{nHit} hits" for score, nHit in zip(self.polarTickVals, nHits)],
-                                        hoverinfo = "text",
-                                        mode = "markers+lines",
+                        dbc.Row(
+                            children = [
+                                dbc.Col(
+                                    dcc.Graph(
+                                        figure={
+                                            'data': [
+                                                go.Scatterpolar(
+                                                    r=nHits,
+                                                    theta = self.polarTickVals,
+                                                    fill='toself',
+                                                    name='Example Data',
+                                                    text = [f"{score}:<br>{nHit} hits" for score, nHit in zip(self.polarTickVals, nHits)],
+                                                    hoverinfo = "text",
+                                                    mode = "markers+lines",
+                                                )
+                                            ],
+                                            'layout': go.Layout(
+                                                polar = dict(
+                                                    radialaxis_angle = 90,
+                                                    radialaxis = dict(
+                                                        showticklabels = False,
+                                                        showline = False,
+                                                        gridcolor = "#444444",
+                                                    ),
+                                                    angularaxis = dict(
+                                                        tickvals = self.polarTickVals,
+                                                        ticktext = self.polarTickText,
+                                                        tickfont = {"size": 15}
+                                                    ),
+                                                    bgcolor = "#303030",
+                                                ),
+                                                showlegend=False,
+                                                margin={"t": 30, "b": 30, "l": 0, "r": 0},
+                                                paper_bgcolor="#303030",
+                                                font = {
+                                                    "color": "white"
+                                                }
+                                            )
+                                        },
+                                        style={
+                                            'backgroundColor': '#303030',
+                                            'height': '25vh',
+                                            'margin-bottom': '1vh'
+                                        } 
                                     )
-                                ],
-                                'layout': go.Layout(
-                                    polar = dict(
-                                        radialaxis_angle = 90,
-                                        radialaxis = dict(
-                                            showticklabels = False,
-                                            showline = False,
-                                            gridcolor = "#444444",
-                                        ),
-                                        angularaxis = dict(
-                                            tickvals = self.polarTickVals,
-                                            ticktext = self.polarTickText,
-                                            tickfont = {"size": 15}
-                                        ),
-                                        bgcolor = "#303030",
-                                    ),
-                                    showlegend=False,
-                                    margin={"t": 30, "b": 30},
-                                    paper_bgcolor="#303030",
-                                    font = {
-                                        "color": "white"
-                                    }
+                                ),
+                                dbc.Col(
+                                    children = [
+                                        dartIcon1,
+                                        dartIcon2,
+                                        dartIcon3,
+                                        html.Div(
+                                            children = [
+                                                html.H5(
+                                                    "Total:",
+                                                    style = {
+                                                        **self.textStyle,
+                                                        'color': 'grey',
+                                                        'width': f'{7.5*0.5}vh',
+                                                        "margin-left": "1rem",
+                                                        "margin-right": "1rem"
+                                                    }
+                                                ),
+                                                dbc.Badge(
+                                                    totalScore,
+                                                    style = {
+                                                        "width": "5rem",
+                                                        "fontSize": "1.5rem",
+                                                        "fontWeight": "bold"
+                                                    },
+                                                    color = "primary"
+                                                ),
+                                            ],
+                                            style = {
+                                                'display': 'flex',
+                                                'justifyContent': 'center',
+                                                'alignItems': 'center',
+                                                'flexDirection': "row"
+                                            }
+                                        )
+                                    ],
+                                    width=5
                                 )
-                            },
-                            style={
-                                'backgroundColor': '#303030',
-                                'height': '25vh',
-                                'margin-bottom': '1vh'
-                            } 
+                            ],
+                            style = {
+                                "margin-right": "1.5vw",
+                                "margin-left": "1.5vw",
+                                "display": "flex",
+                                "flex-wrap": "nowrap",
+                            }
                         )
+                        
                     ]
                 )
             ],
             style = {
-                "minWidth": "30rem",
+                "minWidth": "35rem",
+                "maxWidth": "35rem",
                 "margin": "10px"
             },
             className="mx-auto"

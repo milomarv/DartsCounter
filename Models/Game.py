@@ -235,6 +235,21 @@ class Game:
                                     nHits += 1
         return nHits
     
+    def getPossibleCheckouts(self, player: Player):
+        nPossibleCheckouts, nSuccessfullCheckouts = 0, 0
+        for set in self.sets:
+            for leg in set.legs:
+                for round in leg.rounds:
+                    playerTurn = round.turns[player]
+                    if playerTurn:
+                        for score in playerTurn.scores.values():
+                            if not type(score) == type(None) and not score.NoDart:
+                                if score.checkOutPossible:
+                                    nPossibleCheckouts += 1
+                                if score.checkOutSuccess:
+                                    nSuccessfullCheckouts += 1
+        return nPossibleCheckouts, nSuccessfullCheckouts
+    
     def getNtotalLegs(self):
         nTotalLegs = 0
         for set in self.sets:

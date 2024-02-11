@@ -23,9 +23,9 @@ class ScoreboardPageLayout:
                 html.Div(
                     dbc.Stack(
                         children = [
-                            self.playerCard.Build("Player 1"),
-                            self.playerCard.Build("Player 2"),
-                            self.playerCard.Build("Player 3")
+                            self.playerCard.Build(False, "Player 1"),
+                            self.playerCard.Build(False, "Player 2"),
+                            self.playerCard.Build(False, "Player 3")
                         ],
                         id = "scoreboard-player-area",
                         direction = "horizontal",
