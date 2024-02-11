@@ -103,7 +103,7 @@ class Set:
                 if playerTurn:
                     oneDartHit = False
                     for score in playerTurn.scores.values():
-                        if not type(score) == type(None):
+                        if not type(score) == type(None) and not score.NoDart:
                             scoreCount += score.total
                             oneDartHit = True
                     if oneDartHit:
@@ -130,7 +130,7 @@ class Set:
                 playerTurn = round.turns[player]
                 if playerTurn:
                     for score in playerTurn.scores.values():
-                        if not type(score) == type(None):
+                        if not type(score) == type(None) and not score.NoDart:
                             if score.multiplier == multiplier:
                                 nMultipliers += 1
         return nMultipliers
@@ -142,7 +142,7 @@ class Set:
                 playerTurn = round.turns[player]
                 if playerTurn:
                     for score in playerTurn.scores.values():
-                        if not type(score) == type(None):
+                        if not type(score) == type(None) and not score.NoDart:
                             if score.score == number:
                                 nHits += 1
         return nHits

@@ -10,6 +10,7 @@ class GamesDB:
         self.logger = Logger(__name__)
         self.folderPath = "./DB/databases/games/"
         self.deleteAfterNDays = 30
+        self.maxEntries = 10
     
     def __createFolderIfNotExistsDecorator__(func):
         def wrapper(self, *args, **kwargs):
@@ -25,6 +26,26 @@ class GamesDB:
                 if (dt.datetime.now() - gameTs).days > self.deleteAfterNDays:
                     self.logger.info(f"Game '{game}' is older than {self.deleteAfterNDays} days")
                     self.deleteGame(game)
+            return func(self, *args, **kwargs)
+        return wrapper
+    
+    def __deleteToManyEntriesDecorator__(func):
+        def wrapper(self, *args, **kwargs):
+            games = self.listGames(suppress_logger=True)
+            games.reverse()
+            nEntries = 0
+            for game in games:
+                gameVersions = self.listVersions(game, suppress_logger=True)
+                gameVersions.reverse()
+                for entry in gameVersions:
+                    nEntries += 1
+                    if nEntries > self.maxEntries:
+                        self.logger.info(f"Deleting version '{entry}' from database, because it exceeds the maximum number of entries ({self.maxEntries})")
+                        self.deleteVersion(game, entry, suppress_logger=True)
+                nVersions = self.listVersions(game, suppress_logger=True)
+                if len(nVersions) == 0:
+                    self.logger.info(f"Deleting game '{game}' from database, because it has no versions left")
+                    self.deleteGame(game, suppress_logger=True)
             return func(self, *args, **kwargs)
         return wrapper
 
@@ -43,6 +64,7 @@ class GamesDB:
     
     @__createFolderIfNotExistsDecorator__
     @__deleteOldGamesDecorator__
+    @__deleteToManyEntriesDecorator__
     def save(self, game):
         self.logger.info(f"Saving game '{game.ts}.{game.version}' to database")
         folderName, fileName, folderPath, gamePath = self.__getPaths__(game)
@@ -59,6 +81,7 @@ class GamesDB:
     
     @__createFolderIfNotExistsDecorator__
     @__deleteOldGamesDecorator__
+    @__deleteToManyEntriesDecorator__
     def load(self, gameTs, gameVersion):
         self.logger.info(f"Loading game '{gameTs}.{gameVersion}' from database")
         gamePath = Path(self.folderPath) / str(gameTs) / f"{gameVersion}.pkl"
@@ -75,8 +98,9 @@ class GamesDB:
     
     @__createFolderIfNotExistsDecorator__
     @__deleteOldGamesDecorator__
-    def deleteVersion(self, gameTs, gameVersion):
-        self.logger.info(f"Deleting version '{gameTs}.{gameVersion}' from database")
+    def deleteVersion(self, gameTs, gameVersion, suppress_logger=False):
+        if not suppress_logger:
+            self.logger.info(f"Deleting version '{gameTs}.{gameVersion}' from database")
         gamePath = Path(self.folderPath) / str(gameTs) / f"{gameVersion}.pkl"
 
         if not Path(gamePath).exists():
@@ -87,8 +111,9 @@ class GamesDB:
         gamePath.unlink()
     
     @__createFolderIfNotExistsDecorator__
-    def deleteGame(self, gameTs):
-        self.logger.info(f"Deleting game '{gameTs}' from database")
+    def deleteGame(self, gameTs, suppress_logger=False):
+        if not suppress_logger:
+            self.logger.info(f"Deleting game '{gameTs}' from database")
         folderPath = Path(self.folderPath) / gameTs
 
         if not Path(folderPath).exists():
@@ -110,8 +135,9 @@ class GamesDB:
         return gameFolders
     
     @__createFolderIfNotExistsDecorator__
-    def listVersions(self, gameTs):
-        self.logger.info(f"Listing all versions of game '{gameTs}' from database")
+    def listVersions(self, gameTs, suppress_logger=False):
+        if not suppress_logger:
+            self.logger.info(f"Listing all versions of game '{gameTs}' from database")
 
         if not Path(self.folderPath).exists():
             error_msg = f"Database folder does not exist. No versions can be listed."

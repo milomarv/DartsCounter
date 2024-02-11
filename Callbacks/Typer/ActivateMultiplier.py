@@ -37,7 +37,11 @@ class ActivateMultiplier(CallbackBase):
             Output("x2-score-button", "active"),
             Output("x3-score-button", "active"),
             Output("25-score-button", "disabled"),
-            Output("50-score-button", "disabled")
+            Output("50-score-button", "disabled"),
+            Output("x2-score-button", "color"),
+            Output("x3-score-button", "color"),
+            Output("25-score-button", "color"),
+            Output("50-score-button", "color")
         ]
         self.states = [
             State("x2-score-button", "active"),
@@ -55,14 +59,14 @@ class ActivateMultiplier(CallbackBase):
         prop_id = self.getPropFromContext()
         if prop_id == "x2-score-button":
             if x2_active:
-                return [False, False, False, False]
+                return [False, False, False, False, "primary", "primary", "primary", "primary"]
             else:
-                return [True, False, True, True]
+                return [True, False, True, True, "success", "primary", "secondary", "secondary"]
         elif prop_id == "x3-score-button":
             if x3_active:
-                return [False, False, False, False]
+                return [False, False, False, False, "primary", "primary", "primary", "primary"]
             else:
-                return [False, True, True, True]
+                return [False, True, True, True, "primary", "success", "secondary", "secondary"]
         elif not prop_id.startswith("x"):
-            return [False, False, False, False]
+            return [False, False, False, False, "primary", "primary", "primary", "primary"]
         raise PreventUpdate

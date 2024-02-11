@@ -42,6 +42,7 @@ class ThrowDart(CallbackBase):
             Input("score-confirm-button", "n_clicks"),
             Input("leg-win-confirm-button", "n_clicks"),
             Input("set-win-confirm-button", "n_clicks"),
+            Input("rollback-not-possible-confirm-button", "n_clicks"),
             Input("typer-interval", "n_intervals")
         ]
         self.outputs = [
@@ -60,15 +61,15 @@ class ThrowDart(CallbackBase):
             Output("set-win-confirm-modal", "is_open"),
             Output("set-win-confirm-modal-body", "children"),
             Output("game-win-confirm-modal", "is_open"),
-            Output("game-win-confirm-modal-body", "children")
+            Output("game-win-confirm-modal-body", "children"),
+            Output("rollback-not-possible-confirm-modal", "is_open"),
+            Output("typer-interval", "disabled"),
+            Output("typer-interval", "interval")
         ]
         self.states = [
             State("x2-score-button", "active"),
             State("x3-score-button", "active"),
-            State("score-confirm-modal", "is_open"),
-            State("leg-win-confirm-modal", "is_open"),
-            State("set-win-confirm-modal", "is_open"),
-            State("game-win-confirm-modal", "is_open"),
+            State("score-confirm-modal", "is_open")
         ]
         self.emptyDartIcon = DartIcon().Build()
         self.emptyAllDartsIcon = [self.emptyDartIcon, self.emptyDartIcon, self.emptyDartIcon]
@@ -77,32 +78,33 @@ class ThrowDart(CallbackBase):
         self.LegWinConfirmationContent = LegWinConfirmationContent()
         self.SetWinConfirmationContent = SetWinConfirmationContent()
         self.GameWinConfirmationContent = GameWinConfirmationContent()
+        self.UpdateInterval = 2000
         self.logger.info("Initialized ThrowDart Template")
     
     def Callback(
         self,
         s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10,
         s11, s12, s13, s14, s15, s16, s17, s18, s19, s20,
-        s25, s50, goBack, scoreConfirm, legWinConfirm, setWinConfirm, nUpdateInterval, x2_active, x3_active,
-        scoreConfirmModalOpen, legWinConfirmModalOpen, setWinConfirmModalOpen, gameWinConfirmModalOpen
+        s25, s50, goBack, scoreConfirm, legWinConfirm, setWinConfirm, rollBackNotPossibleConfirm,
+        nUpdateInterval, x2_active, x3_active, scoreConfirmModalIsOpen
     ):
         prop_id = self.getPropFromContext(blockInital=False)
-
-        if prop_id == "typer-interval" and any([scoreConfirmModalOpen, legWinConfirmModalOpen, setWinConfirmModalOpen, gameWinConfirmModalOpen]):
-            raise PreventUpdate
 
         if prop_id == "go-back-score-button":
             try:
                 self.game.rollback()
             except GameRollBackNotPossibleError:
-                pass
+                return [
+                    "N/A", *self.emptyAllDartsIcon, "Player", "0", 
+                    False, None, False, None, False, None, False, None, False, None, True, True, self.UpdateInterval
+                ]
 
         try:
             currentSet = self.game.getCurrentSet()
         except GameNotStartedError as e:
             return [
-                "0", *self.emptyAllDartsIcon, "Name", "0", 
-                True, str(e), False, None, False, None, False, None, False, None
+                "N/A", *self.emptyAllDartsIcon, "Player", "0", 
+                True, str(e), False, None, False, None, False, None, False, None, False, True, self.UpdateInterval
             ]
         except NoSetCreatedError:
             self.game.beginNewSet()
@@ -126,12 +128,7 @@ class ThrowDart(CallbackBase):
             currentRound.beginNextTurn()
             currentTurn = currentRound.getCurrentTurn()
 
-        if prop_id \
-            and not prop_id.startswith("score-confirm") \
-            and not prop_id.startswith("leg-win-confirm") \
-            and not prop_id.startswith("set-win-confirm") \
-            and not prop_id.startswith("go-back") \
-            and not prop_id.startswith("typer-interval"):
+        if self.checkForDartsThrow(prop_id):
             score = int(prop_id.split("-")[0])
             if x2_active:
                 multiplier = DOUBLE
@@ -145,9 +142,25 @@ class ThrowDart(CallbackBase):
             else:
                 multiplier = SINGLE
             currentTurn.throwDart(DartScore(score, multiplier))
-            self.game.save()
+            if currentTurn.getNextDart():
+                self.game.save()
         
-        if prop_id == "score-confirm-button":
+        dartIcons = self.generateDartsIcons(currentTurn)
+        
+        avgLegScore = self.calculateAvg(currentLeg, currentTurn.player)
+
+        if prop_id == "score-confirm-button" or (prop_id == "typer-interval" and scoreConfirmModalIsOpen):
+            if currentLeg.winner:
+                legWinConfirmModalBody = self.LegWinConfirmationContent.Build(
+                    currentLeg.winner.name,
+                    currentLeg.getThrownDarts(currentLeg.winner)
+                )
+                return [
+                    str(currentLeg.getPointsLeft(currentTurn.player)),
+                    *dartIcons,
+                    currentTurn.player.name, 0,
+                    False, None, False, None, True, legWinConfirmModalBody, False, None, False, None, False, True, self.UpdateInterval
+                ]
             try:
                 try:
                     currentRound.beginNextTurn()
@@ -160,14 +173,9 @@ class ThrowDart(CallbackBase):
                 currentRound = currentLeg.getCurrentRound()
                 currentRound.beginNextTurn()
                 currentTurn = currentRound.getCurrentTurn()
-                
-        
-        dartIcons = self.generateDartsIcons(currentTurn)
-        
-        avgLegScore = currentLeg.getAvgScore(currentTurn.player)
-        if not avgLegScore:
-            avgLegScore = 0
-        avgLegScore = round(avgLegScore, 2)
+                self.game.save()
+            dartIcons = self.generateDartsIcons(currentTurn)
+            avgLegScore = self.calculateAvg(currentLeg, currentTurn.player)
 
         if prop_id == "leg-win-confirm-button":
             try:
@@ -180,6 +188,7 @@ class ThrowDart(CallbackBase):
                     currentRound.beginNextTurn()
                     currentTurn = currentRound.getCurrentTurn()
                     dartIcons = self.generateDartsIcons(currentTurn)
+                    avgLegScore = self.calculateAvg(currentLeg, currentTurn.player)
                 except AlreadyFinishedError:
                     pass
             except AllLegsFinishedError:
@@ -191,7 +200,7 @@ class ThrowDart(CallbackBase):
                     str(currentLeg.getPointsLeft(currentTurn.player)),
                     *dartIcons,
                     currentTurn.player.name, avgLegScore,
-                    False, None, False, None, False, None, True, setWinConfirmModalBody, False, None
+                    False, None, False, None, False, None, True, setWinConfirmModalBody, False, None, False, True, self.UpdateInterval
                 ]
         
         if prop_id == "set-win-confirm-button":
@@ -206,6 +215,7 @@ class ThrowDart(CallbackBase):
                 currentRound.beginNextTurn()
                 currentTurn = currentRound.getCurrentTurn()
                 dartIcons = self.generateDartsIcons(currentTurn)
+                avgLegScore = self.calculateAvg(currentLeg, currentTurn.player)
             except GameAlreadyFinishedError:
                 gameWinConfirmModalBody = self.GameWinConfirmationContent.Build(
                     self.game.winner.name,
@@ -215,22 +225,10 @@ class ThrowDart(CallbackBase):
                     str(currentLeg.getPointsLeft(currentTurn.player)),
                     *dartIcons,
                     currentTurn.player.name, avgLegScore,
-                    False, None, False, None, False, None, False, None, True, gameWinConfirmModalBody
+                    False, None, False, None, False, None, False, None, True, gameWinConfirmModalBody, False, True, self.UpdateInterval
                 ]
             except AlreadyFinishedError:
                 pass
-        
-        if currentLeg.winner:
-            legWinConfirmModalBody = self.LegWinConfirmationContent.Build(
-                currentLeg.winner.name,
-                currentLeg.getThrownDarts(currentLeg.winner)
-            )
-            return [
-                str(currentLeg.getPointsLeft(currentTurn.player)),
-                *dartIcons,
-                currentTurn.player.name, avgLegScore,
-                False, None, False, None, True, legWinConfirmModalBody, False, None, False, None
-            ]
 
         if not currentTurn.getNextDart():
             try:
@@ -248,23 +246,47 @@ class ThrowDart(CallbackBase):
                     currentTurn.player.name,
                     currentTurn.getScore()
                 )
+            updateInterval = 5000
         else:
             openScoreConfirmModal = False
             scoreConfirmModalBody = None
+            updateInterval = 1000
+        
+        if not prop_id == "typer-interval":
+            print("FINISH")
 
         return [
             str(currentLeg.getPointsLeft(currentTurn.player)),
             *dartIcons,
             currentTurn.player.name, avgLegScore,
-            False, None, openScoreConfirmModal, scoreConfirmModalBody, False, None, False, None, False, None
+            False, None, openScoreConfirmModal, scoreConfirmModalBody, False, None, False, None, False, None, False, False, updateInterval
         ]
-        raise PreventUpdate
 
     def generateDartsIcons(self, currentTurn):
         dartIcons = []
         for dart in currentTurn.scores.values():
-            if dart:
+            if dart and not dart.NoDart:
                 dartIcons.append(DartIcon().Build(color = "blue", score = dart.total))
             else:
                 dartIcons.append(self.emptyDartIcon)
         return dartIcons
+
+    def calculateAvg(self, currentLeg, player):
+        avgLegScore = currentLeg.getAvgScore(player)
+        if not avgLegScore:
+            avgLegScore = 0
+        avgLegScore = round(avgLegScore, 2)
+        return avgLegScore
+        
+    
+    def checkForDartsThrow(self, prop_id):
+        if prop_id \
+            and not prop_id.startswith("score-confirm") \
+            and not prop_id.startswith("leg-win-confirm") \
+            and not prop_id.startswith("set-win-confirm") \
+            and not prop_id.startswith("rollback-not-possible") \
+            and not prop_id.startswith("go-back") \
+            and not prop_id.startswith("typer-interval"):
+            return True
+        else:
+            return False

@@ -46,6 +46,12 @@ class TyperPageLayout:
             size="xl",
             href="/"
         )
+        self.infoRollbackNotPossibleModal = ConfirmModal(
+            "rollback-not-possible",
+            title = "Rollback not possible",
+            children = ["Going back further is not possible. No previous states of the game are available."],
+            closeAble=False
+        )
         self.scoreCardTextStyle = {
             'display': 'flex',
             'justifyContent': 'center',
@@ -62,7 +68,7 @@ class TyperPageLayout:
                             children = [
                                 html.Div(
                                     html.H1(
-                                        "0",
+                                        "N/A",
                                         id = "typer-score",
                                         style={
                                             **self.scoreCardTextStyle,
@@ -107,7 +113,7 @@ class TyperPageLayout:
                                 ),
                                 html.Div(
                                     html.H1(
-                                        "Name",
+                                        "Player",
                                         id = "typer-player-name",
                                         style={
                                             **self.scoreCardTextStyle,
@@ -220,5 +226,6 @@ class TyperPageLayout:
             self.confirmLegWinModal.Build(),
             self.confirmSetWinModal.Build(),
             self.confirmGameWinModal.Build(),
+            self.infoRollbackNotPossibleModal.Build(),
             dcc.Interval(id = "typer-interval", interval = 1000, n_intervals = 0)
         ])

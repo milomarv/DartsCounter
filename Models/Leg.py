@@ -60,14 +60,14 @@ class Leg:
                 pass
         return thrownDarts
     
-    def getScore(self, player: Player):
-        score = 0
-        for round in self.rounds:
-            try:
-                score += round.turns[player].totalScore
-            except AttributeError:
-                pass
-        return score
+    # def getScore(self, player: Player):
+    #     score = 0
+    #     for round in self.rounds:
+    #         try:
+    #             score += round.turns[player].totalScore
+    #         except AttributeError:
+    #             pass
+    #     return score
     
     def getPointsLeft(self, player: Player):
         pointsLeft = self.points
@@ -88,7 +88,7 @@ class Leg:
             if playerTurn:
                 oneDartHit = False
                 for score in playerTurn.scores.values():
-                    if not type(score) == type(None):
+                    if not type(score) == type(None) and not score.NoDart:
                         scoreCount += score.total
                         oneDartHit = True
                 if oneDartHit:
@@ -104,7 +104,7 @@ class Leg:
             playerTurn = round.turns[player]
             if playerTurn:
                 for score in playerTurn.scores.values():
-                    if not type(score) == type(None):
+                    if not type(score) == type(None) and not score.NoDart:
                         if score.multiplier == multiplier:
                             nMultipliers += 1
         return nMultipliers
@@ -115,7 +115,7 @@ class Leg:
             playerTurn = round.turns[player]
             if playerTurn:
                 for score in playerTurn.scores.values():
-                    if not type(score) == type(None):
+                    if not type(score) == type(None) and not score.NoDart:
                         if score.score == number:
                             nHits += 1
         return nHits

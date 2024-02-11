@@ -40,6 +40,7 @@ class StartStopGame(CallbackBase):
         if self.getPropFromContext(blockInital=False) == "start-stop-game-button":
             if not self.game.started:
                 self.game.stop()
+                print(out)
                 try:
                     self.game.start(
                         players=[Player(name) for name in players if name],

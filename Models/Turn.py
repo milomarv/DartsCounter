@@ -1,7 +1,7 @@
 from Errors import *
 from Models.Player import Player
 from Logging.Logger import Logger
-from Models.DartScore import DartScore, MISS
+from Models.DartScore import DartScore, MISS, NODART
 
 class Turn:
     def __init__(self, player: Player, leg):
@@ -27,7 +27,11 @@ class Turn:
     
     def __overshoot__(self):
         self.logger.info(f"Player {self.player.name} overshoots the points left ({self.leg.getPointsLeft(self.player)}). All Scores of this turn are set to 0.")
-        self.scores = {d: DartScore(0, MISS) for d in self.scores.keys()}
+        for dart, score in self.scores.items():
+            if not score:
+                self.scores[dart] = DartScore(0, NODART, NoDart=True)
+            else:
+                self.scores[dart] = DartScore(0, MISS)
         self.overshooted = True
     
     def getNextDart(self):
@@ -57,13 +61,18 @@ class Turn:
                     self.checkout = True
                     self.leg.winner = self.player
                     self.scores[nextDart] = score
+                    for dart, score in self.scores.items():
+                        if not score:
+                            self.scores[dart] = DartScore(0, NODART, NoDart=True)
                     self.logger.info(f"Player {self.player.name} finished the leg with a checkout on {score}")
                     return
                 else:
                     self.logger.info(f"Player {self.player.name} had wrong checkout")
+                    self.scores[nextDart] = score
                     self.__overshoot__()
                     return
             if score.total > self.leg.getPointsLeft(self.player) - self.leg.out.value:
+                self.scores[nextDart] = score
                 self.__overshoot__()
                 return
             self.scores[nextDart] = score
@@ -75,14 +84,14 @@ class Turn:
     def getThrownDarts(self):
         thrownDarts = 0
         for dart, score in self.scores.items():
-            if score:
+            if score and not score.NoDart:
                 thrownDarts += 1
         return thrownDarts
     
     def getScore(self):
         totalScore = 0
         for dart, score in self.scores.items():
-            if score:
+            if score and not score.NoDart:
                 totalScore += score.total
         return totalScore
     

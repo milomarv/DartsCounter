@@ -1,5 +1,6 @@
 import datetime as dt
 from typing import List
+import threading
 
 from Errors import *
 from Logging.Logger import Logger
@@ -73,7 +74,6 @@ class Game:
         out: Out = Out(2)
     ):
         self.__init__(None, None, True, players, nSets, setType, nLegs, legType, points, out, None, [])
-        print(self.sets)
         try:
             self.DB.deleteGame(str(self.ts))
         except DBEntryDoesNotExistError:
@@ -83,6 +83,11 @@ class Game:
             error_msg = "At least one player is required to start a game."
             self.logger.error(error_msg)
             raise ValueError(error_msg)
+        playerNames = [player.name for player in players]
+        if len(playerNames) != len(set(playerNames)):
+            error_msg = "Player names must be unique. No duplicate names allowed."
+            self.logger.error(error_msg)
+            raise ValueError(error_msg)
         self.started = True
     
     def stop(self):
@@ -90,7 +95,9 @@ class Game:
     
     def save(self):
         self.version = self.__createTs__()
-        self.DB.save(self)
+        saveThread = threading.Thread(target=self.DB.save, args=(self,))
+        saveThread.start()
+        # print("CONTINUE")
     
     def rollback(self, nVersions=1):
         self.logger.info(f"Rolling back {nVersions} versions")
@@ -181,7 +188,7 @@ class Game:
                     if playerTurn:
                         oneDartHit = False
                         for score in playerTurn.scores.values():
-                            if not type(score) == type(None):
+                            if not type(score) == type(None) and not score.NoDart:
                                 scoreCount += score.total
                                 oneDartHit = True
                         if oneDartHit:
@@ -210,7 +217,7 @@ class Game:
                     playerTurn = round.turns[player]
                     if playerTurn:
                         for score in playerTurn.scores.values():
-                            if not type(score) == type(None):
+                            if not type(score) == type(None) and not score.NoDart:
                                 if score.multiplier == multiplier:
                                     nMultipliers += 1
         return nMultipliers
@@ -223,7 +230,7 @@ class Game:
                     playerTurn = round.turns[player]
                     if playerTurn:
                         for score in playerTurn.scores.values():
-                            if not type(score) == type(None):
+                            if not type(score) == type(None) and not score.NoDart:
                                 if score.score == number:
                                     nHits += 1
         return nHits

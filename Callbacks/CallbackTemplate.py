@@ -15,6 +15,7 @@ class CallbackTemplate(CallbackBase):
             Output("id", "property")
         ]
         self.states = []
+        self.running = []
         self.logger.info("Initialized Callback Template")
     
     def Callback(self, prop_val):

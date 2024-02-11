@@ -36,7 +36,7 @@ class OvershootConfirmationContent(ConfirmationContentBase):
                     children = [
                         html.Div("Player ", style = self.playerTextStyle),
                         html.Div(playerName, style = self.playerNameTextStyle),
-                        html.Div(" overshooted 😟", style = self.playerTextStyle),
+                        html.Div(" overshot 😟", style = self.playerTextStyle),
                     ],
                     style = self.textRowStyle
                 ),

@@ -3,10 +3,11 @@ DOUBLE_OUT = 2
 MASTER_OUT = 3
 
 class Out:
-    def __init__(self, value):
-        if value not in [1, 2, 3]:
+    def __init__(self, value: int):
+        if int(value) == 1 or int(value) == 2 or int(value) == 3:
+            self.value = int(value)
+        else:
             raise ValueError("Out value must be 1, 2 or 3")
-        self.value = value
 
     def __str__(self):
         if self.value == 1:
