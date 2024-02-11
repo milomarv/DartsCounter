@@ -72,6 +72,8 @@ class Game:
         points: int, 
         out: Out = Out(2)
     ):
+        self.__init__(None, None, True, players, nSets, setType, nLegs, legType, points, out, None, [])
+        print(self.sets)
         try:
             self.DB.deleteGame(str(self.ts))
         except DBEntryDoesNotExistError:
@@ -82,16 +84,9 @@ class Game:
             self.logger.error(error_msg)
             raise ValueError(error_msg)
         self.started = True
-        self.players = players
-        self.nSets = nSets
-        self.setType = setType
-        self.nLegs = nLegs
-        self.legType = legType
-        self.points = points
-        self.out = out
     
     def stop(self):
-        self.__init__()
+        self.__init__(None, None, True, [], None, None, None, None, None, None, [])
     
     def save(self):
         self.version = self.__createTs__()
