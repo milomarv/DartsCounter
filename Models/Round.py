@@ -36,7 +36,7 @@ class Round:
         if currentTurn and not currentTurn.finished:
             error_msg = f"Tried to begin new turn. Current turn for Player {currentTurn.player.name} has not been finished yet."
             self.logger.error(error_msg)
-            raise ValueError(error_msg)
+            raise AlreadyFinishedError(error_msg)
         else:
             nextPlayer = self.getNextPlayer()
             if not nextPlayer:

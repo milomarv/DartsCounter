@@ -1,3 +1,4 @@
+from Errors import *
 from Models.Player import Player
 from Logging.Logger import Logger
 from Models.DartScore import DartScore, MISS
@@ -95,6 +96,6 @@ class Turn:
         if self.finished:
             error_msg = "Tried to finish turn. Turn has already been finished."
             self.logger.error(error_msg)
-            raise ValueError(error_msg)
+            raise AlreadyFinishedError(error_msg)
         self.finished = True
         self.logger.info(f"Player {self.player.name} finished turn with a total score of {self.getScore()} points")

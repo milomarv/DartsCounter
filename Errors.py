@@ -1,6 +1,9 @@
 class GameNotStartedError(Exception):
     pass
 
+class AlreadyFinishedError(Exception):
+    pass
+
 class NoSetCreatedError(Exception):
     pass
 

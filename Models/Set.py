@@ -151,7 +151,7 @@ class Set:
         if not self.winner:
             error_msg = "Tried to finish set. Set has no winner yet."
             self.logger.error(error_msg)
-            raise ValueError(error_msg)
+            raise AlreadyFinishedError(error_msg)
         self.logger.info(f"Set finished - Winner: {self.winner}")
         for player in self.players:
             if self.game.getSetWins(player) == self.game.getNSetWinsforGameWin():

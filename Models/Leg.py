@@ -142,7 +142,7 @@ class Leg:
         if not self.winner:
             error_msg = "Tried to finish leg. No declared winner yet."
             self.logger.error(error_msg)
-            raise ValueError(error_msg)
+            raise AlreadyFinishedError(error_msg)
         self.logger.info(f"Leg finished with winner: {self.winner.name}")
         for player in self.players:
             if self.set.getLegWins(player) == self.set.getNLegWinsforSetWin():

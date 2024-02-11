@@ -1,4 +1,4 @@
-from dash import html
+from dash import html, dcc
 import dash_bootstrap_components as dbc
 
 from Pages.TyperPage.Card import Card
@@ -219,5 +219,6 @@ class TyperPageLayout:
             self.confrimScoreModal.Build(),
             self.confirmLegWinModal.Build(),
             self.confirmSetWinModal.Build(),
-            self.confirmGameWinModal.Build()
+            self.confirmGameWinModal.Build(),
+            dcc.Interval(id = "typer-interval", interval = 1000, n_intervals = 0)
         ])
