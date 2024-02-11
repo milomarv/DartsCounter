@@ -262,10 +262,7 @@ class ThrowDart(CallbackBase):
     def generateDartsIcons(self, currentTurn):
         dartIcons = []
         for dart in currentTurn.scores.values():
-            if dart and not dart.NoDart:
-                dartIcons.append(DartIcon().Build(color = "blue", score = dart.total))
-            else:
-                dartIcons.append(self.emptyDartIcon)
+            dartIcons.append(DartIcon().Build(dart))
         return dartIcons
 
     def calculateAvg(self, currentLeg, player):

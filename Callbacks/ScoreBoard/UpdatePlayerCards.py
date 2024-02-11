@@ -136,7 +136,7 @@ class UpdatePlayerCards(CallbackBase):
                     totalScore = 0
                     for dart in lastTurn.scores.values():
                         if dart and not dart.NoDart:
-                            dartIcons.append(self.playerCard.dartIcon.Build(color = "blue", score = dart.total))
+                            dartIcons.append(self.playerCard.dartIcon.Build(dart))
                             totalScore += dart.total
                         else:
                             dartIcons.append(self.emptyDartIcon)

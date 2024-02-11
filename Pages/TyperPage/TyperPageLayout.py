@@ -82,15 +82,15 @@ class TyperPageLayout:
                                     dbc.Row(
                                         children = [
                                             dbc.Col(
-                                                self.dartIcon.Build("grey"),
+                                                self.dartIcon.Build(),
                                                 id = "dart1-icon"
                                             ),
                                             dbc.Col(
-                                                self.dartIcon.Build("grey"),
+                                                self.dartIcon.Build(),
                                                 id = "dart2-icon"
                                             ),
                                             dbc.Col(
-                                                self.dartIcon.Build("grey"),
+                                                self.dartIcon.Build(),
                                                 id = "dart3-icon"
                                             ),
                                         ]
