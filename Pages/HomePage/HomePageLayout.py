@@ -104,6 +104,16 @@ class HomePageLayout:
                     style = self.button_style
                 ),
                 html.Br(),
+                dbc.Switch(
+                    id="online-switch",
+                    value=False
+                ),
+                dbc.Tooltip(
+                    "This switch turns on the online mode. That means the Typerboard has a automatic refresh. So multiple Typerboards can be used at the same time.",
+                    target="online-switch",
+                    placement = "left"
+                ),
+                html.Br(),
                 dbc.Row(
                     children = [
                         dbc.Col(

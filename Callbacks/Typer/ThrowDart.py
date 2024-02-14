@@ -14,6 +14,7 @@ class ThrowDart(CallbackBase):
         self.logger = Logger(__name__)
         self.app = dependencyContainer.app
         self.game = dependencyContainer.game
+        self.online_mode = dependencyContainer.online_mode
         self.inputs = [
             Input("0-score-button", "n_clicks"),
             Input("1-score-button", "n_clicks"),
@@ -256,7 +257,7 @@ class ThrowDart(CallbackBase):
             str(currentLeg.getPointsLeft(currentTurn.player)),
             *dartIcons,
             currentTurn.player.name, avgLegScore,
-            False, None, openScoreConfirmModal, scoreConfirmModalBody, False, None, False, None, False, None, False, False, updateInterval
+            False, None, openScoreConfirmModal, scoreConfirmModalBody, False, None, False, None, False, None, False, not self.online_mode.value, updateInterval
         ]
 
     def generateDartsIcons(self, currentTurn):
