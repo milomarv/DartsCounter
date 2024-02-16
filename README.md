@@ -1,12 +1,12 @@
 # 🎯 Dart Counter Web Application
 
 ## Overview
-This Dart Counter is a web server application designed to facilitate playing the classic game of darts, commonly known as 501. However, users can also configure the game to play with other point values. The application allows customization of the number of legs and sets, as well as the option to play in modes such as Best of or First to.
+This Dart Counter is a distributed web server application uniquely designed to enhance the experience of playing the classic game of darts, commonly known as 501. Unlike traditional dart counters, this application operates across multiple devices. Users need two devices to fully utilize its functionality: one for inputting scores using the Typer Page and another for displaying the game progress and statistics.
 
 ## Features
 
 ### 1. Configure Game
-Users can set up the game according to their preferences, including choosing the point value for each game (e.g., 501), specifying the number of legs and sets, and selecting the mode (Best of or First to).
+Users can set up the game according to their preferences, including choosing the point value for each game (e.g., 501), specifying the number of legs and sets, and selecting the mode (Best of or First to). Additionally, various game variants are available, such as "Double out," where players must hit a double to win the game, adding an extra layer of strategy and skill to the gameplay experience.
 
 ### 2. Type in Scores
 The application provides a dedicated Typer Page where users can conveniently input their scores during gameplay.
@@ -75,6 +75,13 @@ git pull origin main
         ```bash
         gunicorn --listen=*:8050 app:server
         ```
+
+3. Once the application is running, open a web browser.
+
+4. In the address bar of the web browser, enter the following URL:
+    ```
+    http://localhost:8050
+    ```
     
 ## Make the Application Publicly Available
 
@@ -94,6 +101,21 @@ git pull origin main
 6. **Warning**: Exercise caution when using ngrok to expose your local server. Sharing the generated URL indiscriminately can provide direct access to your local machine, potentially posing security risks.
 
 7. Share the generated URL with anyone you want to give access to your application.
+   
+## Online Mode
+
+The Online Mode is a feature designed to enhance the multiplayer experience by enabling synchronization between multiple Typer Board devices. When activated, players can enjoy real-time updates and seamless gameplay across different devices, allowing for a more interactive and engaging darts experience.
+
+### Functionality
+- **Switch on the Home Page**: Users can toggle the Online Mode switch on the Home Page to activate or deactivate synchronization between Typer Board devices. 
+- **Enhanced Multiplayer Experience**: With Online Mode enabled, players can collaborate and compete with each other in real-time, even if they are physically apart. For example, two players can meet up in a platform like Discord and access the same game statistics, creating a shared gaming experience.
+- **Automatic Refresh**: If Online Mode is enabled, the Typer Board will automatically refresh to ensure accurate game progress. This prevents any discrepancies that may arise from manual synchronization.
+- **Opt-in Setting**: Online Mode is not enabled by default to prevent potential minor bugs that may occur during synchronization.
+
+### Note
+- **Scoreboard Real-time Updates**: Regardless of Online Mode's status, the Scoreboard page will always be updated in real-time, providing players with accurate game statistics and progress tracking.
+
+
 
 ## Technologies Used
 - Python
