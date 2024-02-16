@@ -248,16 +248,18 @@ class ThrowDart(CallbackBase):
                     currentTurn.getScore()
                 )
             updateInterval = 5000
+            intervalIsDisabled = False
         else:
             openScoreConfirmModal = False
             scoreConfirmModalBody = None
             updateInterval = 1000
+            intervalIsDisabled = not self.online_mode.value
 
         return [
             str(currentLeg.getPointsLeft(currentTurn.player)),
             *dartIcons,
             currentTurn.player.name, avgLegScore,
-            False, None, openScoreConfirmModal, scoreConfirmModalBody, False, None, False, None, False, None, False, not self.online_mode.value, updateInterval
+            False, None, openScoreConfirmModal, scoreConfirmModalBody, False, None, False, None, False, None, False, intervalIsDisabled, updateInterval
         ]
 
     def generateDartsIcons(self, currentTurn):

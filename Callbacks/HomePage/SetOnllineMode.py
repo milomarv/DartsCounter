@@ -27,9 +27,11 @@ class SetOnlineMode(CallbackBase):
                 return ["Offline"]
         else:
             if switch_val:
+                self.logger.info("Switched to Online Mode")
                 self.online_mode.value = True
                 return ["Online"]
             else:
+                self.logger.info("Switched to Offline Mode")
                 self.online_mode.value = False
                 return ["Offline"]
         raise PreventUpdate
