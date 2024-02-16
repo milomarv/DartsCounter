@@ -121,3 +121,8 @@ The Online Mode is a feature designed to enhance the multiplayer experience by e
 - Python
 - Dash (Python web framework for building analytical web applications)
 - Plotly (Python graphing library for interactive visualizations)
+
+
+## Contributors
+- [milomarv](https://github.com/milomarv)
+- [DerWodnik](https://github.com/DerWodnik)
