@@ -25,7 +25,7 @@ Before getting started, ensure that the following prerequisites are met:
 ## Installation
 1. Clone the repository to your local machine:
     ```bash
-    git clone https://github.com/your-username/DartsCounter.git
+    git clone https://github.com/milomarv/DartsCounter.git
     ```
 2. Navigate to the project directory:
     ```bash
@@ -73,7 +73,7 @@ git pull origin main
         ```
     - On macOS and Linux (using Gunicorn):
         ```bash
-        gunicorn --listen=*:8050 app:server
+        gunicorn -b :8050 app:server
         ```
 
 3. Once the application is running, open a web browser.
