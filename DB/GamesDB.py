@@ -131,7 +131,12 @@ class GamesDB:
             self.logger.info(f"Listing all games from database")
         gameFolders = []
         for folder in Path(self.folderPath).iterdir():
+            try:
+                float(folder.parts[-1])
+            except ValueError:
+                break
             gameFolders.append(folder.parts[-1])
+        gameFolders = sorted(gameFolders)
         return gameFolders
     
     @__createFolderIfNotExistsDecorator__
@@ -148,4 +153,5 @@ class GamesDB:
         gameVersions = []
         for version in folderPath.iterdir():
             gameVersions.append(".".join(version.parts[-1].split(".")[0:2]))
+        gameVersions = sorted(gameVersions)
         return gameVersions
