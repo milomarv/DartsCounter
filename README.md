@@ -82,7 +82,49 @@ git pull origin main
     ```
     http://localhost:8050
     ```
-    
+
+## Accessing the Web Server from Other Devices
+
+To access the web server running on your device from other devices within the same network, you'll need to find the IP address of your device. Here's how to do it for Linux, macOS, and Windows:
+
+### Linux:
+
+1. Open a terminal.
+2. Use the following command to find your IP address:
+    ```bash
+    hostname -I
+    ```
+3. Note down the IP address displayed.
+
+### macOS:
+
+1. Open a terminal.
+2. Enter the following command to retrieve your IP address:
+    ```bash
+    ipconfig getifaddr en0
+    ```
+   Note: Replace `en0` with the appropriate network interface if needed.
+3. Make a note of the IP address shown.
+
+### Windows:
+
+1. Press `Win + R` to open the Run dialog.
+2. Type `cmd` and press Enter to open the Command Prompt.
+3. In the Command Prompt, type the following command:
+    ```cmd
+    ipconfig
+    ```
+4. Look for the "IPv4 Address" under the appropriate network adapter (usually labeled Ethernet or Wi-Fi).
+5. Note down the IP address.
+
+Once you have obtained the IP address of your device, you can access the web server from other devices by typing the following URL into the web browser:
+
+```
+http://[YOUR_DEVICE_IP]:8050
+```
+
+Replace `[YOUR_DEVICE_IP]` with the IP address you obtained earlier. This will open the web page hosted by your web server.
+
 ## Make the Application Publicly Available
 
 1. If you haven't already, start the application as instructed in the previous section.
