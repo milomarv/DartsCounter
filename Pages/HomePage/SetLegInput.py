@@ -11,7 +11,7 @@ class SetLegInput:
         return html.Div(
             children = [
                 dbc.Label(f"Number of {self.prettyText}s:", html_for=f"number-of-{self.idText}s-input"),
-                dbc.Input(type="number", id=f"number-of-{self.idText}s-input", value=3, min=1),
+                dbc.Input(type="number", id=f"number-of-{self.idText}s-input", min=1),
                 html.Br(),
                 dbc.Label(f"{self.prettyText} Mode:", html_for=f"{self.idText}-mode-select"),
                 dbc.Select(

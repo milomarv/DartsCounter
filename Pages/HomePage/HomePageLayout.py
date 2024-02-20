@@ -60,8 +60,7 @@ class HomePageLayout:
                                             dbc.Col(
                                                 children = [
                                                     dbc.Label("Points:", html_for="points-input"),
-                                                    dbc.Input(type="number", id="points-input", value=501, min=101, step=100)
-                                                    # dbc.Input(type="number", id="points-input", value=40, min=40, step=100)
+                                                    dbc.Input(type="number", id="points-input", min=101, step=100)
                                                 ]
                                             ),
                                             dbc.Col(
@@ -73,8 +72,7 @@ class HomePageLayout:
                                                             {"label": "Single Out", "value": SINGLE_OUT},
                                                             {"label": "Double Out", "value": DOUBLE_OUT},
                                                             {"label": "Master Out", "value": MASTER_OUT}
-                                                        ],
-                                                        value = DOUBLE_OUT
+                                                        ]
                                                     )
                                                 ]
                                             )
@@ -96,7 +94,7 @@ class HomePageLayout:
                     )
                 ),
                 html.Br(),
-                html.Button(
+                dbc.Button(
                     "Game", 
                     id="start-stop-game-button", 
                     n_clicks=0, 

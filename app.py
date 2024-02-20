@@ -23,7 +23,7 @@ app.layout = html.Div([
         href='/assets/favicon.ico',
     ),
     html.Div(id = "page-content"),
-    dcc.Location(id = "url", refresh = False)
+    dcc.Location(id = "url", refresh = True)
 ])
 
 server = app.server

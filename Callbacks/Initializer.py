@@ -7,6 +7,7 @@ from Callbacks.Router import Router
 from Callbacks.HomePage.AddPlayer import AddPlayer
 from Callbacks.HomePage.StartStopGame import StartStopGame
 from Callbacks.HomePage.SetOnllineMode import SetOnlineMode
+from Callbacks.HomePage.InitializeFields import InitializeFields
 
 from Callbacks.Typer.ThrowDart import ThrowDart
 from Callbacks.Typer.ActivateMultiplier import ActivateMultiplier
@@ -26,6 +27,7 @@ class Initializer:
         AddPlayer(self.dependencyContainer).Register()
         StartStopGame(self.dependencyContainer).Register()
         SetOnlineMode(self.dependencyContainer).Register()
+        InitializeFields(self.dependencyContainer).Register()
 
         ThrowDart(self.dependencyContainer).Register()
         ActivateMultiplier(self.dependencyContainer).Register()
