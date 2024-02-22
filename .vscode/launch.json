@@ -5,11 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python Debugger: App",
+            "name": "Darts Counter Debugger",
             "type": "debugpy",
             "request": "launch",
-            "program": "app.py",
-            "console": "integratedTerminal"
+            "program": "${workspaceFolder}/app.py",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/venv/Scripts/python"
         }
     ]
 }

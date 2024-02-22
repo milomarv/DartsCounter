@@ -73,7 +73,7 @@ class Game:
         points: int, 
         out: Out = Out(2)
     ):
-        self.__init__(None, None, True, players, nSets, setType, nLegs, legType, points, out, None, [])
+        self.__init__(None, None, False, players, nSets, setType, nLegs, legType, points, out, None, [])
         try:
             self.DB.deleteGame(str(self.ts))
         except DBEntryDoesNotExistError:
