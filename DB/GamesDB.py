@@ -10,7 +10,7 @@ class GamesDB:
         self.logger = Logger(__name__)
         self.folderPath = "./DB/databases/games/"
         self.deleteAfterNDays = 30
-        self.maxEntries = 10
+        self.maxEntries = 100
     
     def __createFolderIfNotExistsDecorator__(func):
         def wrapper(self, *args, **kwargs):
