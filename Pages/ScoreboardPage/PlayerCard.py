@@ -1,6 +1,7 @@
 from dash import html, dcc
 import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
+import numpy as np
 
 from Pages.TyperPage.DartIcon import DartIcon
 
@@ -236,8 +237,10 @@ class PlayerCard:
                                     },
                                     "margin": {"t": 30, "l": 30, "r": 30, "b": 50},
                                     "yaxis": {
+                                        "type": "log",
                                         "tickformat": ".0%",
                                         "gridcolor": "#444444",
+                                        "range": [-1.5, 0],
                                         "tickfont": {
                                             "color": "#303030"
                                         }
@@ -258,7 +261,7 @@ class PlayerCard:
                                         figure={
                                             'data': [
                                                 go.Scatterpolar(
-                                                    r=nHits,
+                                                    r=np.log(np.array(nHits) + 0.9),
                                                     theta = self.polarTickVals,
                                                     fill='toself',
                                                     name='Example Data',
