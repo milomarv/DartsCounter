@@ -27,7 +27,7 @@ app.layout = html.Div([
 
 server = app.server
 
-logger.info("Inizialized Dash App")
+logger.info("Initialized Dash App")
 
 Callbacks.Initializer(app).Run()
 logger.info("Initialized Callbacks")
