@@ -43,24 +43,24 @@ class PlayerCard:
             triplePerc: int = 0,
             missPerc: int = 0,
             nHits: list = [],
-            dartIcon1: DartIcon = None,
-            dartIcon2: DartIcon = None,
-            dartIcon3: DartIcon = None,
             totalScore: int = 0,
             checkoutRate: str = "N/A",
-            checkoutCounter: str = "N/A"
+            checkoutCounter: str = "N/A",
+            dart_icon1: DartIcon = None,
+            dart_icon2: DartIcon = None,
+            dart_icon3: DartIcon = None,
     ):
         if active:
             cardHeaderColor = "#375a7f"
         else:
             cardHeaderColor = "#444444"
 
-        if not dartIcon1:
-            dartIcon1 = self.dartIcon.Build()
-        if not dartIcon2:
-            dartIcon2 = self.dartIcon.Build()
-        if not dartIcon3:
-            dartIcon3 = self.dartIcon.Build()
+        if not dart_icon1:
+            dart_icon1 = self.dartIcon.Build()
+        if not dart_icon2:
+            dart_icon2 = self.dartIcon.Build()
+        if not dart_icon3:
+            dart_icon3 = self.dartIcon.Build()
 
         return dbc.Card(
             children=[
@@ -305,9 +305,9 @@ class PlayerCard:
                                 ),
                                 dbc.Col(
                                     children=[
-                                        dartIcon1,
-                                        dartIcon2,
-                                        dartIcon3,
+                                        dart_icon1,
+                                        dart_icon2,
+                                        dart_icon3,
                                         html.Div(
                                             children=[
                                                 html.H5(

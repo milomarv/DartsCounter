@@ -1,20 +1,21 @@
-from dash import html
 from dash.dependencies import Input, Output, State
-from dash.exceptions import PreventUpdate
 
+from Callbacks.CallbackBase import CallbackBase
+from Callbacks.DependencyContainer import DependencyContainer
 from Errors import *
 from Logging.Logger import Logger
-from Callbacks.CallbackBase import CallbackBase
-
+from Models import Turn, Leg, Player, Set
 from Models.DartScore import DartScore, SINGLE, DOUBLE, TRIPLE, MISS
 from Pages.TyperPage import *
 
+
 class ThrowDart(CallbackBase):
-    def __init__(self, dependencyContainer):
+    def __init__(self, dependency_container: DependencyContainer) -> None:
+        super().__init__()
         self.logger = Logger(__name__)
-        self.app = dependencyContainer.app
-        self.game = dependencyContainer.game
-        self.online_mode = dependencyContainer.online_mode
+        self.app = dependency_container.app
+        self.game = dependency_container.game
+        self.online_mode = dependency_container.online_mode
         self.inputs = [
             Input("0-score-button", "n_clicks"),
             Input("1-score-button", "n_clicks"),
@@ -81,55 +82,56 @@ class ThrowDart(CallbackBase):
         self.GameWinConfirmationContent = GameWinConfirmationContent()
         self.UpdateInterval = 2000
         self.logger.info("Initialized ThrowDart Template")
-    
-    def Callback(
-        self,
-        s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10,
-        s11, s12, s13, s14, s15, s16, s17, s18, s19, s20,
-        s25, s50, goBack, scoreConfirm, legWinConfirm, setWinConfirm, rollBackNotPossibleConfirm,
-        nUpdateInterval, x2_active, x3_active, scoreConfirmModalIsOpen
-    ):
-        prop_id = self.getPropFromContext(blockInital=False)
+
+    def callback(
+            self,
+            _s0: int, _s1: int, _s2: int, _s3: int, _s4: int, _s5: int, _s6: int, _s7: int, _s8: int, _s9: int,
+            _s10: int, _s11: int, _s12: int, _s13: int, _s14: int, _s15: int, _s16: int, _s17: int, _s18: int,
+            _s19: int, _s20: int, _s25: int, _s50: int, _go_back: int,
+            _score_confirm: int, _leg_win_confirm: int, _set_win_confirm: int, _roll_back_not_possible_confirm: int,
+            _n_update_interval: int, x2_active: bool, x3_active: bool, score_confirm_modal_is_open: bool
+    ) -> list:
+        prop_id = self.get_prop_from_context(block_initial=False)
 
         if prop_id == "go-back-score-button":
             try:
                 self.game.rollback()
             except GameRollBackNotPossibleError:
                 return [
-                    "N/A", *self.emptyAllDartsIcon, "Player", "0", 
+                    "N/A", *self.emptyAllDartsIcon, "Player", "0",
                     False, None, False, None, False, None, False, None, False, None, True, True, self.UpdateInterval
                 ]
 
         try:
-            currentSet = self.game.getCurrentSet()
+            current_set = self.game.getCurrentSet()
         except GameNotStartedError as e:
             return [
-                "N/A", *self.emptyAllDartsIcon, "Player", "0", 
+                "N/A", *self.emptyAllDartsIcon, "Player", "0",
                 True, str(e), False, None, False, None, False, None, False, None, False, True, self.UpdateInterval
             ]
         except NoSetCreatedError:
             self.game.beginNewSet()
-            currentSet = self.game.getCurrentSet()
-        
-        try:
-            currentLeg = currentSet.getCurrentLeg()
-        except NoLegCreatedError:
-            currentSet.beginNewLeg()
-            currentLeg = currentSet.getCurrentLeg()
-        
-        try:
-            currentRound = currentLeg.getCurrentRound()
-        except NoRoundCreatedError:
-            currentLeg.beginNewRound()
-            currentRound = currentLeg.getCurrentRound()
-        
-        try:
-            currentTurn = currentRound.getCurrentTurn()
-        except NoTurnCreatedError:
-            currentRound.beginNextTurn()
-            currentTurn = currentRound.getCurrentTurn()
+            current_set = self.game.getCurrentSet()
 
-        if self.checkForDartsThrow(prop_id):
+        try:
+            current_leg = current_set.getCurrentLeg()
+        except NoLegCreatedError:
+            current_set.beginNewLeg()
+            current_leg = current_set.getCurrentLeg()
+
+        try:
+            current_round = current_leg.getCurrentRound()
+        except NoRoundCreatedError:
+            current_leg.beginNewRound()
+            current_round = current_leg.getCurrentRound()
+
+        try:
+            current_turn = current_round.getCurrentTurn()
+        except NoTurnCreatedError:
+            current_round.beginNextTurn()
+            current_turn = current_round.getCurrentTurn()
+
+        if self.check_for_darts_throw(prop_id):
             score = int(prop_id.split("-")[0])
             if x2_active:
                 multiplier = DOUBLE
@@ -142,148 +144,154 @@ class ThrowDart(CallbackBase):
                 multiplier = MISS
             else:
                 multiplier = SINGLE
-            currentTurn.throwDart(DartScore(score, multiplier))
-            if currentTurn.getNextDart():
+            current_turn.throwDart(DartScore(score, multiplier))
+            if current_turn.getNextDart():
                 self.game.save()
-        
-        dartIcons = self.generateDartsIcons(currentTurn)
-        
-        avgLegScore = self.calculateAvg(currentLeg, currentTurn.player)
 
-        if prop_id == "score-confirm-button" or (prop_id == "typer-interval" and scoreConfirmModalIsOpen):
-            if currentLeg.winner:
-                legWinConfirmModalBody = self.LegWinConfirmationContent.Build(
-                    currentLeg.winner.name,
-                    currentLeg.getThrownDarts(currentLeg.winner)
+        dart_icons = self.generate_darts_icons(current_turn)
+
+        avg_leg_score = self.calculate_avg(current_leg, current_turn.player)
+
+        if prop_id == "score-confirm-button" or (prop_id == "typer-interval" and score_confirm_modal_is_open):
+            if current_leg.winner:
+                leg_win_confirm_modal_body = self.LegWinConfirmationContent.Build(
+                    current_leg.winner.name,
+                    current_leg.getThrownDarts(current_leg.winner)
                 )
                 return [
-                    str(currentLeg.getPointsLeft(currentTurn.player)),
-                    *dartIcons,
-                    currentTurn.player.name, 0,
-                    False, None, False, None, True, legWinConfirmModalBody, False, None, False, None, False, True, self.UpdateInterval
+                    str(current_leg.getPointsLeft(current_turn.player)),
+                    *dart_icons,
+                    current_turn.player.name, 0,
+                    False, None, False, None, True, leg_win_confirm_modal_body, False, None, False, None, False, True,
+                    self.UpdateInterval
                 ]
             try:
                 try:
-                    currentRound.beginNextTurn()
-                    currentTurn = currentRound.getCurrentTurn()
+                    current_round.beginNextTurn()
+                    current_turn = current_round.getCurrentTurn()
                 except AlreadyFinishedError:
                     pass
             except AllTurnsFinishedError:
-                currentRound.finish()
-                currentLeg.beginNewRound()
-                currentRound = currentLeg.getCurrentRound()
-                currentRound.beginNextTurn()
-                currentTurn = currentRound.getCurrentTurn()
+                current_round.finish()
+                current_leg.beginNewRound()
+                current_round = current_leg.getCurrentRound()
+                current_round.beginNextTurn()
+                current_turn = current_round.getCurrentTurn()
             self.game.save()
-            dartIcons = self.generateDartsIcons(currentTurn)
-            avgLegScore = self.calculateAvg(currentLeg, currentTurn.player)
+            dart_icons = self.generate_darts_icons(current_turn)
+            avg_leg_score = self.calculate_avg(current_leg, current_turn.player)
 
         if prop_id == "leg-win-confirm-button":
             try:
                 try:
-                    currentLeg.finish()
-                    currentSet.beginNewLeg()
-                    currentLeg = currentSet.getCurrentLeg()
-                    currentLeg.beginNewRound()
-                    currentRound = currentLeg.getCurrentRound()
-                    currentRound.beginNextTurn()
-                    currentTurn = currentRound.getCurrentTurn()
-                    dartIcons = self.generateDartsIcons(currentTurn)
-                    avgLegScore = self.calculateAvg(currentLeg, currentTurn.player)
+                    current_leg.finish()
+                    avg_leg_score, current_turn, current_leg, dart_icons = self.begin_new_leg(
+                        current_set)
                 except AlreadyFinishedError:
                     pass
             except AllLegsFinishedError:
-                setWinConfirmModalBody = self.SetWinConfirmationContent.Build(
-                    currentSet.winner.name,
-                    round(currentSet.getAvgScore(currentSet.winner), 2),
+                set_win_confirm_modal_body = self.SetWinConfirmationContent.Build(
+                    current_set.winner.name,
+                    round(current_set.getAvgScore(current_set.winner), 2),
                 )
                 return [
-                    str(currentLeg.getPointsLeft(currentTurn.player)),
-                    *dartIcons,
-                    currentTurn.player.name, avgLegScore,
-                    False, None, False, None, False, None, True, setWinConfirmModalBody, False, None, False, True, self.UpdateInterval
+                    str(current_leg.getPointsLeft(current_turn.player)),
+                    *dart_icons,
+                    current_turn.player.name, avg_leg_score,
+                    False, None, False, None, False, None, True, set_win_confirm_modal_body, False, None, False, True,
+                    self.UpdateInterval
                 ]
-        
+
         if prop_id == "set-win-confirm-button":
             try:
-                currentSet.finish()
+                current_set.finish()
                 self.game.beginNewSet()
-                currentSet = self.game.getCurrentSet()
-                currentSet.beginNewLeg()
-                currentLeg = currentSet.getCurrentLeg()
-                currentLeg.beginNewRound()
-                currentRound = currentLeg.getCurrentRound()
-                currentRound.beginNextTurn()
-                currentTurn = currentRound.getCurrentTurn()
-                dartIcons = self.generateDartsIcons(currentTurn)
-                avgLegScore = self.calculateAvg(currentLeg, currentTurn.player)
+                current_set = self.game.getCurrentSet()
+                avg_leg_score, current_turn, current_leg, dart_icons = self.begin_new_leg(
+                    current_set)
             except GameAlreadyFinishedError:
-                gameWinConfirmModalBody = self.GameWinConfirmationContent.Build(
+                game_win_confirm_modal_body = self.GameWinConfirmationContent.Build(
                     self.game.winner.name,
                     round(self.game.getAvgScore(self.game.winner), 2)
                 )
                 return [
-                    str(currentLeg.getPointsLeft(currentTurn.player)),
-                    *dartIcons,
-                    currentTurn.player.name, avgLegScore,
-                    False, None, False, None, False, None, False, None, True, gameWinConfirmModalBody, False, True, self.UpdateInterval
+                    str(current_leg.getPointsLeft(current_turn.player)),
+                    *dart_icons,
+                    current_turn.player.name, avg_leg_score,
+                    False, None, False, None, False, None, False, None, True, game_win_confirm_modal_body, False, True,
+                    self.UpdateInterval
                 ]
             except AlreadyFinishedError:
                 pass
 
-        if not currentTurn.getNextDart():
+        if not current_turn.getNextDart():
             try:
-                currentTurn.finish()
+                current_turn.finish()
             except AlreadyFinishedError:
                 pass
-            openScoreConfirmModal = True
-            if currentTurn.overshooted:
-                scoreConfirmModalBody = self.OvershootConfirmationContent.Build(
-                    currentTurn.player.name,
-                    currentTurn.getScore()
+            open_score_confirm_modal = True
+            if current_turn.overshooted:
+                score_confirm_modal_body = self.OvershootConfirmationContent.Build(
+                    current_turn.player.name,
+                    current_turn.getScore()
                 )
             else:
-                scoreConfirmModalBody = self.ScoreConfirmationContent.Build(
-                    currentTurn.player.name,
-                    currentTurn.getScore()
+                score_confirm_modal_body = self.ScoreConfirmationContent.Build(
+                    current_turn.player.name,
+                    current_turn.getScore()
                 )
-            updateInterval = 5000
-            intervalIsDisabled = False
+            update_interval = 5000
+            interval_is_disabled = False
         else:
-            openScoreConfirmModal = False
-            scoreConfirmModalBody = None
-            updateInterval = 1000
-            intervalIsDisabled = not self.online_mode.value
+            open_score_confirm_modal = False
+            score_confirm_modal_body = None
+            update_interval = 1000
+            interval_is_disabled = not self.online_mode.value
 
         return [
-            str(currentLeg.getPointsLeft(currentTurn.player)),
-            *dartIcons,
-            currentTurn.player.name, avgLegScore,
-            False, None, openScoreConfirmModal, scoreConfirmModalBody, False, None, False, None, False, None, False, intervalIsDisabled, updateInterval
+            str(current_leg.getPointsLeft(current_turn.player)),
+            *dart_icons,
+            current_turn.player.name, avg_leg_score,
+            False, None, open_score_confirm_modal, score_confirm_modal_body,
+            False, None, False, None, False, None, False,
+            interval_is_disabled, update_interval
         ]
 
-    def generateDartsIcons(self, currentTurn):
-        dartIcons = []
-        for dart in currentTurn.scores.values():
-            dartIcons.append(DartIcon().Build(dart))
-        return dartIcons
+    def begin_new_leg(self, current_set: Set) -> tuple:
+        current_set.beginNewLeg()
+        current_leg = current_set.getCurrentLeg()
+        current_leg.beginNewRound()
+        current_round = current_leg.getCurrentRound()
+        current_round.beginNextTurn()
+        current_turn = current_round.getCurrentTurn()
+        dart_icons = self.generate_darts_icons(current_turn)
+        avg_leg_score = self.calculate_avg(current_leg, current_turn.player)
+        return avg_leg_score, current_turn, current_leg, dart_icons
 
-    def calculateAvg(self, currentLeg, player):
-        avgLegScore = currentLeg.getAvgScore(player)
-        if not avgLegScore:
-            avgLegScore = 0
-        avgLegScore = round(avgLegScore, 2)
-        return avgLegScore
-        
-    
-    def checkForDartsThrow(self, prop_id):
+    @staticmethod
+    def generate_darts_icons(current_turn: Turn) -> list:
+        dart_icons = []
+        for dart in current_turn.scores.values():
+            dart_icons.append(DartIcon().Build(dart))
+        return dart_icons
+
+    @staticmethod
+    def calculate_avg(current_leg: Leg, player: Player) -> float:
+        avg_leg_score = current_leg.getAvgScore(player)
+        if not avg_leg_score:
+            avg_leg_score = 0
+        avg_leg_score = round(avg_leg_score, 2)
+        return avg_leg_score
+
+    @staticmethod
+    def check_for_darts_throw(prop_id: str) -> bool:
         if prop_id \
-            and not prop_id.startswith("score-confirm") \
-            and not prop_id.startswith("leg-win-confirm") \
-            and not prop_id.startswith("set-win-confirm") \
-            and not prop_id.startswith("rollback-not-possible") \
-            and not prop_id.startswith("go-back") \
-            and not prop_id.startswith("typer-interval"):
+                and not prop_id.startswith("score-confirm") \
+                and not prop_id.startswith("leg-win-confirm") \
+                and not prop_id.startswith("set-win-confirm") \
+                and not prop_id.startswith("rollback-not-possible") \
+                and not prop_id.startswith("go-back") \
+                and not prop_id.startswith("typer-interval"):
             return True
         else:
             return False
