@@ -1,14 +1,18 @@
-from dash.dependencies import Input, Output, State
-from dash.exceptions import PreventUpdate
+from typing import List
 
-from Logging.Logger import Logger
+from dash.dependencies import Input, Output
+
 from Callbacks.CallbackBase import CallbackBase
+from Callbacks.DependencyContainer import DependencyContainer
+from Logging.Logger import Logger
+
 
 class SetOnlineMode(CallbackBase):
-    def __init__(self, dependencyContainer):
+    def __init__(self, dependency_container: DependencyContainer) -> None:
+        super().__init__()
         self.logger = Logger(__name__)
-        self.app = dependencyContainer.app
-        self.online_mode = dependencyContainer.online_mode
+        self.app = dependency_container.app
+        self.online_mode = dependency_container.online_mode
         self.inputs = [
             Input("online-switch", "value")
         ]
@@ -18,9 +22,9 @@ class SetOnlineMode(CallbackBase):
         self.states = []
         self.running = []
         self.logger.info("Initialized set Online Mode Callback")
-    
-    def Callback(self, switch_val):
-        if type(switch_val) == type(None):
+
+    def callback(self, switch_val: bool) -> List[str]:
+        if type(switch_val) is type(None):
             if self.online_mode.value:
                 return ["Online"]
             else:
@@ -34,4 +38,3 @@ class SetOnlineMode(CallbackBase):
                 self.logger.info("Switched to Offline Mode")
                 self.online_mode.value = False
                 return ["Offline"]
-        raise PreventUpdate

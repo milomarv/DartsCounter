@@ -1,18 +1,20 @@
 import dash
 from dash.exceptions import PreventUpdate
 
+
 class CallbackBase:
-    def Register(self):
+    def register(self) -> None:
         self.app.callback(
             self.outputs,
             self.inputs,
             self.states
-        )(self.Callback)
-    
-    def getPropFromContext(self, blockInital =True):
+        )(self.callback)
+
+    @staticmethod
+    def get_prop_from_context(block_initial: bool = True) -> str | None:
         ctx = dash.callback_context
         if not ctx.triggered:
-            if blockInital:
+            if block_initial:
                 raise PreventUpdate
             else:
                 return None

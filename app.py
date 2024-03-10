@@ -29,7 +29,7 @@ server = app.server
 
 logger.info("Initialized Dash App")
 
-Callbacks.Initializer(app).Run()
+Callbacks.Initializer(app).run()
 logger.info("Initialized Callbacks")
 
 if __name__ == "__main__":

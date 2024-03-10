@@ -1,18 +1,20 @@
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
-import dash_bootstrap_components as dbc
 
+from Callbacks.CallbackBase import CallbackBase
+from Callbacks.DependencyContainer import DependencyContainer
 from Errors import *
 from Logging.Logger import Logger
-from Callbacks.CallbackBase import CallbackBase
-from Models.DartScore import DartScore, SINGLE, DOUBLE, TRIPLE, MISS, NODART
+from Models.DartScore import SINGLE, DOUBLE, TRIPLE, MISS
 from Pages.ScoreboardPage.PlayerCard import PlayerCard
 
+
 class UpdatePlayerCards(CallbackBase):
-    def __init__(self, dependencyContainer):
+    def __init__(self, dependency_container: DependencyContainer) -> None:
+        super().__init__()
         self.logger = Logger(__name__)
-        self.app = dependencyContainer.app
-        self.game = dependencyContainer.game
+        self.app = dependency_container.app
+        self.game = dependency_container.game
         self.inputs = [
             Input("scoreboard-update-interval", "n_intervals"),
         ]
@@ -27,150 +29,145 @@ class UpdatePlayerCards(CallbackBase):
         self.logger.info("Initialized Callback Template")
         self.playerCard = PlayerCard()
         self.emptyDartIcon = self.playerCard.dartIcon.Build()
-    
-    def Callback(self, n_intervals, gameFilter, setFilter, legFilter):
+
+    def callback(self, _n_intervals: int, game_filter: str, set_filter: str, leg_filter: str) -> list:
+        que_on = None
         try:
-            if gameFilter == "btn btn-primary":
-                queOn = self.game
-            elif setFilter == "btn btn-primary":
-                queOn = self.game.getCurrentSet()
-            elif legFilter == "btn btn-primary":
-                queOn = self.game.getCurrentSet().getCurrentLeg()
-        except NoSetCreatedError:
-            queOn = None
-        except NoLegCreatedError:
-            queOn = None
+            if game_filter == "btn btn-primary":
+                que_on = self.game
+            elif set_filter == "btn btn-primary":
+                que_on = self.game.getCurrentSet()
+            elif leg_filter == "btn btn-primary":
+                que_on = self.game.getCurrentSet().getCurrentLeg()
         except GameNotStartedError:
             raise PreventUpdate
 
-        returnCols = []
+        return_cols = []
         for player in self.game.players:
             # Get Player Name
-            playerName = player.name
+            player_name = player.name
 
             # Get If Player is on current turn
             try:
-                currentTurn = self.game.getCurrentSet().getCurrentLeg().getCurrentRound().getCurrentTurn()
-                if currentTurn.player == player:
+                current_turn = self.game.getCurrentSet().getCurrentLeg().getCurrentRound().getCurrentTurn()
+                if current_turn.player == player:
                     active = True
                 else:
                     active = False
             except NoSetCreatedError:
                 active = False
 
-
             # Get Player Current Score
             try:
-                currentLeg = self.game.getCurrentSet().getCurrentLeg()
-                playerPointsLeft = currentLeg.getPointsLeft(player)
+                current_leg = self.game.getCurrentSet().getCurrentLeg()
+                player_points_left = current_leg.getPointsLeft(player)
             except KeyError:
-                playerPointsLeft = "N/A"
+                player_points_left = "N/A"
             except NoSetCreatedError:
-                playerPointsLeft = "N/A"
+                player_points_left = "N/A"
             except NoLegCreatedError:
-                playerPointsLeft = "N/A"
+                player_points_left = "N/A"
             except GameNotStartedError:
-                playerPointsLeft = "N/A"
-            
+                player_points_left = "N/A"
+
             # Get Player Current Avg
-            if queOn:
-                playerAvg = queOn.getAvgScore(player)
-                if not playerAvg:
-                    playerAvg = "N/A"
+            if que_on:
+                player_avg = que_on.getAvgScore(player)
+                if not player_avg:
+                    player_avg = "N/A"
                 else:
-                    playerAvg = round(playerAvg, 2)
+                    player_avg = round(player_avg, 2)
             else:
-                playerAvg = "N/A"
-            
+                player_avg = "N/A"
+
             # Get Player Thrown Darts
-            if queOn:
-                playerDarts = queOn.getThrownDarts(player)
-                if not playerDarts:
-                    playerDarts = 0
+            if que_on:
+                player_darts = que_on.getThrownDarts(player)
+                if not player_darts:
+                    player_darts = 0
             else:
-                playerDarts = 0
-            
+                player_darts = 0
+
             # Get Set Wins
-            setWins = self.game.getSetWins(player)
+            set_wins = self.game.getSetWins(player)
 
             # Get Leg Wins
             try:
-                legWins = self.game.getCurrentSet().getLegWins(player)
+                leg_wins = self.game.getCurrentSet().getLegWins(player)
             except NoSetCreatedError:
-                legWins = 0
+                leg_wins = 0
             except GameNotStartedError:
-                legWins = 0
-            
+                leg_wins = 0
+
             # Get Singles, Doubles, Triples, Misses
-            if queOn:
+            if que_on:
                 try:
-                    single = queOn.getMultipliers(player, SINGLE)
-                    singlePerc = single/playerDarts
-                    double = queOn.getMultipliers(player, DOUBLE)
-                    doublePerc = double/playerDarts
-                    triple = queOn.getMultipliers(player, TRIPLE)
-                    triplePerc = triple/playerDarts
-                    miss = queOn.getMultipliers(player, MISS)
-                    missPerc = miss/playerDarts
+                    single = que_on.getMultipliers(player, SINGLE)
+                    single_perc = single / player_darts
+                    double = que_on.getMultipliers(player, DOUBLE)
+                    double_perc = double / player_darts
+                    triple = que_on.getMultipliers(player, TRIPLE)
+                    triple_perc = triple / player_darts
+                    miss = que_on.getMultipliers(player, MISS)
+                    miss_perc = miss / player_darts
                 except ZeroDivisionError:
                     single, double, triple, miss = 0, 0, 0, 0
-                    singlePerc, doublePerc, triplePerc, missPerc = 0, 0, 0, 0
+                    single_perc, double_perc, triple_perc, miss_perc = 0, 0, 0, 0
             else:
                 single, double, triple, miss = 0, 0, 0, 0
-                singlePerc, doublePerc, triplePerc, missPerc = 0, 0, 0, 0
+                single_perc, double_perc, triple_perc, miss_perc = 0, 0, 0, 0
 
             # Get N Hits on Numbers
             numbers = self.playerCard.polarVals
-            if queOn:
-                nHits = []
+            if que_on:
+                n_hits = []
                 for n in numbers:
-                    nHits.append(queOn.getNHitsOnNumbers(player, n))
+                    n_hits.append(que_on.getNHitsOnNumbers(player, n))
             else:
-                nHits = [0 for _ in numbers]
+                n_hits = [0 for _ in numbers]
 
             # Get Players Last 3 Darts
             try:
-                lastTurn = self.game.getCurrentSet().getCurrentLeg().getLastTurn(player)
-                if lastTurn:
-                    dartIcons = []
-                    totalScore = 0
-                    for dart in lastTurn.scores.values():
+                last_turn = self.game.getCurrentSet().getCurrentLeg().getLastTurn(player)
+                if last_turn:
+                    dart_icons = []
+                    total_score = 0
+                    for dart in last_turn.scores.values():
                         if dart and not dart.NoDart:
-                            dartIcons.append(self.playerCard.dartIcon.Build(dart))
-                            totalScore += dart.total
+                            dart_icons.append(self.playerCard.dartIcon.Build(dart))
+                            total_score += dart.total
                         else:
-                            dartIcons.append(self.emptyDartIcon)
+                            dart_icons.append(self.emptyDartIcon)
                 else:
-                    dartIcons = [self.emptyDartIcon, self.emptyDartIcon, self.emptyDartIcon]
-                    totalScore = 0
+                    dart_icons = [self.emptyDartIcon, self.emptyDartIcon, self.emptyDartIcon]
+                    total_score = 0
             except NoSetCreatedError:
-                dartIcons = [self.emptyDartIcon, self.emptyDartIcon, self.emptyDartIcon]
-                totalScore = 0
-            
-            # Get Possible Checkouts
-            if queOn:
-                nPossibleCheckouts, nSuccessfullCheckouts = queOn.getPossibleCheckouts(player)
-            else:
-                nPossibleCheckouts, nSuccessfullCheckouts = None, None
-            if nPossibleCheckouts or nSuccessfullCheckouts:
-                checkoutRate = f"{round(nSuccessfullCheckouts / nPossibleCheckouts * 100, 2)} %"
-                checkoutCount = f"{nSuccessfullCheckouts}/{nPossibleCheckouts}"
-            else:
-                checkoutRate, checkoutCount = "N/A", "N/A"
+                dart_icons = [self.emptyDartIcon, self.emptyDartIcon, self.emptyDartIcon]
+                total_score = 0
 
-            playerStatsCard = self.playerCard.Build(
-                active, playerName, playerPointsLeft, playerAvg, playerDarts, setWins, legWins,
+            # Get Possible Checkouts
+            if que_on:
+                n_possible_checkouts, n_successful_checkouts = que_on.getPossibleCheckouts(player)
+            else:
+                n_possible_checkouts, n_successful_checkouts = None, None
+            if n_possible_checkouts or n_successful_checkouts:
+                checkout_rate = f"{round(n_successful_checkouts / n_possible_checkouts * 100, 2)} %"
+                checkout_count = f"{n_successful_checkouts}/{n_possible_checkouts}"
+            else:
+                checkout_rate, checkout_count = "N/A", "N/A"
+
+            player_stats_card = self.playerCard.Build(
+                active, player_name, player_points_left, player_avg, player_darts, set_wins, leg_wins,
                 single, double, triple, miss,
-                singlePerc, doublePerc, triplePerc, missPerc, nHits,
-                *dartIcons, totalScore,
-                checkoutRate, checkoutCount
+                single_perc, double_perc, triple_perc, miss_perc, n_hits,
+                total_score, checkout_rate, checkout_count,
+                *dart_icons
             )
-            returnCols.append(playerStatsCard)
-        return [returnCols]
-        raise PreventUpdate
-    
-    def emptyDarts(self):
-        dart1 = DartScore(0, NODART, NoDart=True)
-        dart2 = DartScore(0, NODART, NoDart=True)
-        dart3 = DartScore(0, NODART, NoDart=True)
-        return dart1, dart2, dart3
+            return_cols.append(player_stats_card)
+        return [return_cols]
+
+    # def emptyDarts(self) -> object:
+    #     dart1 = DartScore(0, NO_DART, NoDart=True)
+    #     dart2 = DartScore(0, NO_DART, NoDart=True)
+    #     dart3 = DartScore(0, NO_DART, NoDart=True)
+    #     return dart1, dart2, dart3

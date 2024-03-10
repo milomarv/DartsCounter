@@ -1,13 +1,16 @@
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
-from Logging.Logger import Logger
 from Callbacks.CallbackBase import CallbackBase
+from Callbacks.DependencyContainer import DependencyContainer
+from Logging.Logger import Logger
+
 
 class ActivateMultiplier(CallbackBase):
-    def __init__(self, dependencyContainer):
+    def __init__(self, dependency_container: DependencyContainer) -> None:
+        super().__init__()
         self.logger = Logger(__name__)
-        self.app = dependencyContainer.app
+        self.app = dependency_container.app
         self.inputs = [
             Input("x2-score-button", "n_clicks"),
             Input("x3-score-button", "n_clicks"),
@@ -47,16 +50,18 @@ class ActivateMultiplier(CallbackBase):
             State("x2-score-button", "active"),
             State("x3-score-button", "active")
         ]
-        self.logger.info("Initialized Activate Mulitplier Callback")
-    
-    def Callback(
-        self, 
-        n_clicks_x2, n_clicks_x3, 
-        s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10,
-        s11, s12, s13, s14, s15, s16, s17, s18, s19, s20,
-        x2_active, x3_active
-    ):
-        prop_id = self.getPropFromContext()
+        self.logger.info("Initialized Activate Multiplier Callback")
+
+    def callback(
+            self,
+            _n_clicks_x2: int, _n_clicks_x3: int,
+            _s0: int, _s1: int, _s2: int, _s3: int, _s4: int, _s5: int, _s6: int, _s7: int, _s8: int, _s9: int,
+            _s10: int,
+            _s11: int, _s12: int, _s13: int, _s14: int, _s15: int, _s16: int, _s17: int, _s18: int, _s19: int,
+            _s20: int,
+            x2_active: bool, x3_active: bool
+    ) -> list[bool | str]:
+        prop_id = self.get_prop_from_context()
         if prop_id == "x2-score-button":
             if x2_active:
                 return [False, False, False, False, "primary", "primary", "primary", "primary"]
