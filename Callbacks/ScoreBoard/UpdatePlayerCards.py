@@ -2,10 +2,10 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
 from Callbacks.CallbackBase import CallbackBase
-from Callbacks.DependencyContainer import DependencyContainer
-from Errors import *
+from DependencyContainer import DependencyContainer
+from Errors import GameNotStartedError, NoLegCreatedError, NoSetCreatedError
 from Logging.Logger import Logger
-from Models.DartScore import SINGLE, DOUBLE, TRIPLE, MISS
+from Models.DartScore import DOUBLE, MISS, SINGLE, TRIPLE
 from Pages.ScoreboardPage.PlayerCard import PlayerCard
 
 
@@ -16,30 +16,30 @@ class UpdatePlayerCards(CallbackBase):
         self.app = dependency_container.app
         self.game = dependency_container.game
         self.inputs = [
-            Input("scoreboard-update-interval", "n_intervals"),
+            Input('scoreboard-update-interval', 'n_intervals'),
         ]
         self.outputs = [
-            Output("scoreboard-player-area", "children")
+            Output('scoreboard-player-area', 'children')
         ]
         self.states = [
-            State("game-filter-button", "className"),
-            State("current-set-filter-button", "className"),
-            State("current-leg-filter-button", "className")
+            State('game-filter-button', 'className'),
+            State('current-set-filter-button', 'className'),
+            State('current-leg-filter-button', 'className')
         ]
-        self.logger.info("Initialized Callback Template")
+        self.logger.info('Initialized Callback Template')
         self.playerCard = PlayerCard()
         self.emptyDartIcon = self.playerCard.dartIcon.Build()
 
     def callback(self, _n_intervals: int, game_filter: str, set_filter: str, leg_filter: str) -> list:
         que_on = None
         try:
-            if game_filter == "btn btn-primary":
+            if game_filter == 'btn btn-primary':
                 que_on = self.game
-            elif set_filter == "btn btn-primary":
+            elif set_filter == 'btn btn-primary':
                 que_on = self.game.getCurrentSet()
-            elif leg_filter == "btn btn-primary":
+            elif leg_filter == 'btn btn-primary':
                 que_on = self.game.getCurrentSet().getCurrentLeg()
-        except GameNotStartedError:
+        except (GameNotStartedError, NoSetCreatedError):
             raise PreventUpdate
 
         return_cols = []
@@ -62,23 +62,23 @@ class UpdatePlayerCards(CallbackBase):
                 current_leg = self.game.getCurrentSet().getCurrentLeg()
                 player_points_left = current_leg.getPointsLeft(player)
             except KeyError:
-                player_points_left = "N/A"
+                player_points_left = 'N/A'
             except NoSetCreatedError:
-                player_points_left = "N/A"
+                player_points_left = 'N/A'
             except NoLegCreatedError:
-                player_points_left = "N/A"
+                player_points_left = 'N/A'
             except GameNotStartedError:
-                player_points_left = "N/A"
+                player_points_left = 'N/A'
 
             # Get Player Current Avg
             if que_on:
                 player_avg = que_on.getAvgScore(player)
                 if not player_avg:
-                    player_avg = "N/A"
+                    player_avg = 'N/A'
                 else:
                     player_avg = round(player_avg, 2)
             else:
-                player_avg = "N/A"
+                player_avg = 'N/A'
 
             # Get Player Thrown Darts
             if que_on:
@@ -151,10 +151,10 @@ class UpdatePlayerCards(CallbackBase):
             else:
                 n_possible_checkouts, n_successful_checkouts = None, None
             if n_possible_checkouts or n_successful_checkouts:
-                checkout_rate = f"{round(n_successful_checkouts / n_possible_checkouts * 100, 2)} %"
-                checkout_count = f"{n_successful_checkouts}/{n_possible_checkouts}"
+                checkout_rate = f'{round(n_successful_checkouts / n_possible_checkouts * 100, 2)} %'
+                checkout_count = f'{n_successful_checkouts}/{n_possible_checkouts}'
             else:
-                checkout_rate, checkout_count = "N/A", "N/A"
+                checkout_rate, checkout_count = 'N/A', 'N/A'
 
             player_stats_card = self.playerCard.Build(
                 active, player_name, player_points_left, player_avg, player_darts, set_wins, leg_wins,

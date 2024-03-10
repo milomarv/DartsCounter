@@ -18,5 +18,5 @@ class CallbackBase:
                 raise PreventUpdate
             else:
                 return None
-        prop_id = ctx.triggered[0]["prop_id"].split(".")[0]
+        prop_id = ctx.triggered[0]['prop_id'].split('.')[0]
         return prop_id

@@ -1,8 +1,8 @@
 import random
 
-from DB import *
-from Models import *
 from Logging import *
+from Models import *
+
 
 def randomScore():
     score = random.choice([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 50])
@@ -13,12 +13,13 @@ def randomScore():
         multiplier = SINGLE
     return DartScore(score, multiplier)
 
+
 logger = Logger(__name__)
-logger.info("Start Simulation")
+logger.info('Start Simulation')
 
 playersDB = PlayersDB()
 
-for name in ["Wilson", "DerDicke", "Lappler"]:
+for name in ['Wilson', 'DerDicke', 'Lappler']:
     newPlayer = Player(name)
     playersDB.add(newPlayer)
 
@@ -28,13 +29,13 @@ players = playersDB.load()
 playerWilson = players[0]
 
 game = Game(
-    players = players[:2],
+    players=players[:2],
     nSets=5,
     setType=TypeSetLeg(FIRST_TO),
     nLegs=3,
     legType=TypeSetLeg(BEST_OF),
     points=501,
-    out = Out(DOUBLE_OUT)
+    out=Out(DOUBLE_OUT)
 )
 
 while True:
@@ -66,4 +67,3 @@ while True:
     if game.winner:
         break
 print(game)
-
