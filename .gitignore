@@ -1,5 +1,5 @@
-DB/databases/games*
-DB/databases
+Repositories/pickle_databases/games*
+Repositories/pickle_databases
 .DS_Store
 
 # Byte-compiled / optimized / DLL files

@@ -2,7 +2,7 @@ from dash import ALL
 from dash.dependencies import Input, Output, State
 
 from Callbacks.CallbackBase import CallbackBase
-from Callbacks.DependencyContainer import DependencyContainer
+from DependencyContainer import DependencyContainer
 from Logging.Logger import Logger
 from Models.Out import Out
 from Models.Player import Player
@@ -16,26 +16,26 @@ class StartStopGame(CallbackBase):
         self.app = dependency_container.app
         self.game = dependency_container.game
         self.inputs = [
-            Input("start-stop-game-button", "n_clicks"),
-            Input("end-game-confirm-button", "n_clicks")
+            Input('start-stop-game-button', 'n_clicks'),
+            Input('end-game-confirm-button', 'n_clicks')
         ]
         self.outputs = [
-            Output("start-stop-game-button", "children"),
-            Output("start-stop-game-button", "className"),
-            Output("start-game-error-modal", "is_open"),
-            Output("start-game-error-modal-body", "children"),
-            Output("end-game-confirm-modal", "is_open")
+            Output('start-stop-game-button', 'children'),
+            Output('start-stop-game-button', 'className'),
+            Output('start-game-error-modal', 'is_open'),
+            Output('start-game-error-modal-body', 'children'),
+            Output('end-game-confirm-modal', 'is_open')
         ]
         self.states = [
-            State({"type": "player-input", "index": ALL}, "value"),
-            State("number-of-sets-input", "value"),
-            State("number-of-legs-input", "value"),
-            State("set-mode-select", "value"),
-            State("leg-mode-select", "value"),
-            State("points-input", "value"),
-            State("out-variant-select", "value")
+            State({'type': 'player-input', 'index': ALL}, 'value'),
+            State('number-of-sets-input', 'value'),
+            State('number-of-legs-input', 'value'),
+            State('set-mode-select', 'value'),
+            State('leg-mode-select', 'value'),
+            State('points-input', 'value'),
+            State('out-variant-select', 'value')
         ]
-        self.logger.info("Initialized StartStopGame Callback")
+        self.logger.info('Initialized StartStopGame Callback')
 
     def callback(
             self,
@@ -49,29 +49,29 @@ class StartStopGame(CallbackBase):
             points: int,
             out: int
     ) -> list[str | bool | None]:
-        if self.get_prop_from_context(block_initial=False) == "start-stop-game-button":
+        if self.get_prop_from_context(block_initial=False) == 'start-stop-game-button':
             if not self.game.started:
-                self.game.stop()
+                self.game.finish()
                 try:
                     self.game.start(
                         players=[Player(name) for name in players if name],
-                        nSets=n_sets,
-                        setType=TypeSetLeg(set_type),
-                        nLegs=n_legs,
-                        legType=TypeSetLeg(leg_type),
+                        n_sets=n_sets,
+                        set_type=TypeSetLeg(set_type),
+                        n_legs=n_legs,
+                        leg_type=TypeSetLeg(leg_type),
                         points=points,
                         out=Out(out)
                     )
                     self.game.save()
-                    return ["Stop Game", "btn btn-danger", False, None, False]
+                    return ['Stop Game', 'btn btn-danger', False, None, False]
                 except ValueError as e:
-                    return ["Start Game", "btn btn-success", True, str(e), False]
+                    return ['Start Game', 'btn btn-success', True, str(e), False]
             else:
-                return ["Stop Game", "btn btn-danger", False, None, True]
-        elif self.get_prop_from_context(block_initial=False) == "end-game-confirm-button":
+                return ['Stop Game', 'btn btn-danger', False, None, True]
+        elif self.get_prop_from_context(block_initial=False) == 'end-game-confirm-button':
             self.game.started = False
-            return ["Start Game", "btn btn-success", False, None, False]
+            return ['Start Game', 'btn btn-success', False, None, False]
         elif self.game.started:
-            return ["Stop Game", "btn btn-danger", False, None, False]
+            return ['Stop Game', 'btn btn-danger', False, None, False]
         else:
-            return ["Start Game", "btn btn-success", False, None, False]
+            return ['Start Game', 'btn btn-success', False, None, False]

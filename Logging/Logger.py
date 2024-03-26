@@ -4,8 +4,8 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - [%
 
 
 class Logger:
-    def __init__(self, nameSpace: str):
-        self.nameSpace = nameSpace
+    def __init__(self, name_space: str):
+        self.nameSpace = name_space
         self.logger = logging.getLogger(self.nameSpace)
 
         self.info = self.logger.info

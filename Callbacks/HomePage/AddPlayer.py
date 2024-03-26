@@ -2,7 +2,7 @@ from dash import Patch
 from dash.dependencies import Input, Output
 
 from Callbacks.CallbackBase import CallbackBase
-from Callbacks.DependencyContainer import DependencyContainer
+from DependencyContainer import DependencyContainer
 from Logging.Logger import Logger
 from Pages.HomePage.PlayerInput import PlayerInput
 
@@ -12,11 +12,11 @@ class AddPlayer(CallbackBase):
         super().__init__()
         self.logger = Logger(__name__)
         self.app = dependency_container.app
-        self.inputs = [Input("add-player", "n_clicks")]
-        self.outputs = [Output("player-inputs-div", "children")]
+        self.inputs = [Input('add-player', 'n_clicks')]
+        self.outputs = [Output('player-inputs-div', 'children')]
         self.states = []
         self.playerInput = PlayerInput()
-        self.logger.info("Initialized AddPlayer Callback")
+        self.logger.info('Initialized AddPlayer Callback')
 
     def callback(self, n_clicks: int) -> list:
         if n_clicks:
