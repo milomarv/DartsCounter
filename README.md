@@ -1,28 +1,43 @@
 # 🎯 Dart Counter Web Application
 
 ## Overview
-This Dart Counter is a distributed web server application uniquely designed to enhance the experience of playing the classic game of darts, commonly known as 501. Unlike traditional dart counters, this application operates across multiple devices. Users need two devices to fully utilize its functionality: one for inputting scores using the Typer Page and another for displaying the game progress and statistics.
+
+This Dart Counter is a distributed web server application uniquely designed to enhance the experience of playing
+the classic game of darts, commonly known as 501. Unlike traditional dart counters, this application operates across
+multiple devices. Users need two devices to fully utilize its functionality: one for inputting scores using the Typer
+Page and another for displaying the game progress and statistics.
 
 ## Features
 
 ### 1. Configure Game
-Users can set up the game according to their preferences, including choosing the point value for each game (e.g., 501), specifying the number of legs and sets, and selecting the mode (Best of or First to). Additionally, various game variants are available, such as "Double out," where players must hit a double to win the game, adding an extra layer of strategy and skill to the gameplay experience.
+
+Users can set up the game according to their preferences, including choosing the point value for each game (e.g., 501),
+specifying the number of legs and sets, and selecting the mode (Best of or First to). Additionally, various game
+variants are available, such as "Double out," where players must hit a double to win the game, adding an extra layer of
+strategy and skill to the gameplay experience.
 
 ### 2. Type in Scores
+
 The application provides a dedicated Typer Page where users can conveniently input their scores during gameplay.
 
 ### 3. Scoreboard
-Scores entered by the users are instantly reflected on the Scoreboard page. Here, players can view the current points, along with other relevant statistics. Additionally, the scoreboard page offers graphical representations of the game progress for each player.
+
+Scores entered by the users are instantly reflected on the Scoreboard page. Here, players can view the current points,
+along with other relevant statistics. Additionally, the scoreboard page offers graphical representations of the game
+progress for each player.
 
 ## Prerequisites
 
 Before getting started, ensure that the following prerequisites are met:
 
-1. **Python**: Make sure you have Python installed on your system. You can download Python from the [official website](https://www.python.org/downloads/).
+1. **Python**: Make sure you have Python installed on your system. You can download Python from
+   the [official website](https://www.python.org/downloads/).
 
-2. **Git**: Git is used for version control. If you haven't already, download and install Git from the [official website](https://git-scm.com/downloads).
+2. **Git**: Git is used for version control. If you haven't already, download and install Git from
+   the [official website](https://git-scm.com/downloads).
 
 ## Installation
+
 1. Clone the repository to your local machine:
     ```bash
     git clone https://github.com/milomarv/DartsCounter.git
@@ -50,12 +65,15 @@ Before getting started, ensure that the following prerequisites are met:
     ```
 
 ## Updating
+
 If there are updates available for the Dart Counter application, you can pull the latest changes from the repository:
+
 ```bash
 git pull origin main
 ```
 
 ## Run the Application
+
 1. Activate the virtual environment (if not already activated):
     - On Windows:
         ```bash
@@ -85,7 +103,8 @@ git pull origin main
 
 ## Accessing the Web Server from Other Devices
 
-To access the web server running on your device from other devices within the same network, you'll need to find the IP address of your device. Here's how to do it for Linux, macOS, and Windows:
+To access the web server running on your device from other devices within the same network, you'll need to find the IP
+address of your device. Here's how to do it for Linux, macOS, and Windows:
 
 ### Linux:
 
@@ -117,13 +136,15 @@ To access the web server running on your device from other devices within the sa
 4. Look for the "IPv4 Address" under the appropriate network adapter (usually labeled Ethernet or Wi-Fi).
 5. Note down the IP address.
 
-Once you have obtained the IP address of your device, you can access the web server from other devices by typing the following URL into the web browser:
+Once you have obtained the IP address of your device, you can access the web server from other devices by typing the
+following URL into the web browser:
 
 ```
 http://[YOUR_DEVICE_IP]:8050
 ```
 
-Replace `[YOUR_DEVICE_IP]` with the IP address you obtained earlier. This will open the web page hosted by your web server.
+Replace `[YOUR_DEVICE_IP]` with the IP address you obtained earlier. This will open the web page hosted by your web
+server.
 
 ## Make the Application Publicly Available
 
@@ -138,33 +159,44 @@ Replace `[YOUR_DEVICE_IP]` with the IP address you obtained earlier. This will o
     .\ngrok.exe http http://localhost:8050  
     ```
 
-5. Ngrok will generate a forwarding URL (e.g., `http://abcd1234.ngrok.io`) that you can share with others to access your application.
+5. Ngrok will generate a forwarding URL (e.g., `http://abcd1234.ngrok.io`) that you can share with others to access your
+   application.
 
-6. **Warning**: Exercise caution when using ngrok to expose your local server. Sharing the generated URL indiscriminately can provide direct access to your local machine, potentially posing security risks.
+6. **Warning**: Exercise caution when using ngrok to expose your local server. Sharing the generated URL
+   indiscriminately can provide direct access to your local machine, potentially posing security risks.
 
 7. Share the generated URL with anyone you want to give access to your application.
-   
+
 ## Online Mode
 
-The Online Mode is a feature designed to enhance the multiplayer experience by enabling synchronization between multiple Typer Board devices. When activated, players can enjoy real-time updates and seamless gameplay across different devices, allowing for a more interactive and engaging darts experience.
+The Online Mode is a feature designed to enhance the multiplayer experience by enabling synchronization between multiple
+Typer Board devices. When activated, players can enjoy real-time updates and seamless gameplay across different devices,
+allowing for a more interactive and engaging darts experience.
 
 ### Functionality
-- **Switch on the Home Page**: Users can toggle the Online Mode switch on the Home Page to activate or deactivate synchronization between Typer Board devices. 
-- **Enhanced Multiplayer Experience**: With Online Mode enabled, players can collaborate and compete with each other in real-time, even if they are physically apart. For example, two players can meet up in a platform like Discord and access the same game statistics, creating a shared gaming experience.
-- **Automatic Refresh**: If Online Mode is enabled, the Typer Board will automatically refresh to ensure accurate game progress. This prevents any discrepancies that may arise from manual synchronization.
-- **Opt-in Setting**: Online Mode is not enabled by default to prevent potential minor bugs that may occur during synchronization.
+
+- **Switch on the Home Page**: Users can toggle the Online Mode switch on the Home Page to activate or deactivate
+  synchronization between Typer Board devices.
+- **Enhanced Multiplayer Experience**: With Online Mode enabled, players can collaborate and compete with each other in
+  real-time, even if they are physically apart. For example, two players can meet up in a platform like Discord and
+  access the same game statistics, creating a shared gaming experience.
+- **Automatic Refresh**: If Online Mode is enabled, the Typer Board will automatically refresh to ensure accurate game
+  progress. This prevents any discrepancies that may arise from manual synchronization.
+- **Opt-in Setting**: Online Mode is not enabled by default to prevent potential minor bugs that may occur during
+  synchronization.
 
 ### Note
-- **Scoreboard Real-time Updates**: Regardless of Online Mode's status, the Scoreboard page will always be updated in real-time, providing players with accurate game statistics and progress tracking.
 
-
+- **Scoreboard Real-time Updates**: Regardless of Online Mode's status, the Scoreboard page will always be updated in
+  real-time, providing players with accurate game statistics and progress tracking.
 
 ## Technologies Used
+
 - Python
 - Dash (Python web framework for building analytical web applications)
 - Plotly (Python graphing library for interactive visualizations)
 
-
 ## Contributors
+
 - [milomarv](https://github.com/milomarv)
 - [DerWodnik](https://github.com/DerWodnik)

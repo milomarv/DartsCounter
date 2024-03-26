@@ -1,175 +1,156 @@
-from typing import List
+from typing import List, Optional
 
-from Errors import *
+from Errors import AllLegsFinishedError, AlreadyFinishedError, NoLegCreatedError
 from Logging.Logger import Logger
-from .Player import Player
-from .Out import Out
-from .TypeSetLeg import TypeSetLeg, BEST_OF, FIRST_TO
+from .AbstractGamePart import AbstractGamePart
 from .Leg import Leg
+from .Out import Out
+from .Player import Player
+from .TypeSetLeg import BEST_OF, FIRST_TO, TypeSetLeg
 
-class Set:
+
+class Set(AbstractGamePart):
     def __init__(
-        self, 
-        players: List[Player],
-        game,
-        setType: TypeSetLeg,
-        nLegs: int, 
-        legType: TypeSetLeg, 
-        points: int, 
-        out: Out = 2
+            self,
+            players: List[Player],
+            game,
+            set_type: TypeSetLeg,
+            n_legs: int,
+            leg_type: TypeSetLeg,
+            points: int,
+            out: Out = 2
     ):
+        super().__init__()
         self.logger = Logger(__name__)
         self.players = players
         self.game = game
-        self.setType = setType
-        self.nLegs = nLegs
-        self.legType = legType
+        self.setType = set_type
+        self.nLegs = n_legs
+        self.legType = leg_type
         self.points = points
         self.out = out
         self.winner = None
         self.legs = []
-        self.logger.info(f"New set created")
-    
-    def __str__(self):
-        setString = f"SET\n"
-        setString += f"Number of Players: {len(self.players)}\n"
-        setString += f"Set Type: {self.setType}\n"
-        setString += f"Number of Legs: {self.nLegs}\n"
-        setString += f"Leg Type: {self.legType}\n"
-        setString += f"Points: {self.points}\n"
-        setString += f"Out: {self.out}\n"
-        setString += f"Leg Wins: {[f'{player.name}: {self.getLegWins(player)}' for player in self.players]}\n"
-        setString += f"Winner: {self.winner}\n"
+        self.logger.info('New set created')
+
+    def __str__(self) -> str:
+        setString = 'SET\n'
+        setString += f'Number of Players: {len(self.players)}\n'
+        setString += f'Set Type: {self.setType}\n'
+        setString += f'Number of Legs: {self.nLegs}\n'
+        setString += f'Leg Type: {self.legType}\n'
+        setString += f'Points: {self.points}\n'
+        setString += f'Out: {self.out}\n'
+        setString += f"Leg Wins: {[f'{player.name}: {self.get_leg_wins(player)}' for player in self.players]}\n"
+        setString += f'Winner: {self.winner}\n'
         return setString
-    
-    def getCurrentLeg(self, suppress_logger=False):
+
+    def __get_score_count_and_n_rounds__(self, player: Player) -> tuple[int, int]:
+        score_count = 0
+        n_rounds = 0
+        for i_leg in self.legs:
+            set_score_count, set_rounds = i_leg.__get_score_count_and_n_rounds__(player)
+            score_count += set_score_count
+            n_rounds += set_rounds
+        return score_count, n_rounds
+
+    def get_current_leg(self, suppress_logger: bool = False) -> Leg:
         try:
             return self.legs[-1]
         except IndexError:
-            error_msg = "Tried to get Information about current Leg. No leg has been created yet. Use createNewLeg() to create a leg."
+            error_msg = 'Tried to get Information about current Leg. No leg has been created yet.\
+Use createNewLeg() to create a leg.'
             if not suppress_logger:
                 self.logger.error(error_msg)
             raise NoLegCreatedError(error_msg)
-    
-    def beginNewLeg(self):
+
+    def begin_new_leg(self) -> None:
         try:
-            currentLeg = self.getCurrentLeg(suppress_logger=True)
+            currentLeg = self.get_current_leg(suppress_logger=True)
         except NoLegCreatedError:
             currentLeg = None
         if currentLeg and not currentLeg.winner:
-            error_msg = "Tried to begin new leg. Current leg has not been finished yet."
+            error_msg = 'Tried to begin new leg. Current leg has not been finished yet.'
             self.logger.error(error_msg)
             raise ValueError(error_msg)
         if self.winner:
-            error_msg = "Tried to begin new leg. Set has already been finished."
+            error_msg = 'Tried to begin new leg. Set has already been finished.'
             self.logger.error(error_msg)
             raise AllLegsFinishedError(error_msg)
         else:
-            if self.game.getNtotalLegs():
+            if self.game.get_n_total_legs():
                 first_player = self.game.players.pop(0)
                 self.game.players.append(first_player)
             leg = Leg(
                 players=self.players,
-                set=self,
-                legType=self.legType,
+                set_instance=self,
+                leg_type=self.legType,
                 points=self.points,
                 out=self.out
             )
             self.legs.append(leg)
-    
-    def getLegWins(self, player: Player):
+
+    def get_leg_wins(self, player: Player) -> int:
         wins = 0
         for leg in self.legs:
             if leg.winner == player:
                 wins += 1
         return wins
-    
-    def getNLegWinsforSetWin(self):
+
+    def get_n_leg_wins_for_set_win(self) -> int:
         if self.legType.value == BEST_OF:
             return self.nLegs // len(self.players) + 1
         elif self.legType.value == FIRST_TO:
             return self.nLegs
         else:
-            error_msg = f"Unknown Set Type: {self.setType}"
+            error_msg = f'Unknown Set Type: {self.setType}'
             self.logger.error(error_msg)
             raise ValueError(error_msg)
-    
-    def getAvgScore(self, player: Player):
-        scoreCount = 0
-        nRounds = 0
-        for leg in self.legs:
-            for round in leg.rounds:
-                playerTurn = round.turns[player]
-                if playerTurn:
-                    oneDartHit = False
-                    for score in playerTurn.scores.values():
-                        if not type(score) == type(None) and not score.NoDart:
-                            scoreCount += score.total
-                            oneDartHit = True
-                    if oneDartHit:
-                        nRounds += 1
+
+    def get_avg_score(self, player: Player) -> Optional[float]:
+        score_count, n_rounds = self.__get_score_count_and_n_rounds__(player)
         try:
-            return scoreCount / nRounds
+            return score_count / n_rounds
         except ZeroDivisionError:
             return None
-    
-    def getThrownDarts(self, player: Player):
+
+    # TODO insert function into thrown darts Game
+    def get_thrown_darts(self, player: Player) -> int:
         thrownDarts = 0
         for leg in self.legs:
-            for round in leg.rounds:
+            for i_round in leg.rounds:
                 try:
-                    thrownDarts += round.turns[player].getThrownDarts()
+                    thrownDarts += i_round.turns[player].get_thrown_darts()
                 except AttributeError:
                     pass
         return thrownDarts
 
-    def getMultipliers(self, player: Player, multiplier: int):
-        nMultipliers = 0
-        for leg in self.legs:
-            for round in leg.rounds:
-                playerTurn = round.turns[player]
-                if playerTurn:
-                    for score in playerTurn.scores.values():
-                        if not type(score) == type(None) and not score.NoDart:
-                            if score.multiplier == multiplier:
-                                nMultipliers += 1
-        return nMultipliers
-    
-    def getNHitsOnNumbers(self, player: Player, number: int):
-        nHits = 0
-        for leg in self.legs:
-            for round in leg.rounds:
-                playerTurn = round.turns[player]
-                if playerTurn:
-                    for score in playerTurn.scores.values():
-                        if not type(score) == type(None) and not score.NoDart:
-                            if score.score == number:
-                                nHits += 1
-        return nHits
+    def get_score_count(self, attribute: str, desired_val: int, player: Player) -> int:
+        n_counts = 0
+        for i_leg in self.legs:
+            leg_counts = i_leg.get_score_count(attribute, desired_val, player)
+            n_counts += leg_counts
+        return n_counts
 
-    def getPossibleCheckouts(self, player: Player):
-        nPossibleCheckouts, nSuccessfullCheckouts = 0, 0
-        for leg in self.legs:
-            for round in leg.rounds:
-                playerTurn = round.turns[player]
-                if playerTurn:
-                    for score in playerTurn.scores.values():
-                        if not type(score) == type(None) and not score.NoDart:
-                            if score.checkOutPossible:
-                                nPossibleCheckouts += 1
-                            if score.checkOutSuccess:
-                                nSuccessfullCheckouts += 1
-        return nPossibleCheckouts, nSuccessfullCheckouts
-    
-    def finish(self):
+    def get_n_hits_on_numbers(self) -> None:
+        raise NotImplementedError('removed method -> use get_score_count instead with attribute: score')
+
+    def get_possible_and_successful_checkouts(self, player: Player) -> tuple[int, int]:
+        n_possible_checkouts, n_successful_checkouts = 0, 0
+        for i_leg in self.legs:
+            leg_possible_checkouts, leg_successful_checkouts = i_leg.get_possible_and_successful_checkouts(player)
+            n_possible_checkouts += leg_possible_checkouts
+            n_successful_checkouts += leg_successful_checkouts
+        return n_possible_checkouts, n_successful_checkouts
+
+    def finish(self) -> None:
         if not self.winner:
-            error_msg = "Tried to finish set. Set has no winner yet."
+            error_msg = 'Tried to finish set. Set has no winner yet.'
             self.logger.error(error_msg)
             raise AlreadyFinishedError(error_msg)
-        self.logger.info(f"Set finished - Winner: {self.winner}")
+        self.logger.info(f'Set finished - Winner: {self.winner}')
         for player in self.players:
-            if self.game.getSetWins(player) == self.game.getNSetWinsforGameWin():
-                self.logger.info(f"Set has been finished. Winner of the set: {player.name}")
+            if self.game.get_set_wins(player) == self.game.get_n_set_wins_for_game_win():
+                self.logger.info(f'Set has been finished. Winner of the set: {player.name}')
                 self.game.winner = player
                 break
-

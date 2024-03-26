@@ -1,6 +1,8 @@
 # TODO Refactor Layout
-#   - for Logging
-#   - for Models
+#   - for ModelsTests
+#       - check avg
+#       - check thrown darts
+#       - check checkout
 #   - for Pages
 #   - for app.py
 #   - for Errors.py
@@ -13,3 +15,4 @@
 # TODO Player AI
 # TODO deploy on Raspberry PI
 # TODO Average in Typer passt nicht
+# TODO Maser Out not working when playing single out

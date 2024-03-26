@@ -36,9 +36,9 @@ class UpdatePlayerCards(CallbackBase):
             if game_filter == 'btn btn-primary':
                 que_on = self.game
             elif set_filter == 'btn btn-primary':
-                que_on = self.game.getCurrentSet()
+                que_on = self.game.get_current_set()
             elif leg_filter == 'btn btn-primary':
-                que_on = self.game.getCurrentSet().getCurrentLeg()
+                que_on = self.game.get_current_set().get_current_leg()
         except (GameNotStartedError, NoSetCreatedError):
             raise PreventUpdate
 
@@ -49,7 +49,7 @@ class UpdatePlayerCards(CallbackBase):
 
             # Get If Player is on current turn
             try:
-                current_turn = self.game.getCurrentSet().getCurrentLeg().getCurrentRound().getCurrentTurn()
+                current_turn = self.game.get_current_set().get_current_leg().get_current_round().get_current_turn()
                 if current_turn.player == player:
                     active = True
                 else:
@@ -59,8 +59,8 @@ class UpdatePlayerCards(CallbackBase):
 
             # Get Player Current Score
             try:
-                current_leg = self.game.getCurrentSet().getCurrentLeg()
-                player_points_left = current_leg.getPointsLeft(player)
+                current_leg = self.game.get_current_set().get_current_leg()
+                player_points_left = current_leg.get_points_left(player)
             except KeyError:
                 player_points_left = 'N/A'
             except NoSetCreatedError:
@@ -72,7 +72,7 @@ class UpdatePlayerCards(CallbackBase):
 
             # Get Player Current Avg
             if que_on:
-                player_avg = que_on.getAvgScore(player)
+                player_avg = que_on.get_avg_score(player)
                 if not player_avg:
                     player_avg = 'N/A'
                 else:
@@ -82,18 +82,18 @@ class UpdatePlayerCards(CallbackBase):
 
             # Get Player Thrown Darts
             if que_on:
-                player_darts = que_on.getThrownDarts(player)
+                player_darts = que_on.get_thrown_darts(player)
                 if not player_darts:
                     player_darts = 0
             else:
                 player_darts = 0
 
             # Get Set Wins
-            set_wins = self.game.getSetWins(player)
+            set_wins = self.game.get_set_wins(player)
 
             # Get Leg Wins
             try:
-                leg_wins = self.game.getCurrentSet().getLegWins(player)
+                leg_wins = self.game.get_current_set().get_leg_wins(player)
             except NoSetCreatedError:
                 leg_wins = 0
             except GameNotStartedError:
@@ -102,13 +102,13 @@ class UpdatePlayerCards(CallbackBase):
             # Get Singles, Doubles, Triples, Misses
             if que_on:
                 try:
-                    single = que_on.getMultipliers(player, SINGLE)
+                    single = que_on.get_score_count('multiplier', SINGLE, player)
                     single_perc = single / player_darts
-                    double = que_on.getMultipliers(player, DOUBLE)
+                    double = que_on.get_score_count('multiplier', DOUBLE, player)
                     double_perc = double / player_darts
-                    triple = que_on.getMultipliers(player, TRIPLE)
+                    triple = que_on.get_score_count('multiplier', TRIPLE, player)
                     triple_perc = triple / player_darts
-                    miss = que_on.getMultipliers(player, MISS)
+                    miss = que_on.get_score_count('multiplier', MISS, player)
                     miss_perc = miss / player_darts
                 except ZeroDivisionError:
                     single, double, triple, miss = 0, 0, 0, 0
@@ -122,18 +122,18 @@ class UpdatePlayerCards(CallbackBase):
             if que_on:
                 n_hits = []
                 for n in numbers:
-                    n_hits.append(que_on.getNHitsOnNumbers(player, n))
+                    n_hits.append(que_on.get_score_count('score', n, player))
             else:
                 n_hits = [0 for _ in numbers]
 
             # Get Players Last 3 Darts
             try:
-                last_turn = self.game.getCurrentSet().getCurrentLeg().getLastTurn(player)
+                last_turn = self.game.get_current_set().get_current_leg().get_last_turn(player)
                 if last_turn:
                     dart_icons = []
                     total_score = 0
                     for dart in last_turn.scores.values():
-                        if dart and not dart.NoDart:
+                        if dart and not dart.no_dart:
                             dart_icons.append(self.playerCard.dartIcon.Build(dart))
                             total_score += dart.total
                         else:
@@ -147,7 +147,7 @@ class UpdatePlayerCards(CallbackBase):
 
             # Get Possible Checkouts
             if que_on:
-                n_possible_checkouts, n_successful_checkouts = que_on.getPossibleCheckouts(player)
+                n_possible_checkouts, n_successful_checkouts = que_on.get_possible_and_successful_checkouts(player)
             else:
                 n_possible_checkouts, n_successful_checkouts = None, None
             if n_possible_checkouts or n_successful_checkouts:

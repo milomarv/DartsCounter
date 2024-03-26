@@ -51,14 +51,14 @@ class StartStopGame(CallbackBase):
     ) -> list[str | bool | None]:
         if self.get_prop_from_context(block_initial=False) == 'start-stop-game-button':
             if not self.game.started:
-                self.game.stop()
+                self.game.finish()
                 try:
                     self.game.start(
                         players=[Player(name) for name in players if name],
-                        nSets=n_sets,
-                        setType=TypeSetLeg(set_type),
-                        nLegs=n_legs,
-                        legType=TypeSetLeg(leg_type),
+                        n_sets=n_sets,
+                        set_type=TypeSetLeg(set_type),
+                        n_legs=n_legs,
+                        leg_type=TypeSetLeg(leg_type),
                         points=points,
                         out=Out(out)
                     )

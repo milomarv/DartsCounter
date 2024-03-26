@@ -110,33 +110,33 @@ class ThrowDart(CallbackBase):
                 ]
 
         try:
-            current_set = self.game.getCurrentSet()
+            current_set = self.game.get_current_set()
         except GameNotStartedError as e:
             return [
                 'N/A', *self.emptyAllDartsIcon, 'Player', '0',
                 True, str(e), False, None, False, None, False, None, False, None, False, True, self.UpdateInterval
             ]
         except NoSetCreatedError:
-            self.game.beginNewSet()
-            current_set = self.game.getCurrentSet()
+            self.game.begin_new_set()
+            current_set = self.game.get_current_set()
 
         try:
-            current_leg = current_set.getCurrentLeg()
+            current_leg = current_set.get_current_leg()
         except NoLegCreatedError:
-            current_set.beginNewLeg()
-            current_leg = current_set.getCurrentLeg()
+            current_set.begin_new_leg()
+            current_leg = current_set.get_current_leg()
 
         try:
-            current_round = current_leg.getCurrentRound()
+            current_round = current_leg.get_current_round()
         except NoRoundCreatedError:
-            current_leg.beginNewRound()
-            current_round = current_leg.getCurrentRound()
+            current_leg.begin_new_round()
+            current_round = current_leg.get_current_round()
 
         try:
-            current_turn = current_round.getCurrentTurn()
+            current_turn = current_round.get_current_turn()
         except NoTurnCreatedError:
-            current_round.beginNextTurn()
-            current_turn = current_round.getCurrentTurn()
+            current_round.begin_next_turn()
+            current_turn = current_round.get_current_turn()
 
         if self.check_for_darts_throw(prop_id):
             score = int(prop_id.split('-')[0])
@@ -151,8 +151,8 @@ class ThrowDart(CallbackBase):
                 multiplier = MISS
             else:
                 multiplier = SINGLE
-            current_turn.throwDart(DartScore(score, multiplier))
-            if current_turn.getNextDart():
+            current_turn.throw_dart(DartScore(score, multiplier))
+            if current_turn.get_next_dart():
                 self.game.save()
 
         dart_icons = self.generate_darts_icons(current_turn)
@@ -163,10 +163,10 @@ class ThrowDart(CallbackBase):
             if current_leg.winner:
                 leg_win_confirm_modal_body = self.LegWinConfirmationContent.Build(
                     current_leg.winner.name,
-                    current_leg.getThrownDarts(current_leg.winner)
+                    current_leg.get_thrown_darts(current_leg.winner)
                 )
                 return [
-                    str(current_leg.getPointsLeft(current_turn.player)),
+                    str(current_leg.get_points_left(current_turn.player)),
                     *dart_icons,
                     current_turn.player.name, 0,
                     False, None, False, None, True, leg_win_confirm_modal_body, False, None, False, None, False, True,
@@ -174,16 +174,16 @@ class ThrowDart(CallbackBase):
                 ]
             try:
                 try:
-                    current_round.beginNextTurn()
-                    current_turn = current_round.getCurrentTurn()
+                    current_round.begin_next_turn()
+                    current_turn = current_round.get_current_turn()
                 except AlreadyFinishedError:
                     pass
             except AllTurnsFinishedError:
                 current_round.finish()
-                current_leg.beginNewRound()
-                current_round = current_leg.getCurrentRound()
-                current_round.beginNextTurn()
-                current_turn = current_round.getCurrentTurn()
+                current_leg.begin_new_round()
+                current_round = current_leg.get_current_round()
+                current_round.begin_next_turn()
+                current_turn = current_round.get_current_turn()
             self.game.save()
             dart_icons = self.generate_darts_icons(current_turn)
             avg_leg_score = self.calculate_avg(current_leg, current_turn.player)
@@ -199,10 +199,10 @@ class ThrowDart(CallbackBase):
             except AllLegsFinishedError:
                 set_win_confirm_modal_body = self.SetWinConfirmationContent.Build(
                     current_set.winner.name,
-                    round(current_set.getAvgScore(current_set.winner), 2),
+                    round(current_set.get_avg_score(current_set.winner), 2),
                 )
                 return [
-                    str(current_leg.getPointsLeft(current_turn.player)),
+                    str(current_leg.get_points_left(current_turn.player)),
                     *dart_icons,
                     current_turn.player.name, avg_leg_score,
                     False, None, False, None, False, None, True, set_win_confirm_modal_body, False, None, False, True,
@@ -212,17 +212,17 @@ class ThrowDart(CallbackBase):
         if prop_id == 'set-win-confirm-button':
             try:
                 current_set.finish()
-                self.game.beginNewSet()
-                current_set = self.game.getCurrentSet()
+                self.game.begin_new_set()
+                current_set = self.game.get_current_set()
                 avg_leg_score, current_turn, current_leg, dart_icons = self.begin_new_leg(
                     current_set)
             except GameAlreadyFinishedError:
                 game_win_confirm_modal_body = self.GameWinConfirmationContent.Build(
                     self.game.winner.name,
-                    round(self.game.getAvgScore(self.game.winner), 2)
+                    round(self.game.get_avg_score(self.game.winner), 2)
                 )
                 return [
-                    str(current_leg.getPointsLeft(current_turn.player)),
+                    str(current_leg.get_points_left(current_turn.player)),
                     *dart_icons,
                     current_turn.player.name, avg_leg_score,
                     False, None, False, None, False, None, False, None, True, game_win_confirm_modal_body, False, True,
@@ -231,21 +231,21 @@ class ThrowDart(CallbackBase):
             except AlreadyFinishedError:
                 pass
 
-        if not current_turn.getNextDart():
+        if not current_turn.get_next_dart():
             try:
                 current_turn.finish()
             except AlreadyFinishedError:
                 pass
             open_score_confirm_modal = True
-            if current_turn.overshooted:
+            if current_turn.overshot:
                 score_confirm_modal_body = self.OvershootConfirmationContent.Build(
                     current_turn.player.name,
-                    current_turn.getScore()
+                    current_turn.get_score()
                 )
             else:
                 score_confirm_modal_body = self.ScoreConfirmationContent.Build(
                     current_turn.player.name,
-                    current_turn.getScore()
+                    current_turn.get_score()
                 )
             update_interval = 5000
             interval_is_disabled = False
@@ -256,7 +256,7 @@ class ThrowDart(CallbackBase):
             interval_is_disabled = not self.online_mode.value
 
         return [
-            str(current_leg.getPointsLeft(current_turn.player)),
+            str(current_leg.get_points_left(current_turn.player)),
             *dart_icons,
             current_turn.player.name, avg_leg_score,
             False, None, open_score_confirm_modal, score_confirm_modal_body,
@@ -265,12 +265,12 @@ class ThrowDart(CallbackBase):
         ]
 
     def begin_new_leg(self, current_set: Set) -> tuple:
-        current_set.beginNewLeg()
-        current_leg = current_set.getCurrentLeg()
-        current_leg.beginNewRound()
-        current_round = current_leg.getCurrentRound()
-        current_round.beginNextTurn()
-        current_turn = current_round.getCurrentTurn()
+        current_set.begin_new_leg()
+        current_leg = current_set.get_current_leg()
+        current_leg.begin_new_round()
+        current_round = current_leg.get_current_round()
+        current_round.begin_next_turn()
+        current_turn = current_round.get_current_turn()
         dart_icons = self.generate_darts_icons(current_turn)
         avg_leg_score = self.calculate_avg(current_leg, current_turn.player)
         return avg_leg_score, current_turn, current_leg, dart_icons
@@ -284,7 +284,7 @@ class ThrowDart(CallbackBase):
 
     @staticmethod
     def calculate_avg(current_leg: Leg, player: Player) -> float:
-        avg_leg_score = current_leg.getAvgScore(player)
+        avg_leg_score = current_leg.get_avg_score(player)
         if not avg_leg_score:
             avg_leg_score = 0
         avg_leg_score = round(avg_leg_score, 2)
