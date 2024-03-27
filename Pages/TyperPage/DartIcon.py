@@ -5,22 +5,22 @@ from Models.DartScore import DartScore
 
 
 class DartIcon:
-    def __init__(self, flexDirection='column', iconSize: float = 1.0, paddingBottom=None):
-        self.flexDirection = flexDirection
-        self.iconSize = iconSize
-        self.paddingBottom = paddingBottom
+    def __init__(self, flex_direction='column', icon_size: float = 1.0, padding_bottom=None):
+        self.flexDirection = flex_direction
+        self.iconSize = icon_size
+        self.paddingBottom = padding_bottom
 
-    def Build(self, dartScore: DartScore = None):
-        if not dartScore or dartScore.no_dart:
+    def build(self, dart_score: DartScore = None) -> html.Div:
+        if not dart_score or dart_score.no_dart:
             color = 'grey'
             prefix = ''
             score = 0
         else:
             color = 'blue'
-            score = dartScore.score
-            if dartScore.multiplier == 2:
+            score = dart_score.score
+            if dart_score.multiplier == 2:
                 prefix = 'D'
-            elif dartScore.multiplier == 3:
+            elif dart_score.multiplier == 3:
                 prefix = 'T'
             else:
                 prefix = ''

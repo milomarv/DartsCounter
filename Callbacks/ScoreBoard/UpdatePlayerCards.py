@@ -28,7 +28,7 @@ class UpdatePlayerCards(CallbackBase):
         ]
         self.logger.info('Initialized Callback Template')
         self.playerCard = PlayerCard()
-        self.emptyDartIcon = self.playerCard.dartIcon.Build()
+        self.emptyDartIcon = self.playerCard.dartIcon.build()
 
     def callback(self, _n_intervals: int, game_filter: str, set_filter: str, leg_filter: str) -> list:
         que_on = None
@@ -134,7 +134,7 @@ class UpdatePlayerCards(CallbackBase):
                     total_score = 0
                     for dart in last_turn.scores.values():
                         if dart and not dart.no_dart:
-                            dart_icons.append(self.playerCard.dartIcon.Build(dart))
+                            dart_icons.append(self.playerCard.dartIcon.build(dart))
                             total_score += dart.total
                         else:
                             dart_icons.append(self.emptyDartIcon)
@@ -156,7 +156,7 @@ class UpdatePlayerCards(CallbackBase):
             else:
                 checkout_rate, checkout_count = 'N/A', 'N/A'
 
-            player_stats_card = self.playerCard.Build(
+            player_stats_card = self.playerCard.build(
                 active, player_name, player_points_left, player_avg, player_darts, set_wins, leg_wins,
                 single, double, triple, miss,
                 single_perc, double_perc, triple_perc, miss_perc, n_hits,

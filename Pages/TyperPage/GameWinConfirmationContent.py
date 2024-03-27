@@ -1,10 +1,10 @@
 from dash import html
-import dash_bootstrap_components as dbc
 
 from .ConfirmationContentBase import ConfirmationContentBase
 
+
 class GameWinConfirmationContent(ConfirmationContentBase):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.playerTextStyle = {
             'fontSize': '5vh',
@@ -27,26 +27,26 @@ class GameWinConfirmationContent(ConfirmationContentBase):
             **self.infoBaseStyle
         }
 
-    def Build(self, playerName: str, nDarts: int):
+    def build(self, player_name: str, n_darts: int) -> html.Div:
         return html.Div(
-            children = [
+            children=[
                 html.Div(
-                    children = [
-                        html.Div("Player ", style = self.playerTextStyle),
-                        html.Div(playerName, style = self.playerNameTextStyle),
-                        html.Div("won the Game! 🎉", style = self.playerTextStyle),
+                    children=[
+                        html.Div('Player ', style=self.playerTextStyle),
+                        html.Div(player_name, style=self.playerNameTextStyle),
+                        html.Div('won the Game! 🎉', style=self.playerTextStyle),
                     ],
-                    style = self.textRowStyle
+                    style=self.textRowStyle
                 ),
                 html.Div(
-                    children = [
-                        html.Div("Got Average of: ", style = self.avgGameTextStyle),
-                        html.Div(nDarts, style = self.avgGameStyle)
+                    children=[
+                        html.Div('Got Average of: ', style=self.avgGameTextStyle),
+                        html.Div(n_darts, style=self.avgGameStyle)
                     ],
-                    style = self.textRowStyle
+                    style=self.textRowStyle
                 )
             ],
-            style = {
+            style={
                 'display': 'flex',
                 'justifyContent': 'center',
                 'alignItems': 'center',

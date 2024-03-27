@@ -3,7 +3,10 @@ from dash.dependencies import Input, Output
 from Callbacks.CallbackBase import CallbackBase
 from DependencyContainer import DependencyContainer
 from Logging.Logger import Logger
-from Pages import HomePageLayout, NotFoundPageLayout, ScoreboardPageLayout, TyperPageLayout
+from Pages.HomePage.HomePageLayout import HomePageLayout
+from Pages.NotFoundPage import NotFoundPageLayout
+from Pages.ScoreboardPage.ScoreboardPageLayout import ScoreboardPageLayout
+from Pages.TyperPage.TyperPageLayout import TyperPageLayout
 
 
 class Router(CallbackBase):
@@ -19,13 +22,13 @@ class Router(CallbackBase):
     def callback(self, pathname: str) -> list:
         if pathname in ['/', '/home']:
             self.logger.info('Routing to HomePage')
-            return [HomePageLayout().Build()]
+            return [HomePageLayout().build()]
         elif pathname == '/typer':
             self.logger.info('Routing to TyperPage')
-            return [TyperPageLayout().Build()]
+            return [TyperPageLayout().build()]
         elif pathname == '/scoreboard':
             self.logger.info('Routing to DashboardPage')
-            return [ScoreboardPageLayout().Build()]
+            return [ScoreboardPageLayout().build()]
         else:
             self.logger.info('Routing to NotFoundPage')
-            return [NotFoundPageLayout().Build()]
+            return [NotFoundPageLayout().build()]

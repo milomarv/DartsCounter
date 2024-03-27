@@ -27,7 +27,7 @@ class AddPlayer(CallbackBase):
         patched_children = Patch()
         for r in range(repeat):
             patched_children.append(
-                self.playerInput.Build()
+                self.playerInput.build()
             )
         self.logger.info(f"Added '{repeat}' Player Inputs to HomePage")
         return [patched_children]

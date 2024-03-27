@@ -1,10 +1,12 @@
 from dash import html
 
+
 class NotFoundPageLayout:
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
-    def Build(self):
+    @staticmethod
+    def build() -> html.Div:
         return html.Div(
             style={
                 'display': 'flex',

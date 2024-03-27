@@ -1,41 +1,42 @@
 import dash_bootstrap_components as dbc
 
+
 class BaseModal:
-    def __init__(self, id :str, title: str, children: list, closeAble: bool = True, size: str = "lg"):
-        self.id = id
+    def __init__(self, identifier: str, title: str, children: list, close_able: bool = True, size: str = 'lg'):
+        self.id = identifier
         self.title = title
         self.children = children
-        self.closeAble = closeAble
+        self.closeAble = close_able
         self.size = size
 
-        self.topicTemplate = "{0}"
-        self.idBodyTemplate = "{0}-modal-body"
-        self.idTemplate = "{0}-modal"
+        self.topicTemplate = '{0}'
+        self.idBodyTemplate = '{0}-modal-body'
+        self.idTemplate = '{0}-modal'
         self.footer = None
 
-    def Build(self):
+    def build(self) -> dbc.Modal:
         return dbc.Modal(
             [
                 dbc.ModalHeader(
                     self.topicTemplate.format(self.title),
                     style={'font-size': '24px'},
-                    close_button = self.closeAble
+                    close_button=self.closeAble
                 ),
                 dbc.ModalBody(
-                    children = self.children,
-                    id = self.idBodyTemplate.format(self.id),
-                    style = {
-                        "display": "flex",
-                        "flexDirection": "column",
-                        "alignItems": "left",
+                    children=self.children,
+                    id=self.idBodyTemplate.format(self.id),
+                    style={
+                        'display': 'flex',
+                        'flexDirection': 'column',
+                        'alignItems': 'left',
                     }
                 ),
                 self.footer
             ],
-            id = self.idTemplate.format(self.id),
-            is_open = False,
+            id=self.idTemplate.format(self.id),
+            is_open=False,
             centered=True,
             size=self.size,
-            backdrop="static",
+            backdrop='static',
             keyboard=False
         )

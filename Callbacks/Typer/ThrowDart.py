@@ -11,9 +11,12 @@ from Errors import AllLegsFinishedError, AllTurnsFinishedError, AlreadyFinishedE
 from Logging.Logger import Logger
 from Models import Leg, Player, Set, Turn
 from Models.DartScore import DOUBLE, DartScore, MISS, SINGLE, TRIPLE
-from Pages.TyperPage import DartIcon, GameWinConfirmationContent, LegWinConfirmationContent, \
-    OvershootConfirmationContent, ScoreConfirmationContent, \
-    SetWinConfirmationContent
+from Pages.TyperPage.DartIcon import DartIcon
+from Pages.TyperPage.GameWinConfirmationContent import GameWinConfirmationContent
+from Pages.TyperPage.LegWinConfirmationContent import LegWinConfirmationContent
+from Pages.TyperPage.OvershootConfirmationContent import OvershootConfirmationContent
+from Pages.TyperPage.ScoreConfirmationContent import ScoreConfirmationContent
+from Pages.TyperPage.SetWinConfirmationContent import SetWinConfirmationContent
 
 
 class ThrowDart(CallbackBase):
@@ -80,7 +83,7 @@ class ThrowDart(CallbackBase):
             State('x3-score-button', 'active'),
             State('score-confirm-modal', 'is_open')
         ]
-        self.emptyDartIcon = DartIcon().Build()
+        self.emptyDartIcon = DartIcon().build()
         self.emptyAllDartsIcon = [self.emptyDartIcon, self.emptyDartIcon, self.emptyDartIcon]
         self.ScoreConfirmationContent = ScoreConfirmationContent()
         self.OvershootConfirmationContent = OvershootConfirmationContent()
@@ -161,7 +164,7 @@ class ThrowDart(CallbackBase):
 
         if prop_id == 'score-confirm-button' or (prop_id == 'typer-interval' and score_confirm_modal_is_open):
             if current_leg.winner:
-                leg_win_confirm_modal_body = self.LegWinConfirmationContent.Build(
+                leg_win_confirm_modal_body = self.LegWinConfirmationContent.build(
                     current_leg.winner.name,
                     current_leg.get_thrown_darts(current_leg.winner)
                 )
@@ -197,7 +200,7 @@ class ThrowDart(CallbackBase):
                 except AlreadyFinishedError:
                     pass
             except AllLegsFinishedError:
-                set_win_confirm_modal_body = self.SetWinConfirmationContent.Build(
+                set_win_confirm_modal_body = self.SetWinConfirmationContent.build(
                     current_set.winner.name,
                     round(current_set.get_avg_score(current_set.winner), 2),
                 )
@@ -217,7 +220,7 @@ class ThrowDart(CallbackBase):
                 avg_leg_score, current_turn, current_leg, dart_icons = self.begin_new_leg(
                     current_set)
             except GameAlreadyFinishedError:
-                game_win_confirm_modal_body = self.GameWinConfirmationContent.Build(
+                game_win_confirm_modal_body = self.GameWinConfirmationContent.build(
                     self.game.winner.name,
                     round(self.game.get_avg_score(self.game.winner), 2)
                 )
@@ -238,12 +241,12 @@ class ThrowDart(CallbackBase):
                 pass
             open_score_confirm_modal = True
             if current_turn.overshot:
-                score_confirm_modal_body = self.OvershootConfirmationContent.Build(
+                score_confirm_modal_body = self.OvershootConfirmationContent.build(
                     current_turn.player.name,
                     current_turn.get_score()
                 )
             else:
-                score_confirm_modal_body = self.ScoreConfirmationContent.Build(
+                score_confirm_modal_body = self.ScoreConfirmationContent.build(
                     current_turn.player.name,
                     current_turn.get_score()
                 )
@@ -279,7 +282,7 @@ class ThrowDart(CallbackBase):
     def generate_darts_icons(current_turn: Turn) -> list:
         dart_icons = []
         for dart in current_turn.scores.values():
-            dart_icons.append(DartIcon().Build(dart))
+            dart_icons.append(DartIcon().build(dart))
         return dart_icons
 
     @staticmethod

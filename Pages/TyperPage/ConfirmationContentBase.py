@@ -1,13 +1,10 @@
-from dash import html
-import dash_bootstrap_components as dbc
-
 class ConfirmationContentBase:
-    def __init__(self):
+    def __init__(self) -> None:
         self.baseStyle = {
             'white-space': 'nowrap'
         }
         self.textBaseStyle = {
-            'corlor': 'grey',
+            'color': 'grey',
             'margin-left': '1vw',
             'margin-right': '1vw'
         }
