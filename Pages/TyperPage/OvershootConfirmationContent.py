@@ -1,10 +1,10 @@
 from dash import html
-import dash_bootstrap_components as dbc
 
 from .ConfirmationContentBase import ConfirmationContentBase
 
+
 class OvershootConfirmationContent(ConfirmationContentBase):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.playerTextStyle = {
             'fontSize': '5vh',
@@ -29,26 +29,26 @@ class OvershootConfirmationContent(ConfirmationContentBase):
             **self.infoBaseStyle
         }
 
-    def Build(self, playerName: str, score: int):
+    def build(self, player_name: str, score: int) -> html.Div:
         return html.Div(
-            children = [
+            children=[
                 html.Div(
-                    children = [
-                        html.Div("Player ", style = self.playerTextStyle),
-                        html.Div(playerName, style = self.playerNameTextStyle),
-                        html.Div(" overshot 😟", style = self.playerTextStyle),
+                    children=[
+                        html.Div('Player ', style=self.playerTextStyle),
+                        html.Div(player_name, style=self.playerNameTextStyle),
+                        html.Div(' overshot 😟', style=self.playerTextStyle),
                     ],
-                    style = self.textRowStyle
+                    style=self.textRowStyle
                 ),
                 html.Div(
-                    children = [
-                        html.Div(score, style = self.scoreStyle),
-                        html.H1("points", style = self.scoreTextStyle)
+                    children=[
+                        html.Div(score, style=self.scoreStyle),
+                        html.H1('points', style=self.scoreTextStyle)
                     ],
-                    style = self.textRowStyle
+                    style=self.textRowStyle
                 )
             ],
-            style = {
+            style={
                 'display': 'flex',
                 'justifyContent': 'center',
                 'alignItems': 'center',

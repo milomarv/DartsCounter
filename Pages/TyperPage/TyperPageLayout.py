@@ -1,57 +1,58 @@
 import dash_bootstrap_components as dbc
-from dash import html, dcc
+from dash import dcc, html
 
-from Pages.Modals import *
+from Pages.Modals.ConfirmModal import ConfirmModal
+from Pages.Modals.ErrorModal import ErrorModal
 from Pages.TyperPage.Card import Card
 from Pages.TyperPage.DartIcon import DartIcon
 from Pages.TyperPage.ScoreButton import ScoreButton
 
 
 class TyperPageLayout:
-    def __init__(self):
+    def __init__(self) -> None:
         self.card = Card()
-        self.generalScoreButton = ScoreButton("secondary")
-        self.specialScoreButton = ScoreButton("primary", fontMultiplier=0.5)
-        self.returnButton = ScoreButton("danger", fontMultiplier=2, vhMultiplier=2)
-        self.multiplierButton = ScoreButton("primary")
+        self.generalScoreButton = ScoreButton('secondary')
+        self.specialScoreButton = ScoreButton('primary', font_multiplier=0.5)
+        self.returnButton = ScoreButton('danger', font_multiplier=2, vh_multiplier=2)
+        self.multiplierButton = ScoreButton('primary')
         self.dartIcon = DartIcon()
         self.loadGameInfoErrorModal = ErrorModal(
-            "load-game-info",
-            title="Load Game Information Error",
+            'load-game-info',
+            title='Load Game Information Error',
             children=[],
-            closeAble=False
+            close_able=False
         )
-        self.confrimScoreModal = ConfirmModal(
-            "score",
-            title="Player Score",
+        self.confirmScoreModal = ConfirmModal(
+            'score',
+            title='Player Score',
             children=[],
-            closeAble=False
+            close_able=False
         )
         self.confirmLegWinModal = ConfirmModal(
-            "leg-win",
-            title="Leg Win",
+            'leg-win',
+            title='Leg Win',
             children=[],
-            closeAble=False
+            close_able=False
         )
         self.confirmSetWinModal = ConfirmModal(
-            "set-win",
-            title="Set Win",
+            'set-win',
+            title='Set Win',
             children=[],
-            closeAble=False
+            close_able=False
         )
         self.confirmGameWinModal = ConfirmModal(
-            "game-win",
-            title="Game Win",
+            'game-win',
+            title='Game Win',
             children=[],
-            closeAble=False,
-            size="xl",
-            href="/"
+            close_able=False,
+            size='xl',
+            href='/'
         )
         self.infoRollbackNotPossibleModal = ConfirmModal(
-            "rollback-not-possible",
-            title="Rollback not possible",
-            children=["Going back further is not possible. No previous states of the game are available."],
-            closeAble=False
+            'rollback-not-possible',
+            title='Rollback not possible',
+            children=['Going back further is not possible. No previous states of the game are available.'],
+            close_able=False
         )
         self.scoreCardTextStyle = {
             'display': 'flex',
@@ -60,17 +61,17 @@ class TyperPageLayout:
             'flexDirection': 'column'
         }
 
-    def Build(self):
+    def build(self) -> html.Div:
         return html.Div([
             dbc.Row(
                 children=[
                     dbc.Col(
-                        self.card.Build(
+                        self.card.build(
                             children=[
                                 html.Div(
                                     html.H1(
-                                        "N/A",
-                                        id="typer-score",
+                                        'N/A',
+                                        id='typer-score',
                                         style={
                                             **self.scoreCardTextStyle,
                                             'height': '30vh',
@@ -83,16 +84,16 @@ class TyperPageLayout:
                                     dbc.Row(
                                         children=[
                                             dbc.Col(
-                                                self.dartIcon.Build(),
-                                                id="dart1-icon"
+                                                self.dartIcon.build(),
+                                                id='dart1-icon'
                                             ),
                                             dbc.Col(
-                                                self.dartIcon.Build(),
-                                                id="dart2-icon"
+                                                self.dartIcon.build(),
+                                                id='dart2-icon'
                                             ),
                                             dbc.Col(
-                                                self.dartIcon.Build(),
-                                                id="dart3-icon"
+                                                self.dartIcon.build(),
+                                                id='dart3-icon'
                                             ),
                                         ]
                                     ),
@@ -101,10 +102,10 @@ class TyperPageLayout:
                                         'height': '10vh'
                                     }
                                 ),
-                                html.Div(style={"height": "8vh"}),
+                                html.Div(style={'height': '8vh'}),
                                 html.Div(
                                     html.H1(
-                                        "Player:",
+                                        'Player:',
                                         style={
                                             **self.scoreCardTextStyle,
                                             'height': '5vh',
@@ -114,8 +115,8 @@ class TyperPageLayout:
                                 ),
                                 html.Div(
                                     html.H1(
-                                        "Player",  # TODO line break when to long Player Name
-                                        id="typer-player-name",
+                                        'Player',  # TODO line break when to long Player Name
+                                        id='typer-player-name',
                                         style={
                                             **self.scoreCardTextStyle,
                                             'height': '12vh',
@@ -124,10 +125,10 @@ class TyperPageLayout:
                                         }
                                     )
                                 ),
-                                html.Div(style={"height": "1vh"}),
+                                html.Div(style={'height': '1vh'}),
                                 html.Div(
                                     html.H2(
-                                        "Average of Leg:",
+                                        'Average of Leg:',
                                         style={
                                             **self.scoreCardTextStyle,
                                             'height': '8vh',
@@ -137,8 +138,8 @@ class TyperPageLayout:
                                 ),
                                 html.Div(
                                     html.H1(
-                                        "0",
-                                        id="typer-leg-avg",
+                                        '0',
+                                        id='typer-leg-avg',
                                         style={
                                             **self.scoreCardTextStyle,
                                             'height': '8vh',
@@ -152,52 +153,52 @@ class TyperPageLayout:
                         width=4
                     ),
                     dbc.Col(
-                        self.card.Build(
+                        self.card.build(
                             children=[
                                 dbc.Row(
                                     children=[
                                         dbc.Col(
                                             children=[
-                                                self.generalScoreButton.Build("1", "1"),
-                                                self.generalScoreButton.Build("5", "5"),
-                                                self.generalScoreButton.Build("9", "9"),
-                                                self.generalScoreButton.Build("13", "13"),
-                                                self.generalScoreButton.Build("17", "17"),
+                                                self.generalScoreButton.build('1', '1'),
+                                                self.generalScoreButton.build('5', '5'),
+                                                self.generalScoreButton.build('9', '9'),
+                                                self.generalScoreButton.build('13', '13'),
+                                                self.generalScoreButton.build('17', '17'),
                                             ]
                                         ),
                                         dbc.Col(
                                             children=[
-                                                self.generalScoreButton.Build("2", "2"),
-                                                self.generalScoreButton.Build("6", "6"),
-                                                self.generalScoreButton.Build("10", "10"),
-                                                self.generalScoreButton.Build("14", "14"),
-                                                self.generalScoreButton.Build("18", "18"),
+                                                self.generalScoreButton.build('2', '2'),
+                                                self.generalScoreButton.build('6', '6'),
+                                                self.generalScoreButton.build('10', '10'),
+                                                self.generalScoreButton.build('14', '14'),
+                                                self.generalScoreButton.build('18', '18'),
                                             ]
                                         ),
                                         dbc.Col(
                                             children=[
-                                                self.generalScoreButton.Build("3", "3"),
-                                                self.generalScoreButton.Build("7", "7"),
-                                                self.generalScoreButton.Build("11", "11"),
-                                                self.generalScoreButton.Build("15", "15"),
-                                                self.generalScoreButton.Build("19", "19"),
+                                                self.generalScoreButton.build('3', '3'),
+                                                self.generalScoreButton.build('7', '7'),
+                                                self.generalScoreButton.build('11', '11'),
+                                                self.generalScoreButton.build('15', '15'),
+                                                self.generalScoreButton.build('19', '19'),
                                             ]
                                         ),
                                         dbc.Col(
                                             children=[
-                                                self.generalScoreButton.Build("4", "4"),
-                                                self.generalScoreButton.Build("8", "8"),
-                                                self.generalScoreButton.Build("12", "12"),
-                                                self.generalScoreButton.Build("16", "16"),
-                                                self.generalScoreButton.Build("20", "20"),
+                                                self.generalScoreButton.build('4', '4'),
+                                                self.generalScoreButton.build('8', '8'),
+                                                self.generalScoreButton.build('12', '12'),
+                                                self.generalScoreButton.build('16', '16'),
+                                                self.generalScoreButton.build('20', '20'),
                                             ]
                                         ),
                                         dbc.Col(
                                             children=[
-                                                self.specialScoreButton.Build("MISS", "0"),
-                                                self.specialScoreButton.Build("BULL", "25"),
-                                                self.specialScoreButton.Build("BULLS EYE", "50"),
-                                                self.returnButton.Build("↻", "go-back")
+                                                self.specialScoreButton.build('MISS', '0'),
+                                                self.specialScoreButton.build('BULL', '25'),
+                                                self.specialScoreButton.build('BULLS EYE', '50'),
+                                                self.returnButton.build('↻', 'go-back')
                                             ]
                                         )
                                     ]
@@ -205,10 +206,10 @@ class TyperPageLayout:
                                 dbc.Row(
                                     children=[
                                         dbc.Col(
-                                            self.multiplierButton.Build("DOUBLE", "x2")
+                                            self.multiplierButton.build('DOUBLE', 'x2')
                                         ),
                                         dbc.Col(
-                                            self.multiplierButton.Build("TRIPLE", "x3")
+                                            self.multiplierButton.build('TRIPLE', 'x3')
                                         )
                                     ]
                                 )
@@ -218,15 +219,15 @@ class TyperPageLayout:
                     )
                 ],
                 style={
-                    "width": "100vw"
+                    'width': '100vw'
                 },
-                className="g-0"
+                className='g-0'
             ),
-            self.loadGameInfoErrorModal.Build(),
-            self.confrimScoreModal.Build(),
-            self.confirmLegWinModal.Build(),
-            self.confirmSetWinModal.Build(),
-            self.confirmGameWinModal.Build(),
-            self.infoRollbackNotPossibleModal.Build(),
-            dcc.Interval(id="typer-interval", interval=1000, n_intervals=0)
+            self.loadGameInfoErrorModal.build(),
+            self.confirmScoreModal.build(),
+            self.confirmLegWinModal.build(),
+            self.confirmSetWinModal.build(),
+            self.confirmGameWinModal.build(),
+            self.infoRollbackNotPossibleModal.build(),
+            dcc.Interval(id='typer-interval', interval=1000, n_intervals=0)
         ])
