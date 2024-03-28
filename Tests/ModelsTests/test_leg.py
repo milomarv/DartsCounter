@@ -47,3 +47,34 @@ class LegTest(ModelsBaseTests):
         # Assert
         self.assertEqual(possible_checkouts, actual_possible_checkouts)
         self.assertEqual(successful_checkouts, actual_successful_checkouts)
+
+    @parameterized.expand([
+        ['Player1', 79],
+        ['Player2', 34],
+        ['Player3', 49]
+    ])
+    def test_get_avg_score(self, player_name: str, actual_avg: int) -> None:
+        # Arrange
+        game_simulation = self.simulation(self.simulation_avg_data)
+
+        # Act
+        game = game_simulation.run()
+        set_instance = game.get_current_set()
+        leg_instance = set_instance.get_current_leg()
+        avg_player = leg_instance.get_avg_score(game_simulation.players[player_name])
+
+        # Assert
+        self.assertEqual(avg_player, actual_avg)
+
+    def test_get_avg_score_while_no_dart_is_thrown(self) -> None:
+        # Arrange
+        game_simulation = self.simulation({'Player1': [], 'Player2': []})
+
+        # Act
+        game = game_simulation.run()
+        set_instance = game.get_current_set()
+        leg_instance = set_instance.get_current_leg()
+        avg_score = leg_instance.get_avg_score(game_simulation.players['Player1'])
+
+        # Assert
+        self.assertEqual(avg_score, None)

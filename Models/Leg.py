@@ -41,16 +41,24 @@ class Leg(AbstractGamePart):
     def __get_score_count_and_n_rounds__(self, player: Player) -> tuple[int, int]:
         score_count = 0
         n_rounds = 0
+
         for i_round in self.rounds:
             player_turn = i_round.turns[player]
             if player_turn:
                 one_dart_hit = False
+                sum_turn_scores = 0
+                num_turn_scores = 0
                 for score in player_turn.scores.values():
                     if type(score) is not type(None) and not score.no_dart:
                         score_count += score.total
                         one_dart_hit = True
+                        sum_turn_scores += score.score
+                        num_turn_scores += 1
+                    elif num_turn_scores > 0:
+                        score_count += sum_turn_scores / num_turn_scores
                 if one_dart_hit:
                     n_rounds += 1
+
         return score_count, n_rounds
 
     def get_current_round(self, suppress_logger: bool = False) -> Round:

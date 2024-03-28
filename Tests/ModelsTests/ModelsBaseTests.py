@@ -21,7 +21,7 @@ class ModelsBaseTests(BaseTests):
             'Player3': [
                 (DartScore(4, SINGLE), DartScore(6, DOUBLE), DartScore(18, TRIPLE)),
                 (DartScore(11, DOUBLE), DartScore(18, SINGLE), DartScore(4, TRIPLE)),
-                (DartScore(7, TRIPLE), DartScore(1, DOUBLE), DartScore(11, SINGLE)),
+                [DartScore(5, TRIPLE)],
             ]
         }
 

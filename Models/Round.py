@@ -56,14 +56,14 @@ Current turn for Player {currentTurn.player.name} has not been finished yet.'
             self.turns[nextPlayer] = turn
 
     def get_current_turn(self, suppress_logger: bool = False) -> Turn:
-        currentTurn = None
+        current_turn = None
         for player, turn in self.turns.items():
             if turn:
-                currentTurn = turn
+                current_turn = turn
             else:
                 break
-        if currentTurn:
-            return currentTurn
+        if current_turn:
+            return current_turn
         else:
             error_msg = 'Tried to get Information about current Turn. No turn has been created yet.\
 Use createNextTurn() to create a turn.'

@@ -19,6 +19,8 @@ class PlayerCard:
         self.polarTickVals = [f'Score {n}' for n in self.polarVals]
         self.polarTickText = [f'{n}' for n in self.polarVals]
 
+        self.logarithmic_level = -1.5
+
         self.dartIcon = DartIcon(
             flex_direction='row',
             icon_size=0.5,
@@ -216,7 +218,12 @@ class PlayerCard:
                                 'data': [
                                     {
                                         'x': ['Single', 'Double', 'Triple', 'Miss'],
-                                        'y': [single_perc, double_perc, triple_perc, miss_perc],
+                                        'y': [
+                                            single_perc + 10 ** self.logarithmic_level,
+                                            double_perc + 10 ** self.logarithmic_level,
+                                            triple_perc + 10 ** self.logarithmic_level,
+                                            miss_perc + 10 ** self.logarithmic_level
+                                        ],
                                         'type': 'bar',
                                         'marker': {
                                             'color': '#375a7f'
@@ -235,16 +242,16 @@ class PlayerCard:
                                 ],
                                 'layout': {
                                     'paper_bgcolor': '#303030',
-                                    'plot_bgcolor': '#303030',
+                                    'plot_bgcolor': '#393939',
                                     'font': {
                                         'color': 'white'
                                     },
                                     'margin': {'t': 30, 'l': 30, 'r': 30, 'b': 50},
                                     'yaxis': {
-                                        'type': 'log',  # TODO lines in background are ugly
+                                        'type': 'log',
                                         'tickformat': '.0%',
-                                        'gridcolor': '#444444',
-                                        'range': [-1.5, 0],  # TODO bars are missing when to less data
+                                        'gridcolor': '#393939',
+                                        'range': [self.logarithmic_level, 0.1],
                                         'tickfont': {
                                             'color': '#303030'
                                         }
@@ -261,7 +268,7 @@ class PlayerCard:
                         dbc.Row(
                             children=[
                                 dbc.Col(
-                                    dcc.Graph(  # TODO numbers are cut when to small Player Cards Hello World
+                                    dcc.Graph(
                                         figure={
                                             'data': [
                                                 go.Scatterpolar(
@@ -291,7 +298,7 @@ class PlayerCard:
                                                     bgcolor='#303030',
                                                 ),
                                                 showlegend=False,
-                                                margin={'t': 30, 'b': 30, 'l': 0, 'r': 0},
+                                                margin={'t': 30, 'b': 30, 'l': 30, 'r': 30},
                                                 paper_bgcolor='#303030',
                                                 font={
                                                     'color': 'white'
