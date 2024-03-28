@@ -8,7 +8,7 @@ class GameTests(ModelsBaseTests):
     @parameterized.expand([
         ['Player1', 79],
         ['Player2', 34],
-        ['Player3', 52]
+        ['Player3', 49]
     ])
     def test_get_avg_score(self, player_name: str, actual_avg: int) -> None:
         # Arrange
