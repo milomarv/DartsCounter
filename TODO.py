@@ -6,3 +6,4 @@
 # TODO Player AI
 # TODO deploy on Raspberry PI
 # TODO Master Out not working when playing single out
+# TODO Firefox Home Page Layout Error
