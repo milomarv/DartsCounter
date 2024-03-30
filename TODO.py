@@ -6,3 +6,5 @@
 # TODO Player AI
 # TODO deploy on Raspberry PI
 # TODO Master Out not working when playing single out
+# TODO Live Badge and Stats on loaded game
+# TODO Graph history of game

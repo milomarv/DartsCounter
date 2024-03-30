@@ -8,14 +8,14 @@ class PlayerInput:
     def build(self) -> dbc.InputGroup:
         self.index += 1
         return dbc.InputGroup(
-            children=[
+            children = [
                 dbc.InputGroupText(f'Player {self.index}'),
                 dbc.Input(
-                    id={'type': 'player-input', 'index': self.index}
+                    id = {'type': 'player-input', 'index': self.index}
                 ),
 
             ],
-            style={
+            style = {
                 'margin-bottom': '15px',
             }
         )

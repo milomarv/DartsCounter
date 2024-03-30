@@ -94,14 +94,14 @@ class ThrowDart(CallbackBase):
         self.logger.info('Initialized ThrowDart Template')
 
     def callback(
-            self,
-            _s0: int, _s1: int, _s2: int, _s3: int, _s4: int, _s5: int, _s6: int, _s7: int, _s8: int, _s9: int,
-            _s10: int, _s11: int, _s12: int, _s13: int, _s14: int, _s15: int, _s16: int, _s17: int, _s18: int,
-            _s19: int, _s20: int, _s25: int, _s50: int, _go_back: int,
-            _score_confirm: int, _leg_win_confirm: int, _set_win_confirm: int, _roll_back_not_possible_confirm: int,
-            _n_update_interval: int, x2_active: bool, x3_active: bool, score_confirm_modal_is_open: bool
+        self,
+        _s0: int, _s1: int, _s2: int, _s3: int, _s4: int, _s5: int, _s6: int, _s7: int, _s8: int, _s9: int,
+        _s10: int, _s11: int, _s12: int, _s13: int, _s14: int, _s15: int, _s16: int, _s17: int, _s18: int,
+        _s19: int, _s20: int, _s25: int, _s50: int, _go_back: int,
+        _score_confirm: int, _leg_win_confirm: int, _set_win_confirm: int, _roll_back_not_possible_confirm: int,
+        _n_update_interval: int, x2_active: bool, x3_active: bool, score_confirm_modal_is_open: bool
     ) -> list:
-        prop_id = self.get_prop_from_context(block_initial=False)
+        prop_id = self.get_prop_from_context(block_initial = False)
 
         if prop_id == 'go-back-score-button':
             try:
@@ -224,6 +224,8 @@ class ThrowDart(CallbackBase):
                     self.game.winner.name,
                     round(self.game.get_avg_score(self.game.winner), 2)
                 )
+                self.game.started = False
+                self.game.save()
                 return [
                     str(current_leg.get_points_left(current_turn.player)),
                     *dart_icons,
