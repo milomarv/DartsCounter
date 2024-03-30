@@ -59,3 +59,36 @@ class GameTests(ModelsBaseTests):
         # Assert
         self.assertEqual(possible_checkouts, actual_possible_checkouts)
         self.assertEqual(successful_checkouts, actual_successful_checkouts)
+
+    def test_get_n_total_finished_sets_if_no_set_was_finished(self) -> None:
+        # Arrange
+        game_simulation = self.simulation(self.simulation_data)
+        game = game_simulation.run()
+
+        # Act
+        n_finished_sets = game.get_n_total_finished_sets()
+
+        # Assert
+        self.assertEqual(n_finished_sets, 0)
+
+    def test_get_n_total_finished_legs_if_no_leg_was_finished(self) -> None:
+        # Arrange
+        game_simulation = self.simulation(self.simulation_data)
+        game = game_simulation.run()
+
+        # Act
+        n_finished_legs = game.get_n_total_finished_legs()
+
+        # Assert
+        self.assertEqual(n_finished_legs, 0)
+
+    def test_get_n_total_finished_legs_if_one_leg_was_finished(self) -> None:
+        # Arrange
+        game_simulation = self.simulation(self.simulation_checkout_data)
+        game = game_simulation.run()
+
+        # Act
+        n_finished_legs = game.get_n_total_finished_legs()
+
+        # Assert
+        self.assertEqual(n_finished_legs, 1)

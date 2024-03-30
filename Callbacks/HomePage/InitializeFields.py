@@ -47,7 +47,7 @@ class InitializeFields(CallbackBase):
         self.n_disable = 7
 
     def callback(self, url: str, _start_stop_game: int, _end_game_confirm: int, player_inputs: List[str]) -> list:
-        if self.get_prop_from_context(block_initial=False) in ['start-stop-game-button', 'end-game-confirm-button']:
+        if self.get_prop_from_context(block_initial = False) in ['start-stop-game-button', 'end-game-confirm-button']:
             time.sleep(0.1)
         if url in ['/', '/home']:
             if self.game.started:
@@ -57,13 +57,13 @@ class InitializeFields(CallbackBase):
                 player_values = list()
                 for i in range(len(player_inputs)):
                     try:
-                        player_values.append(self.game.players[i].name)
+                        player_values.append(self.game.initial_player_alignment[i].name)
                     except IndexError:
                         player_values.append(None)
 
                 return [
-                    self.game.nSets, self.game.nLegs,
-                    self.game.setType.value, self.game.legType.value,
+                    self.game.n_sets, self.game.n_legs,
+                    self.game.set_type.value, self.game.leg_type.value,
                     self.game.points, self.game.out.value,
                     player_values,
                     *disable_fields, disable_player_fields

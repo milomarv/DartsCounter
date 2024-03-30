@@ -2,53 +2,53 @@ import dash_bootstrap_components as dbc
 from dash import html
 
 from Models.Out import DOUBLE_OUT, MASTER_OUT, SINGLE_OUT
-from Pages.HomePage.Card import Card
 from Pages.HomePage.SetLegInput import SetLegInput
+from Pages.MenuCard import MenuCard
 from Pages.Modals.ConfirmModal import ConfirmModal
 from Pages.Modals.ErrorModal import ErrorModal
 
 
 class HomePageLayout:
     def __init__(self) -> None:
-        self.card = Card()
+        self.card = MenuCard()
         self.setInput = SetLegInput('Set', 'set')
         self.legInput = SetLegInput('Leg', 'leg')
         self.start_game_error_modal = ErrorModal(
             'start-game',
-            title='Start Game Error',
-            children=[]
+            title = 'Start Game Error',
+            children = []
         )
         self.end_game_confirm_modal = ConfirmModal(
             'end-game',
-            title='End Game',
-            children=['Are you sure you want to end the game?']
+            title = 'End Game',
+            children = ['Are you sure you want to end the game?']
         )
         self.button_style = {
-            'width': '200px',
+            'width': '250px',
             'height': '50px',
             'fontSize': '20px'
         }
 
     def build(self) -> html.Div:
         return html.Div(
-            style={
+            style = {
                 'display': 'flex',
                 'justifyContent': 'center',
                 'alignItems': 'center',
                 'flexDirection': 'column',
                 'height': '100vh'
             },
-            children=[
+            children = [
                 html.H1('🎯 Darts Counter'),
                 html.Br(),
                 html.Div(
                     dbc.Stack(
-                        children=[
+                        children = [
                             self.card.build(
-                                title='⚙️ Game Settings',
-                                children=[
+                                title = '⚙️ Game Settings',
+                                children = [
                                     dbc.Row(
-                                        children=[
+                                        children = [
                                             dbc.Col(self.setInput.build()),
                                             dbc.Col(self.legInput.build())
                                         ]
@@ -57,19 +57,20 @@ class HomePageLayout:
                                     html.Hr(),
                                     html.Br(),
                                     dbc.Row(
-                                        children=[
+                                        children = [
                                             dbc.Col(
-                                                children=[
-                                                    dbc.Label('Points:', html_for='points-input'),
-                                                    dbc.Input(type='number', id='points-input', min=101, step=100)
+                                                children = [
+                                                    dbc.Label('Points:', html_for = 'points-input'),
+                                                    dbc.Input(type = 'number', id = 'points-input', min = 101,
+                                                              step = 100)
                                                 ]
                                             ),
                                             dbc.Col(
-                                                children=[
-                                                    dbc.Label('Out Variant:', html_for='out-variant-select'),
+                                                children = [
+                                                    dbc.Label('Out Variant:', html_for = 'out-variant-select'),
                                                     dbc.Select(
-                                                        id='out-variant-select',
-                                                        options=[
+                                                        id = 'out-variant-select',
+                                                        options = [
                                                             {'label': 'Single Out', 'value': SINGLE_OUT},
                                                             {'label': 'Double Out', 'value': DOUBLE_OUT},
                                                             {'label': 'Master Out', 'value': MASTER_OUT}
@@ -82,54 +83,62 @@ class HomePageLayout:
                                 ]
                             ),
                             self.card.build(
-                                title='🧑🏽 Players',
-                                children=[
-                                    html.Div(id='player-inputs-div'),
+                                title = '🧑🏽 Players',
+                                children = [
+                                    html.Div(id = 'player-inputs-div'),
                                     html.Br(),
-                                    dbc.Button('Add Player', id='add-player', color='primary', className='mr-1')
+                                    dbc.Button('Add Player', id = 'add-player', color = 'primary', className = 'mr-1')
                                 ]
                             ),
                         ],
-                        direction='horizontal',
-                        gap=5
+                        direction = 'horizontal',
+                        gap = 5
                     )
                 ),
                 html.Br(),
                 dbc.Button(
                     'Game',
-                    id='start-stop-game-button',
-                    n_clicks=0,
-                    className='btn btn-secondary',
-                    style=self.button_style
+                    id = 'start-stop-game-button',
+                    n_clicks = 0,
+                    className = 'btn btn-secondary',
+                    style = self.button_style
                 ),
                 html.Br(),
                 dbc.Switch(
-                    id='online-switch',
-                    value=False
+                    id = 'online-switch',
+                    value = False
                 ),
                 dbc.Tooltip(
                     'This switch turns on the online mode. That means the Typerboard has a automatic refresh.\
 So multiple Typerboards can be used at the same time.',
-                    target='online-switch',
-                    placement='left'
+                    target = 'online-switch',
+                    placement = 'left'
                 ),
                 html.Br(),
                 dbc.Row(
-                    children=[
+                    children = [
                         dbc.Col(
                             dbc.Button(
-                                'Type in Scores',
-                                href='/typer',
-                                className='btn btn-primary',
-                                style=self.button_style
+                                '📲 Type in Scores',
+                                href = '/typer',
+                                className = 'btn btn-primary',
+                                style = self.button_style
                             )
                         ),
                         dbc.Col(
                             dbc.Button(
-                                'Go to Scoreboard',
-                                href='/scoreboard',
-                                className='btn btn-primary',
-                                style=self.button_style
+                                '📊 Go to Scoreboard',
+                                href = '/scoreboard',
+                                className = 'btn btn-primary',
+                                style = self.button_style
+                            )
+                        ),
+                        dbc.Col(
+                            dbc.Button(
+                                '💾 Database',
+                                href = '/database',
+                                className = 'btn btn-primary',
+                                style = self.button_style
                             )
                         )
                     ]

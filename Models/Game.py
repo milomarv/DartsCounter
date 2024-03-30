@@ -1,6 +1,7 @@
+import copy
 import datetime as dt
 import threading
-from typing import List
+from typing import List, Optional
 
 from Errors import DBEntryDoesNotExistError, GameAlreadyFinishedError, GameNotStartedError, \
     GameRollBackNotPossibleError, NoSetCreatedError
@@ -15,20 +16,21 @@ from .TypeSetLeg import BEST_OF, FIRST_TO, TypeSetLeg
 
 class Game(AbstractGamePart):
     def __init__(
-            self,
-            ts: float = None,
-            version: float = None,
-            started: bool = False,
-            players=None,
-            n_sets: int = None,
-            set_type: TypeSetLeg = None,
-            n_legs: int = None,
-            leg_type: TypeSetLeg = None,
-            points: int = 0,
-            out: Out = None,
-            winner: Player = None,
-            sets=None,
-            repository: AbstractGamesRepository = None
+        self,
+        ts: float = None,
+        version: float = None,
+        started: bool = False,
+        players: Optional[list[Player]] = None,
+        initial_player_alignment: Optional[list[Player]] = None,
+        n_sets: int = None,
+        set_type: TypeSetLeg = None,
+        n_legs: int = None,
+        leg_type: TypeSetLeg = None,
+        points: int = 0,
+        out: Out = None,
+        winner: Player = None,
+        sets = None,
+        repository: AbstractGamesRepository = None
     ):
         super().__init__()
 
@@ -49,10 +51,14 @@ class Game(AbstractGamePart):
             self.version = self.ts
         self.started = started
         self.players = players
-        self.nSets = n_sets
-        self.setType = set_type
-        self.nLegs = n_legs
-        self.legType = leg_type
+        if initial_player_alignment:
+            self.initial_player_alignment = initial_player_alignment
+        else:
+            self.initial_player_alignment = copy.copy(players)
+        self.n_sets = n_sets
+        self.set_type = set_type
+        self.n_legs = n_legs
+        self.leg_type = leg_type
         self.points = points
         self.out = out
         self.winner = winner
@@ -61,10 +67,10 @@ class Game(AbstractGamePart):
     def __str__(self) -> str:
         game_string = f'GAME - {dt.datetime.fromtimestamp(self.ts)} -Version: {self.version}\n'
         game_string += f'Number of Players: {len(self.players)}\n'
-        game_string += f'Number of Sets: {self.nSets}\n'
-        game_string += f'Set Type: {self.setType}\n'
-        game_string += f'Number of Legs: {self.nLegs}\n'
-        game_string += f'Leg Type: {self.legType}\n'
+        game_string += f'Number of Sets: {self.n_sets}\n'
+        game_string += f'Set Type: {self.set_type}\n'
+        game_string += f'Number of Legs: {self.n_legs}\n'
+        game_string += f'Leg Type: {self.leg_type}\n'
         game_string += f'Points: {self.points}\n'
         game_string += f'Out: {self.out}\n'
         game_string += f"Set Wins: {[f'{player.name}: {self.get_set_wins(player)}' for player in self.players]}\n"
@@ -76,17 +82,17 @@ class Game(AbstractGamePart):
         return dt.datetime.now().timestamp()
 
     def start(
-            self,
-            players: List[Player],
-            n_sets: int,
-            set_type: TypeSetLeg,
-            n_legs: int,
-            leg_type: TypeSetLeg,
-            points: int,
-            out: Out = Out(2)
+        self,
+        players: List[Player],
+        n_sets: int,
+        set_type: TypeSetLeg,
+        n_legs: int,
+        leg_type: TypeSetLeg,
+        points: int,
+        out: Out = Out(2)
     ) -> None:
-        self.__init__(players=players, n_sets=n_sets, set_type=set_type, n_legs=n_legs, leg_type=leg_type,
-                      points=points, out=out, repository=self.repository)
+        self.__init__(players = players, n_sets = n_sets, set_type = set_type, n_legs = n_legs, leg_type = leg_type,
+                      points = points, out = out, repository = self.repository)
         try:
             self.repository.delete_game(str(self.ts))
         except DBEntryDoesNotExistError:
@@ -104,11 +110,11 @@ class Game(AbstractGamePart):
         self.started = True
 
     def finish(self) -> None:
-        self.__init__(started=True, repository=self.repository)
+        self.__init__(started = True, repository = self.repository)
 
     def save(self) -> bool:
         self.version = self.__create_ts__()
-        save_thread = threading.Thread(target=self.repository.save, args=(self,))
+        save_thread = threading.Thread(target = self.repository.save, args = (self,))
         save_thread.start()
         return True
 
@@ -124,19 +130,20 @@ No previous version exists."
         prev_game = self.repository.load(str(self.ts), prev_version)
         self.repository.delete_version(str(self.ts), str(self.version))
         self.__init__(
-            ts=prev_game.ts,
-            version=prev_game.version,
-            started=prev_game.started,
-            players=prev_game.players,
-            n_sets=prev_game.nSets,
-            set_type=prev_game.setType,
-            n_legs=prev_game.nLegs,
-            leg_type=prev_game.legType,
-            points=prev_game.points,
-            out=prev_game.out,
-            winner=prev_game.winner,
-            sets=prev_game.sets,
-            repository=self.repository
+            ts = prev_game.ts,
+            version = prev_game.version,
+            started = prev_game.started,
+            players = prev_game.players,
+            initial_player_alignment = prev_game.initial_player_alignment,
+            n_sets = prev_game.n_sets,
+            set_type = prev_game.set_type,
+            n_legs = prev_game.n_legs,
+            leg_type = prev_game.leg_type,
+            points = prev_game.points,
+            out = prev_game.out,
+            winner = prev_game.winner,
+            sets = prev_game.sets,
+            repository = self.repository
         )
 
     def get_current_set(self) -> Set:
@@ -166,13 +173,13 @@ No previous version exists."
             raise GameAlreadyFinishedError(error_msg)
         else:
             game_set = Set(
-                players=self.players,
-                game=self,
-                set_type=self.setType,
-                n_legs=self.nLegs,
-                leg_type=self.legType,
-                points=self.points,
-                out=self.out
+                players = self.players,
+                game = self,
+                set_type = self.set_type,
+                n_legs = self.n_legs,
+                leg_type = self.leg_type,
+                points = self.points,
+                out = self.out
             )
             self.sets.append(game_set)
 
@@ -184,10 +191,10 @@ No previous version exists."
         return set_wins
 
     def get_n_set_wins_for_game_win(self) -> int:
-        if self.setType.value == BEST_OF:
-            return self.nSets // 2 + 1
-        elif self.setType.value == FIRST_TO:
-            return self.nSets
+        if self.set_type.value == BEST_OF:
+            return self.n_sets // 2 + 1
+        elif self.set_type.value == FIRST_TO:
+            return self.n_sets
         else:
             error_msg = 'Invalid Set Type'
             self.logger.error(error_msg)
@@ -240,3 +247,18 @@ No previous version exists."
         for i_set in self.sets:
             n_total_legs += len(i_set.legs)
         return n_total_legs
+
+    def get_n_total_finished_legs(self) -> int:
+        n_finished_legs = 0
+        for i_set in self.sets:
+            for i_leg in i_set.legs:
+                if i_leg.winner:
+                    n_finished_legs += 1
+        return n_finished_legs
+
+    def get_n_total_finished_sets(self) -> int:
+        n_finished_sets = 0
+        for i_set in self.sets:
+            if i_set.winner:
+                n_finished_sets += 1
+        return n_finished_sets

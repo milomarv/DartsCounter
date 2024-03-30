@@ -18,4 +18,4 @@ class DependencyContainer:
         self.online_mode = State(False)
         self.games_repository = PickleGamesRepository()
         self.player_repository = PicklePlayerRepository()
-        self.game = Game(repository=self.games_repository)
+        self.game = Game(repository = self.games_repository)
