@@ -1,15 +1,19 @@
 import pickle
+from pathlib import Path
 
 from Logging.Logger import Logger
 from Models.Player import Player
 from Repositories.PlayerRepository.AbstractPlayerRepository import AbstractPlayerRepository
 
-
+# TODO check folder if not created Unit Test
 class PicklePlayerRepository(AbstractPlayerRepository):
     def __init__(self) -> None:
         super().__init__()
         self.logger = Logger(__name__)
-        self.picklePath = './Repositories/pickle_databases/Players.pkl'
+        self.folder_path = './Repositories/pickle_databases'
+        self.picklePath = f'{self.folder_path}/Players.pkl'
+
+        Path(self.folder_path).mkdir(parents=True, exist_ok=True)
 
         try:
             with open(self.picklePath, 'rb'):
