@@ -8,6 +8,7 @@ from Errors import DBEntryDoesNotExistError, GameAlreadyFinishedError, GameNotSt
 from Logging.Logger import Logger
 from Repositories.GameRepository.AbstractGamesRepository import AbstractGamesRepository
 from .AbstractGamePart import AbstractGamePart
+from .ModelsOperations import ModelsOperations
 from .Out import Out
 from .Player import Player
 from .Set import Set
@@ -41,6 +42,8 @@ class Game(AbstractGamePart):
 
         self.logger = Logger(__name__)
         self.repository = repository
+        self.operations = ModelsOperations()
+
         if ts:
             self.ts = ts
         else:
@@ -129,16 +132,23 @@ No previous version exists."
             raise GameRollBackNotPossibleError(error_msg)
         prev_game = self.repository.load(str(self.ts), prev_version)
         self.repository.delete_version(str(self.ts), str(self.version))
+
+        prev_game_n_sets, \
+            prev_game_set_type, \
+            prev_game_n_legs, \
+            prev_game_leg_type, \
+            prev_game_initial_player_alignment = self.operations.get_parameters_from_old_game_class(self)
+
         self.__init__(
             ts = prev_game.ts,
             version = prev_game.version,
             started = prev_game.started,
             players = prev_game.players,
-            initial_player_alignment = prev_game.initial_player_alignment,
-            n_sets = prev_game.n_sets,
-            set_type = prev_game.set_type,
-            n_legs = prev_game.n_legs,
-            leg_type = prev_game.leg_type,
+            initial_player_alignment = prev_game_initial_player_alignment,
+            n_sets = prev_game_n_sets,
+            set_type = prev_game_set_type,
+            n_legs = prev_game_n_legs,
+            leg_type = prev_game_leg_type,
             points = prev_game.points,
             out = prev_game.out,
             winner = prev_game.winner,

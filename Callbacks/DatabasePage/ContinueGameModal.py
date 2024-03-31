@@ -5,6 +5,7 @@ from dash.exceptions import PreventUpdate
 from Callbacks.CallbackBase import CallbackBase
 from DependencyContainer import DependencyContainer
 from Logging.Logger import Logger
+from Models.ModelsOperations import ModelsOperations
 from Pages.DatabasePage.DatabaseCallbacksOperations import DatabaseCallbacksOperations
 
 
@@ -27,13 +28,12 @@ class ContinueGameModal(CallbackBase):
         ]
 
         self.operations = DatabaseCallbacksOperations()
+        self.models_operations = ModelsOperations()
         self.games_repository = dependency_container.games_repository
         self.game = dependency_container.game
 
         self.logger.info('Initialized Continue Game Modal Callback')
 
-    # TODO CONTINUE HERE
-    # TODO write unit test
     def callback(self, continue_clicks: list[int | None], _confirm_clicks: int | None, game_continue_key: str | None) \
             -> list[bool | html.Div | str]:
         prop_id = self.get_prop_from_context()
@@ -42,32 +42,18 @@ class ContinueGameModal(CallbackBase):
             last_game_version = self.games_repository.list_versions(game_continue_key)[-1]
             game = self.games_repository.load(game_continue_key, last_game_version)
 
-            try:
-                game_n_sets = game.n_sets
-            except AttributeError:
-                game_n_sets = game.nSets
-
-            try:
-                game_set_type = game.set_type
-            except AttributeError:
-                game_set_type = game.setType
-
-            try:
-                game_n_legs = game.n_legs
-            except AttributeError:
-                game_n_legs = game.nLegs
-
-            try:
-                game_leg_type = game.leg_type
-            except AttributeError:
-                game_leg_type = game.legType
+            game_n_sets, \
+                game_set_type, \
+                game_n_legs, \
+                game_leg_type, \
+                game_initial_player_alignment = self.models_operations.get_parameters_from_old_game_class(game)
 
             self.game.__init__(
                 ts = game.ts,
                 version = game.version,
                 started = True,
                 players = game.players,
-                initial_player_alignment = game.initial_player_alignment,
+                initial_player_alignment = game_initial_player_alignment,
                 n_sets = game_n_sets,
                 set_type = game_set_type,
                 n_legs = game_n_legs,

@@ -4,13 +4,17 @@ import pickle
 from pathlib import Path
 from typing import Any, Callable
 
+from dotenv import load_dotenv
+
 from Errors import DBEntryAlreadyExistsError, DBEntryDoesNotExistError
 from Logging.Logger import Logger
 from Models import Game
 from Repositories.GameRepository.AbstractGamesRepository import AbstractGamesRepository
 
+# TODO check folder if not created Unit Test
 
-# TODO check folder if not created Unit Test 
+load_dotenv()
+
 
 class PickleGamesRepository(AbstractGamesRepository):
     def __init__(self) -> None:
