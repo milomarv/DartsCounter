@@ -22,7 +22,7 @@ class CallbacksTest(CallbacksBaseTests):
     def test_get_prop_from_context(self, triggered_prop: list[dict], desired_prop: str | dict) -> None:
         # Arrange
         self.dash_mock.callback_context.triggered = triggered_prop
-        callback_base = CallbackBase(self.dash_mock)
+        callback_base = CallbackBase(self.dependency_mock, self.dash_mock)
 
         # Act
         prop_id = callback_base.get_prop_from_context()
@@ -33,7 +33,7 @@ class CallbacksTest(CallbacksBaseTests):
     def test_get_prop_from_context_with_block_initial(self) -> None:
         # Arrange
         self.dash_mock.callback_context.triggered = None
-        callback_base = CallbackBase(self.dash_mock)
+        callback_base = CallbackBase(self.dependency_mock, self.dash_mock)
 
         # Act & Assert
         with self.assertRaises(PreventUpdate):
@@ -42,7 +42,7 @@ class CallbacksTest(CallbacksBaseTests):
     def test_get_prop_from_context_without_block_initial(self) -> None:
         # Arrange
         self.dash_mock.callback_context.triggered = None
-        callback_base = CallbackBase(self.dash_mock)
+        callback_base = CallbackBase(self.dependency_mock, self.dash_mock)
 
         # Act 
         prop_id = callback_base.get_prop_from_context(block_initial = False)

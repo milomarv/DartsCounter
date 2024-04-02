@@ -8,7 +8,7 @@ from Logging.Logger import Logger
 
 class ActivateMultiplier(CallbackBase):
     def __init__(self, dependency_container: DependencyContainer) -> None:
-        super().__init__()
+        super().__init__(dependency_container)
         self.logger = Logger(__name__)
         self.app = dependency_container.app
         self.inputs = [
@@ -53,13 +53,13 @@ class ActivateMultiplier(CallbackBase):
         self.logger.info('Initialized Activate Multiplier Callback')
 
     def callback(
-            self,
-            _n_clicks_x2: int, _n_clicks_x3: int,
-            _s0: int, _s1: int, _s2: int, _s3: int, _s4: int, _s5: int, _s6: int, _s7: int, _s8: int, _s9: int,
-            _s10: int,
-            _s11: int, _s12: int, _s13: int, _s14: int, _s15: int, _s16: int, _s17: int, _s18: int, _s19: int,
-            _s20: int,
-            x2_active: bool, x3_active: bool
+        self,
+        _n_clicks_x2: int, _n_clicks_x3: int,
+        _s0: int, _s1: int, _s2: int, _s3: int, _s4: int, _s5: int, _s6: int, _s7: int, _s8: int, _s9: int,
+        _s10: int,
+        _s11: int, _s12: int, _s13: int, _s14: int, _s15: int, _s16: int, _s17: int, _s18: int, _s19: int,
+        _s20: int,
+        x2_active: bool, x3_active: bool
     ) -> list[bool | str]:
         prop_id = self.get_prop_from_context()
         if prop_id == 'x2-score-button':

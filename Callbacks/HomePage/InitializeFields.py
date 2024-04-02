@@ -14,7 +14,7 @@ from Models.TypeSetLeg import FIRST_TO
 
 class InitializeFields(CallbackBase):
     def __init__(self, dependency_container: DependencyContainer) -> None:
-        super().__init__()
+        super().__init__(dependency_container)
         self.logger = Logger(__name__)
         self.app = dependency_container.app
         self.game = dependency_container.game

@@ -1,5 +1,3 @@
-from typing import Type
-
 from Models.Player import Player
 from Models.TypeSetLeg import TypeSetLeg
 
@@ -7,7 +5,7 @@ from Models.TypeSetLeg import TypeSetLeg
 class ModelsOperations:
     # noinspection PyUnresolvedReferences
     @staticmethod
-    def get_parameters_from_old_game_class(game_class: Type) -> tuple[int, TypeSetLeg, int, TypeSetLeg, list[Player]]:
+    def get_parameters_from_old_game_class(game_class: object) -> tuple[int, TypeSetLeg, int, TypeSetLeg, list[Player]]:
         try:
             game_n_sets = game_class.n_sets
         except AttributeError:

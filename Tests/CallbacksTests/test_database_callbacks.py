@@ -7,11 +7,11 @@ from dash.exceptions import PreventUpdate
 from Callbacks.DatabasePage.ContinueGameModal import ContinueGameModal
 from Callbacks.DatabasePage.DeleteGameModal import DeleteGameModal
 from Callbacks.DatabasePage.LoadGames import LoadGames
-from CallbacksTests.DatabasePageTests.DatabasePageBaseTests import DatabasePageBaseTests
+from CallbacksTests.CallbacksBaseTests import CallbacksBaseTests
 from Models.Game import Game
 
 
-class DatabaseCallbacksTest(DatabasePageBaseTests):
+class DatabaseCallbacksTest(CallbacksBaseTests):
     # noinspection PyPep8Naming
     def setUp(self) -> None:
         super().setUp()

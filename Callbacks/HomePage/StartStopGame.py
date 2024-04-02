@@ -11,7 +11,7 @@ from Models.TypeSetLeg import TypeSetLeg
 
 class StartStopGame(CallbackBase):
     def __init__(self, dependency_container: DependencyContainer) -> None:
-        super().__init__()
+        super().__init__(dependency_container)
         self.logger = Logger(__name__)
         self.app = dependency_container.app
         self.game = dependency_container.game
@@ -38,29 +38,29 @@ class StartStopGame(CallbackBase):
         self.logger.info('Initialized StartStopGame Callback')
 
     def callback(
-            self,
-            _n_start: int,
-            _n_stop: int,
-            players: list[str],
-            n_sets: int,
-            n_legs: int,
-            set_type: str,
-            leg_type: str,
-            points: int,
-            out: int
+        self,
+        _n_start: int,
+        _n_stop: int,
+        players: list[str],
+        n_sets: int,
+        n_legs: int,
+        set_type: str,
+        leg_type: str,
+        points: int,
+        out: int
     ) -> list[str | bool | None]:
-        if self.get_prop_from_context(block_initial=False) == 'start-stop-game-button':
+        if self.get_prop_from_context(block_initial = False) == 'start-stop-game-button':
             if not self.game.started:
                 self.game.finish()
                 try:
                     self.game.start(
-                        players=[Player(name) for name in players if name],
-                        n_sets=n_sets,
-                        set_type=TypeSetLeg(set_type),
-                        n_legs=n_legs,
-                        leg_type=TypeSetLeg(leg_type),
-                        points=points,
-                        out=Out(out)
+                        players = [Player(name) for name in players if name],
+                        n_sets = n_sets,
+                        set_type = TypeSetLeg(set_type),
+                        n_legs = n_legs,
+                        leg_type = TypeSetLeg(leg_type),
+                        points = points,
+                        out = Out(out)
                     )
                     self.game.save()
                     return ['Stop Game', 'btn btn-danger', False, None, False]
@@ -68,7 +68,7 @@ class StartStopGame(CallbackBase):
                     return ['Start Game', 'btn btn-success', True, str(e), False]
             else:
                 return ['Stop Game', 'btn btn-danger', False, None, True]
-        elif self.get_prop_from_context(block_initial=False) == 'end-game-confirm-button':
+        elif self.get_prop_from_context(block_initial = False) == 'end-game-confirm-button':
             self.game.started = False
             return ['Start Game', 'btn btn-success', False, None, False]
         elif self.game.started:

@@ -13,7 +13,7 @@ from Pages.TyperPage.TyperPageLayout import TyperPageLayout
 
 class Router(CallbackBase):
     def __init__(self, dependency_container: DependencyContainer) -> None:
-        super().__init__()
+        super().__init__(dependency_container)
         self.logger = Logger(__name__)
         self.app = dependency_container.app
         self.inputs = [Input('url', 'pathname')]
@@ -38,7 +38,7 @@ class Router(CallbackBase):
         #   - add coming soon Game Details page with date as title
         elif pathname.startswith('/database/game-details'):
             self.logger.info('Routing to Game Details')
-            return [GamesDetailsPageLayout().build(pathname)]
+            return [GamesDetailsPageLayout().build()]
         else:
             self.logger.info('Routing to NotFoundPage')
             return [NotFoundPageLayout().build()]

@@ -6,12 +6,11 @@ from Callbacks.CallbackBase import CallbackBase
 from DependencyContainer import DependencyContainer
 from Logging.Logger import Logger
 from Models.ModelsOperations import ModelsOperations
-from Pages.DatabasePage.DatabaseCallbacksOperations import DatabaseCallbacksOperations
 
 
 class ContinueGameModal(CallbackBase):
     def __init__(self, dependency_container: DependencyContainer) -> None:
-        super().__init__()
+        super().__init__(dependency_container)
         self.logger = Logger(__name__)
         self.app = dependency_container.app
         self.inputs = [
@@ -27,7 +26,6 @@ class ContinueGameModal(CallbackBase):
             State('game-continue-key', 'data')
         ]
 
-        self.operations = DatabaseCallbacksOperations()
         self.models_operations = ModelsOperations()
         self.games_repository = dependency_container.games_repository
         self.game = dependency_container.game
@@ -39,8 +37,7 @@ class ContinueGameModal(CallbackBase):
         prop_id = self.get_prop_from_context()
         if prop_id == 'continue-game-confirm-button':
             self.logger.info(f'Loading last instance of game: \'{game_continue_key}\' to continue it')
-            last_game_version = self.games_repository.list_versions(game_continue_key)[-1]
-            game = self.games_repository.load(game_continue_key, last_game_version)
+            game = self.get_last_version_of_game_key(game_continue_key)
 
             game_n_sets, \
                 game_set_type, \
@@ -67,7 +64,7 @@ class ContinueGameModal(CallbackBase):
         elif any(continue_clicks):
             game_key = prop_id['index']
             self.logger.info(f'Open confirm Modal for continuing game: \'{game_key}\'')
-            game_ts_pretty = self.operations.format_game_ts_pretty(game_key)
+            game_ts_pretty = self.format_game_ts_pretty(game_key)
             modal_content = html.Div(
                 children = [
                     'The last state of the following Game will be started:',

@@ -5,12 +5,11 @@ from dash.exceptions import PreventUpdate
 from Callbacks.CallbackBase import CallbackBase
 from DependencyContainer import DependencyContainer
 from Logging.Logger import Logger
-from Pages.DatabasePage.DatabaseCallbacksOperations import DatabaseCallbacksOperations
 
 
 class DeleteGameModal(CallbackBase):
     def __init__(self, dependency_container: DependencyContainer) -> None:
-        super().__init__()
+        super().__init__(dependency_container)
         self.logger = Logger(__name__)
         self.app = dependency_container.app
         self.inputs = [
@@ -26,7 +25,6 @@ class DeleteGameModal(CallbackBase):
             State('game-deletion-key', 'data')
         ]
 
-        self.operations = DatabaseCallbacksOperations()
         self.games_repository = dependency_container.games_repository
 
         self.logger.info('Initialized open delete game Modal')
@@ -41,7 +39,7 @@ class DeleteGameModal(CallbackBase):
         elif any(delete_clicks):
             game_key = prop_id['index']
             self.logger.info(f'Open confirm Modal for deleting game {game_key}')
-            game_ts_pretty = self.operations.format_game_ts_pretty(game_key)
+            game_ts_pretty = self.format_game_ts_pretty(game_key)
             modal_content = html.Div(
                 children = [
                     'Are you sure you want to delete game from date:',
