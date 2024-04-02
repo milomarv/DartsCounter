@@ -7,13 +7,12 @@ from dash_bootstrap_components import Card
 from Callbacks.CallbackBase import CallbackBase
 from DependencyContainer import DependencyContainer
 from Logging.Logger import Logger
-from Pages.DatabasePage.DatabaseCallbacksOperations import DatabaseCallbacksOperations
 from Pages.DatabasePage.GameEntry import GameEntry
 
 
 class LoadGames(CallbackBase):
     def __init__(self, dependency_container: DependencyContainer) -> None:
-        super().__init__()
+        super().__init__(dependency_container)
         self.logger = Logger(__name__)
         self.app = dependency_container.app
         self.inputs = [
@@ -33,7 +32,6 @@ class LoadGames(CallbackBase):
         self.games_repository = dependency_container.games_repository
         self.current_game = dependency_container.game
 
-        self.operations = DatabaseCallbacksOperations()
         self.game_entry = GameEntry()
 
         self.logger.info('Initialized Callback Load Games')
@@ -48,7 +46,7 @@ class LoadGames(CallbackBase):
 
             game_entries = list()
             for game_key in game_keys:
-                game_ts_pretty = self.operations.format_game_ts_pretty(game_key)
+                game_ts_pretty = self.format_game_ts_pretty(game_key)
 
                 try:
                     last_game_version = self.games_repository.list_versions(game_key)[-1]

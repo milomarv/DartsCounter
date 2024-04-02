@@ -1,6 +1,8 @@
 from Callbacks.DatabasePage.ContinueGameModal import ContinueGameModal
 from Callbacks.DatabasePage.DeleteGameModal import DeleteGameModal
 from Callbacks.DatabasePage.LoadGames import LoadGames
+from Callbacks.GameDetailsPage.LoadGameDetailsGraph import LoadGameDetailsGraph
+from Callbacks.GameDetailsPage.LoadGameDetailsTitle import LoadGameDetailsTitle
 from Callbacks.HomePage.AddPlayer import AddPlayer
 from Callbacks.HomePage.InitializeFields import InitializeFields
 from Callbacks.HomePage.SetOnllineMode import SetOnlineMode
@@ -36,3 +38,6 @@ class Initializer:
         LoadGames(self.dependency_container).register()
         DeleteGameModal(self.dependency_container).register()
         ContinueGameModal(self.dependency_container).register()
+
+        LoadGameDetailsGraph(self.dependency_container).register()
+        LoadGameDetailsTitle(self.dependency_container).register()

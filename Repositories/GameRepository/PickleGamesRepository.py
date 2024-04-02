@@ -38,7 +38,8 @@ class PickleGamesRepository(AbstractGamesRepository):
             games = self.list_games(suppress_logger = True)
             for game in games:
                 game_ts = dt.datetime.fromtimestamp(float(game))
-                if (dt.datetime.now() - game_ts).days > self.deleteAfterNDays:
+                # noinspection PyChainedComparisons
+                if self.deleteAfterNDays > 0 and (dt.datetime.now() - game_ts).days > self.deleteAfterNDays:
                     self.logger.info(f"Game '{game}' is older than {self.deleteAfterNDays} days")
                     self.delete_game(game)
             return func(self, *args, **kwargs)

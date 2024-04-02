@@ -8,7 +8,7 @@ from Logging.Logger import Logger
 
 class CallbackTemplate(CallbackBase):
     def __init__(self, dependency_container: DependencyContainer) -> None:
-        super().__init__()
+        super().__init__(dependency_container)
         self.logger = Logger(__name__)
         self.app = dependency_container.app
         self.inputs = [

@@ -22,35 +22,35 @@ class PlayerCard:
         self.logarithmic_level = -1.5
 
         self.dartIcon = DartIcon(
-            flex_direction='row',
-            icon_size=0.5,
-            padding_bottom='1.5vh'
+            flex_direction = 'row',
+            icon_size = 0.5,
+            padding_bottom = '1.5vh'
         )
 
     def build(
-            self,
-            active=False,
-            name: str = 'Name',
-            points_left: int = 'N/A',
-            avg: float = 'N/A',
-            thrown_darts: int = 0,
-            set_wins: int = 0,
-            leg_wins: int = 0,
-            single: int = 0,
-            double: int = 0,
-            triple: int = 0,
-            miss: int = 0,
-            single_perc: int = 0,
-            double_perc: int = 0,
-            triple_perc: int = 0,
-            miss_perc: int = 0,
-            n_hits=None,
-            total_score: int = 0,
-            checkout_rate: str = 'N/A',
-            checkout_counter: str = 'N/A',
-            dart_icon1: DartIcon = None,
-            dart_icon2: DartIcon = None,
-            dart_icon3: DartIcon = None,
+        self,
+        active = False,
+        name: str = 'Name',
+        points_left: int = 'N/A',
+        avg: float = 'N/A',
+        thrown_darts: int = 0,
+        set_wins: int = 0,
+        leg_wins: int = 0,
+        single: int = 0,
+        double: int = 0,
+        triple: int = 0,
+        miss: int = 0,
+        single_perc: int = 0,
+        double_perc: int = 0,
+        triple_perc: int = 0,
+        miss_perc: int = 0,
+        n_hits = None,
+        total_score: int = 0,
+        checkout_rate: str = 'N/A',
+        checkout_counter: str = 'N/A',
+        dart_icon1: DartIcon = None,
+        dart_icon2: DartIcon = None,
+        dart_icon3: DartIcon = None,
     ) -> dbc.Card:
         if n_hits is None:
             n_hits = []
@@ -67,29 +67,29 @@ class PlayerCard:
             dart_icon3 = self.dartIcon.build()
 
         return dbc.Card(
-            children=[
+            children = [
                 dbc.CardHeader(
                     html.Div(
                         name,
-                        id='typer-player-name',
-                        style={
+                        id = 'typer-player-name',
+                        style = {
                             **self.textStyle,
                             'height': '5vh',
                             'fontSize': '3vh',
                             'fontWeight': 'bold'
                         }
                     ),
-                    style={
+                    style = {
                         'backgroundColor': card_header_color,
                     }
                 ),
                 dbc.CardBody(
-                    children=[
+                    children = [
                         html.Div(
                             html.H1(
                                 points_left,
-                                id='typer-score',
-                                style={
+                                id = 'typer-score',
+                                style = {
                                     **self.textStyle,
                                     'height': '8.5vh',
                                     'fontSize': '7.5vh',
@@ -98,19 +98,19 @@ class PlayerCard:
                             )
                         ),
                         dbc.Row(
-                            children=[
+                            children = [
                                 dbc.Col(
-                                    children=[
+                                    children = [
                                         html.H5(
                                             'Average:',
-                                            style={
+                                            style = {
                                                 **self.textStyle,
                                                 'color': 'grey'
                                             }
                                         ),
                                         html.H4(
                                             avg,
-                                            style={
+                                            style = {
                                                 **self.textStyle,
                                                 'fontWeight': 'bold'
                                             }
@@ -118,17 +118,17 @@ class PlayerCard:
                                     ]
                                 ),
                                 dbc.Col(
-                                    children=[
+                                    children = [
                                         html.H5(
                                             'Darts:',
-                                            style={
+                                            style = {
                                                 **self.textStyle,
                                                 'color': 'grey'
                                             }
                                         ),
                                         html.H4(
                                             thrown_darts,
-                                            style={
+                                            style = {
                                                 **self.textStyle,
                                                 'fontWeight': 'bold'
                                             }
@@ -136,17 +136,17 @@ class PlayerCard:
                                     ]
                                 ),
                                 dbc.Col(
-                                    children=[
+                                    children = [
                                         html.H5(
                                             'Checkouts:',
-                                            style={
+                                            style = {
                                                 **self.textStyle,
                                                 'color': 'grey'
                                             }
                                         ),
                                         html.H4(
                                             checkout_counter,
-                                            style={
+                                            style = {
                                                 **self.textStyle,
                                                 'fontWeight': 'bold'
                                             }
@@ -156,19 +156,19 @@ class PlayerCard:
                             ]
                         ),
                         dbc.Row(
-                            children=[
+                            children = [
                                 dbc.Col(
-                                    children=[
+                                    children = [
                                         html.H5(
                                             'Set Wins:',
-                                            style={
+                                            style = {
                                                 **self.textStyle,
                                                 'color': 'grey'
                                             }
                                         ),
                                         html.H4(
                                             set_wins,
-                                            style={
+                                            style = {
                                                 **self.textStyle,
                                                 'fontWeight': 'bold'
                                             }
@@ -176,17 +176,17 @@ class PlayerCard:
                                     ]
                                 ),
                                 dbc.Col(
-                                    children=[
+                                    children = [
                                         html.H5(
                                             'Leg Wins:',
-                                            style={
+                                            style = {
                                                 **self.textStyle,
                                                 'color': 'grey'
                                             }
                                         ),
                                         html.H4(
                                             leg_wins,
-                                            style={
+                                            style = {
                                                 **self.textStyle,
                                                 'fontWeight': 'bold'
                                             }
@@ -194,17 +194,17 @@ class PlayerCard:
                                     ]
                                 ),
                                 dbc.Col(
-                                    children=[
+                                    children = [
                                         html.H5(
                                             'Checkout Rate:',
-                                            style={
+                                            style = {
                                                 **self.textStyle,
                                                 'color': 'grey'
                                             }
                                         ),
                                         html.H4(
                                             checkout_rate,
-                                            style={
+                                            style = {
                                                 **self.textStyle,
                                                 'fontWeight': 'bold'
                                             }
@@ -214,7 +214,7 @@ class PlayerCard:
                             ]
                         ),
                         dcc.Graph(
-                            figure={
+                            figure = {
                                 'data': [
                                     {
                                         'x': ['Single', 'Double', 'Triple', 'Miss'],
@@ -261,51 +261,51 @@ class PlayerCard:
                                     }
                                 }
                             },
-                            style={
+                            style = {
                                 'height': '25vh'
                             }
                         ),
                         dbc.Row(
-                            children=[
+                            children = [
                                 dbc.Col(
                                     dcc.Graph(
-                                        figure={
+                                        figure = {
                                             'data': [
                                                 go.Scatterpolar(
-                                                    r=np.log(np.array(n_hits) + 0.9),
-                                                    theta=self.polarTickVals,
-                                                    fill='toself',
-                                                    name='Example Data',
-                                                    text=[f'{score}:<br>{nHit} hits' for score, nHit in
-                                                          zip(self.polarTickVals, n_hits)],
-                                                    hoverinfo='text',
-                                                    mode='markers+lines',
+                                                    r = np.log(np.array(n_hits) + 0.9),
+                                                    theta = self.polarTickVals,
+                                                    fill = 'toself',
+                                                    name = 'Example Data',
+                                                    text = [f'{score}:<br>{nHit} hits' for score, nHit in
+                                                            zip(self.polarTickVals, n_hits)],
+                                                    hoverinfo = 'text',
+                                                    mode = 'markers+lines',
                                                 )
                                             ],
                                             'layout': go.Layout(
-                                                polar=dict(
-                                                    radialaxis_angle=90,
-                                                    radialaxis=dict(
-                                                        showticklabels=False,
-                                                        showline=False,
-                                                        gridcolor='#444444',
+                                                polar = dict(
+                                                    radialaxis_angle = 90,
+                                                    radialaxis = dict(
+                                                        showticklabels = False,
+                                                        showline = False,
+                                                        gridcolor = '#444444',
                                                     ),
-                                                    angularaxis=dict(
-                                                        tickvals=self.polarTickVals,
-                                                        ticktext=self.polarTickText,
-                                                        tickfont={'size': 15}
+                                                    angularaxis = dict(
+                                                        tickvals = self.polarTickVals,
+                                                        ticktext = self.polarTickText,
+                                                        tickfont = {'size': 15}
                                                     ),
-                                                    bgcolor='#303030',
+                                                    bgcolor = '#303030',
                                                 ),
-                                                showlegend=False,
-                                                margin={'t': 30, 'b': 30, 'l': 30, 'r': 30},
-                                                paper_bgcolor='#303030',
-                                                font={
+                                                showlegend = False,
+                                                margin = {'t': 30, 'b': 30, 'l': 30, 'r': 30},
+                                                paper_bgcolor = '#303030',
+                                                font = {
                                                     'color': 'white'
                                                 }
                                             )
                                         },
-                                        style={
+                                        style = {
                                             'backgroundColor': '#303030',
                                             'height': '25vh',
                                             'margin-bottom': '1vh'
@@ -313,15 +313,15 @@ class PlayerCard:
                                     )
                                 ),
                                 dbc.Col(
-                                    children=[
+                                    children = [
                                         dart_icon1,
                                         dart_icon2,
                                         dart_icon3,
                                         html.Div(
-                                            children=[
+                                            children = [
                                                 html.H5(
                                                     'Total:',
-                                                    style={
+                                                    style = {
                                                         **self.textStyle,
                                                         'color': 'grey',
                                                         'width': f'{7.5 * 0.5}vh',
@@ -331,15 +331,15 @@ class PlayerCard:
                                                 ),
                                                 dbc.Badge(
                                                     total_score,
-                                                    style={
+                                                    style = {
                                                         'width': '5rem',
                                                         'fontSize': '1.5rem',
                                                         'fontWeight': 'bold'
                                                     },
-                                                    color='primary'
+                                                    color = 'primary'
                                                 ),
                                             ],
-                                            style={
+                                            style = {
                                                 'display': 'flex',
                                                 'justifyContent': 'center',
                                                 'alignItems': 'center',
@@ -347,10 +347,10 @@ class PlayerCard:
                                             }
                                         )
                                     ],
-                                    width=5
+                                    width = 5
                                 )
                             ],
-                            style={
+                            style = {
                                 'margin-right': '1.5vw',
                                 'margin-left': '1.5vw',
                                 'display': 'flex',
@@ -361,10 +361,10 @@ class PlayerCard:
                     ]
                 )
             ],
-            style={
+            style = {
                 'minWidth': '35rem',
                 'maxWidth': '35rem',
                 'margin': '10px'
             },
-            className='mx-auto'
+            className = 'mx-auto'
         )
