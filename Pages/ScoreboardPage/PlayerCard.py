@@ -262,7 +262,7 @@ class PlayerCard:
                                 }
                             },
                             style = {
-                                'height': '25vh'
+                                'height': '22.5vh'
                             }
                         ),
                         dbc.Row(

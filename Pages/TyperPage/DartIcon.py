@@ -5,7 +5,7 @@ from Models.DartScore import DartScore
 
 
 class DartIcon:
-    def __init__(self, flex_direction='column', icon_size: float = 1.0, padding_bottom=None):
+    def __init__(self, flex_direction = 'column', icon_size: float = 1.0, padding_bottom = None):
         self.flexDirection = flex_direction
         self.iconSize = icon_size
         self.paddingBottom = padding_bottom
@@ -26,10 +26,10 @@ class DartIcon:
                 prefix = ''
 
         return html.Div(
-            children=[
+            children = [
                 html.Img(
-                    src=f'./assets/dart-{color}.svg',
-                    style={
+                    src = f'./assets/dart-{color}.svg',
+                    style = {
                         'height': f'{7.5 * self.iconSize}vh',
                         'margin-bottom': '1vh',
                         'margin-left': '1rem',
@@ -38,14 +38,14 @@ class DartIcon:
                 ),
                 dbc.Badge(
                     f'{prefix}{score}',
-                    style={
+                    style = {
                         'width': '5rem',
                         'fontSize': '1.5rem',
                         'fontWeight': 'bold'
                     },
                 )
             ],
-            style={
+            style = {
                 'display': 'flex',
                 'justifyContent': 'center',
                 'alignItems': 'center',
