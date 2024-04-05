@@ -10,6 +10,7 @@ from Logging.Logger import Logger
 from Pages.DatabasePage.GameEntry import GameEntry
 
 
+# TODO add go to scoreboard button if in progress
 class LoadGames(CallbackBase):
     def __init__(self, dependency_container: DependencyContainer) -> None:
         super().__init__(dependency_container)
