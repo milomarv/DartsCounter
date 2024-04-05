@@ -8,6 +8,7 @@ from Callbacks.HomePage.InitializeFields import InitializeFields
 from Callbacks.HomePage.SetOnllineMode import SetOnlineMode
 from Callbacks.HomePage.StartStopGame import StartStopGame
 from Callbacks.Router import Router
+from Callbacks.ScoreBoard.EditScoreboardLabel import EditScoreboardLabelCallback
 from Callbacks.ScoreBoard.SelectFilter import SelectFilter
 from Callbacks.ScoreBoard.UpdatePlayerCards import UpdatePlayerCards
 from Callbacks.Typer.ActivateMultiplier import ActivateMultiplier
@@ -34,6 +35,7 @@ class Initializer:
 
         UpdatePlayerCards(self.dependency_container).register()
         SelectFilter(self.dependency_container).register()
+        EditScoreboardLabelCallback(self.dependency_container).register()
 
         LoadGames(self.dependency_container).register()
         DeleteGameModal(self.dependency_container).register()
