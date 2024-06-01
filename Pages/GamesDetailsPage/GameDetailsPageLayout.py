@@ -5,8 +5,6 @@ from Pages.GamesDetailsPage.GameDetailsCard import GamesDetailsCard
 from Pages.GamesDetailsPage.PlaceholderText import PlaceholderText
 
 
-# TODO CONTINUE HERE
-# TODO add Match name for tournament
 class GamesDetailsPageLayout:
     def __init__(self) -> None:
         self.details_card = GamesDetailsCard()
@@ -42,12 +40,31 @@ class GamesDetailsPageLayout:
                                 height = '44vh'
                             ),
                             html.Div(style = {'height': '2.5vh'}),
-                            self.details_card.build(
-                                title = 'Statistics',
-                                content = [
-                                    self.placeholder_text.build('⌛ Coming soon!', 'game-details-statistics-div')
-                                ],
-                                height = '30vh'
+                            # TODO make content scrollable
+                            dbc.Row(
+                                children = [
+                                    dbc.Col(
+                                        self.details_card.build(
+                                            title = 'Statistics',
+                                            content = [
+                                                self.placeholder_text.build('⌛ Loading...',
+                                                                            'game-details-statistics-div')
+                                            ],
+                                            height = '30vh'
+                                        )
+                                    ),
+                                    dbc.Col(
+                                        self.details_card.build(
+                                            title = 'Operations',
+                                            content = [
+                                                self.placeholder_text.build('⌛ Coming soon!',
+                                                                            'game-details-operations-div')
+                                            ],
+                                            height = '30vh'
+                                        ),
+                                        width = 3
+                                    )
+                                ]
                             )
                         ],
                         width = 6
