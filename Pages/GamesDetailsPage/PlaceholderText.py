@@ -15,6 +15,7 @@ class PlaceholderText:
                 'display': 'flex',
                 'flex-wrap': 'wrap',
                 'align-content': 'center',
-                'justify-content': 'center'
+                'justify-content': 'center',
+                'text-align': 'center'
             }
         )

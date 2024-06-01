@@ -9,6 +9,7 @@ from DependencyContainer import DependencyContainer
 from Logging.Logger import Logger
 
 
+# TODO only updates set and leg wins when first dart of next leg is thrown
 class LoadGameDetailsGraph(CallbackBase):
     def __init__(self, dependency_container: DependencyContainer) -> None:
         super().__init__(dependency_container)
@@ -24,6 +25,8 @@ class LoadGameDetailsGraph(CallbackBase):
 
         self.logger.info('Initialized Load Game Details Graph Callback')
 
+    # TODO uncomplex this method
+    # TODO check if switch between legs and sets is displayed rightly
     def callback(self, url: str) -> list[dcc.Graph]:
         if url.startswith('/database/game-details/'):
             game_key = url.split('/')[-1]

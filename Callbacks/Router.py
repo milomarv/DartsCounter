@@ -34,8 +34,6 @@ class Router(CallbackBase):
         elif pathname == '/database':
             self.logger.info('Routing to DatabasePage')
             return [DatabasePageLayout().build()]
-        # TODO Continue Here
-        #   - add coming soon Game Details page with date as title
         elif pathname.startswith('/database/game-details'):
             self.logger.info('Routing to Game Details')
             return [GamesDetailsPageLayout().build()]

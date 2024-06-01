@@ -55,7 +55,6 @@ class LoadGames(CallbackBase):
                     continue
                 game = self.games_repository.load(game_key, last_game_version)
 
-                # TODO reduce database entries to last one if game is finished
                 # TODO apply max db entries on ongoing games
                 game_winner = None
                 if game.winner:

@@ -3,14 +3,17 @@ from typing import Optional
 import dash_bootstrap_components as dbc
 from dash import html
 
-from Pages.DatabasePage.GameEntryValue import GameEntryValue
+from Pages.DatabasePage.GameValue import GameValue
 from Pages.DatabasePage.PlayerBadge import PlayerBadge
+from Pages.DatabasePage.ProgressBadge import ProgressBadge
 
 
+# TODO add more Setting of Game
 class GameEntry:
     def __init__(self) -> None:
         self.player_badge = PlayerBadge()
-        self.game_entry_value = GameEntryValue()
+        self.game_entry_value = GameValue()
+        self.progress_badge = ProgressBadge()
 
         self.initial_key_width = 2.5
 
@@ -28,22 +31,12 @@ class GameEntry:
 
         continue_button_style = {'display': 'none'}
         delete_button_style = {}
-        if finished == 'finished':
-            finished_badge_color = 'success'
-            finished_badge_text = 'Finished'
-        elif finished == 'in_progress':
-            finished_badge_color = 'primary'
-            finished_badge_text = 'In Progress'
+        if finished == 'in_progress':
             delete_button_style = {'display': 'none'}
         else:
-            finished_badge_color = 'danger'
-            finished_badge_text = 'Not Finished'
             continue_button_style = {}
-        finished_badge = dbc.Badge(
-            finished_badge_text,
-            color = finished_badge_color,
-            style = {'font-size': '1rem'},
-        )
+
+        finished_badge = self.progress_badge.build(finished)
 
         if winner:
             winner_badge_text = winner
