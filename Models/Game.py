@@ -3,8 +3,13 @@ import datetime as dt
 import threading
 from typing import List, Optional
 
-from Errors import DBEntryDoesNotExistError, GameAlreadyFinishedError, GameNotStartedError, \
-    GameRollBackNotPossibleError, NoSetCreatedError
+from Errors import (
+    DBEntryDoesNotExistError,
+    GameAlreadyFinishedError,
+    GameNotStartedError,
+    GameRollBackNotPossibleError,
+    NoSetCreatedError,
+)
 from Logging.Logger import Logger
 from Repositories.GameRepository.AbstractGamesRepository import AbstractGamesRepository
 from .AbstractGamePart import AbstractGamePart
@@ -30,9 +35,9 @@ class Game(AbstractGamePart):
         points: int = 0,
         out: Out = None,
         winner: Player = None,
-        sets = None,
-        repository: AbstractGamesRepository = None
-    ):
+        sets: list[Set] = None,
+        repository: AbstractGamesRepository = None,
+    ) -> None:
         super().__init__()
 
         if sets is None:
@@ -68,7 +73,9 @@ class Game(AbstractGamePart):
         self.sets = sets
 
     def __str__(self) -> str:
-        game_string = f'GAME - {dt.datetime.fromtimestamp(self.ts)} -Version: {self.version}\n'
+        game_string = (
+            f'GAME - {dt.datetime.fromtimestamp(self.ts)} -Version: {self.version}\n'
+        )
         game_string += f'Number of Players: {len(self.players)}\n'
         game_string += f'Number of Sets: {self.n_sets}\n'
         game_string += f'Set Type: {self.set_type}\n'
@@ -92,10 +99,18 @@ class Game(AbstractGamePart):
         n_legs: int,
         leg_type: TypeSetLeg,
         points: int,
-        out: Out = Out(2)
+        out: Out = Out(2),
     ) -> None:
-        self.__init__(players = players, n_sets = n_sets, set_type = set_type, n_legs = n_legs, leg_type = leg_type,
-                      points = points, out = out, repository = self.repository)
+        self.__init__(
+            players=players,
+            n_sets=n_sets,
+            set_type=set_type,
+            n_legs=n_legs,
+            leg_type=leg_type,
+            points=points,
+            out=out,
+            repository=self.repository,
+        )
         try:
             self.repository.delete_game(str(self.ts))
         except DBEntryDoesNotExistError:
@@ -113,11 +128,11 @@ class Game(AbstractGamePart):
         self.started = True
 
     def finish(self) -> None:
-        self.__init__(started = True, repository = self.repository)
+        self.__init__(started=True, repository=self.repository)
 
     def save(self) -> bool:
         self.version = self.__create_ts__()
-        save_thread = threading.Thread(target = self.repository.save, args = (self,))
+        save_thread = threading.Thread(target=self.repository.save, args=(self,))
         save_thread.start()
         return True
 
@@ -133,27 +148,29 @@ No previous version exists."
         prev_game = self.repository.load(str(self.ts), prev_version)
         self.repository.delete_version(str(self.ts), str(self.version))
 
-        prev_game_n_sets, \
-            prev_game_set_type, \
-            prev_game_n_legs, \
-            prev_game_leg_type, \
-            prev_game_initial_player_alignment = self.operations.get_parameters_from_old_game_class(self)
+        (
+            prev_game_n_sets,
+            prev_game_set_type,
+            prev_game_n_legs,
+            prev_game_leg_type,
+            prev_game_initial_player_alignment,
+        ) = self.operations.get_parameters_from_old_game_class(self)
 
         self.__init__(
-            ts = prev_game.ts,
-            version = prev_game.version,
-            started = prev_game.started,
-            players = prev_game.players,
-            initial_player_alignment = prev_game_initial_player_alignment,
-            n_sets = prev_game_n_sets,
-            set_type = prev_game_set_type,
-            n_legs = prev_game_n_legs,
-            leg_type = prev_game_leg_type,
-            points = prev_game.points,
-            out = prev_game.out,
-            winner = prev_game.winner,
-            sets = prev_game.sets,
-            repository = self.repository
+            ts=prev_game.ts,
+            version=prev_game.version,
+            started=prev_game.started,
+            players=prev_game.players,
+            initial_player_alignment=prev_game_initial_player_alignment,
+            n_sets=prev_game_n_sets,
+            set_type=prev_game_set_type,
+            n_legs=prev_game_n_legs,
+            leg_type=prev_game_leg_type,
+            points=prev_game.points,
+            out=prev_game.out,
+            winner=prev_game.winner,
+            sets=prev_game.sets,
+            repository=self.repository,
         )
 
     def get_current_set(self) -> Set:
@@ -183,13 +200,13 @@ No previous version exists."
             raise GameAlreadyFinishedError(error_msg)
         else:
             game_set = Set(
-                players = self.players,
-                game = self,
-                set_type = self.set_type,
-                n_legs = self.n_legs,
-                leg_type = self.leg_type,
-                points = self.points,
-                out = self.out
+                players=self.players,
+                game=self,
+                set_type=self.set_type,
+                n_legs=self.n_legs,
+                leg_type=self.leg_type,
+                points=self.points,
+                out=self.out,
             )
             self.sets.append(game_set)
 
@@ -199,6 +216,13 @@ No previous version exists."
             if gameSet.winner == player:
                 set_wins += 1
         return set_wins
+
+    # TODO unit test
+    def get_leg_wins(self, player: Player) -> int:
+        leg_wins = 0
+        for gameSet in self.sets:
+            leg_wins += gameSet.get_leg_wins(player)
+        return leg_wins
 
     def get_n_set_wins_for_game_win(self) -> int:
         if self.set_type.value == BEST_OF:
@@ -241,16 +265,32 @@ No previous version exists."
         return n_counts
 
     def get_n_hits_on_numbers(self) -> None:
-        raise NotImplementedError('removed method -> use get_score_count instead with attribute: score')
+        raise NotImplementedError(
+            'removed method -> use get_score_count instead with attribute: score'
+        )
 
     # TODO adapt down till leg with unit test
     def get_possible_and_successful_checkouts(self, player: Player) -> tuple[int, int]:
         n_possible_checkouts, n_successful_checkouts = 0, 0
         for i_set in self.sets:
-            set_possible_checkouts, set_successful_checkouts = i_set.get_possible_and_successful_checkouts(player)
+            set_possible_checkouts, set_successful_checkouts = (
+                i_set.get_possible_and_successful_checkouts(player)
+            )
             n_possible_checkouts += set_possible_checkouts
             n_successful_checkouts += set_successful_checkouts
         return n_possible_checkouts, n_successful_checkouts
+
+    # TODO unit test
+    def get_checkout_rate(self, player: Player) -> str:
+        n_possible_checkouts, n_successful_checkouts = (
+            self.get_possible_and_successful_checkouts(player)
+        )
+        try:
+            return (
+                f'{round((n_successful_checkouts / n_possible_checkouts) * 100, 2)} %'
+            )
+        except ZeroDivisionError:
+            return '0 %'
 
     def get_n_total_legs(self) -> int:
         n_total_legs = 0

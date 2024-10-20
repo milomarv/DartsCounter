@@ -1,10 +1,19 @@
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from dash import dcc, html
 from dash.exceptions import PreventUpdate
+import dash_bootstrap_components as dbc
+from parameterized import parameterized
 
+from Callbacks.CallbackBase import CallbackBase
+from Callbacks.GameDetailsPage.LoadGameDetailsPlayerModal import (
+    LoadGameDetailsPlayerModal,
+)
 from Callbacks.GameDetailsPage.LoadGameDetailsGraph import LoadGameDetailsGraph
-from Callbacks.GameDetailsPage.LoadGameDetailsStatistics import LoadGameDetailsStatistics
+from Callbacks.GameDetailsPage.LoadGameDetailsPlayers import LoadGameDetailsPlayers
+from Callbacks.GameDetailsPage.LoadGameDetailsStatistics import (
+    LoadGameDetailsStatistics,
+)
 from Callbacks.GameDetailsPage.LoadGameDetailsTitle import LoadGameDetailsTitle
 from CallbacksTests.CallbacksBaseTests import CallbacksBaseTests
 from Models.Player import Player
@@ -66,10 +75,12 @@ class GameDetailsPageCallbacksTest(CallbacksBaseTests):
         callback_class.get_last_version_of_game_key.return_value = game_simulation.run()
 
         # Act
-        response = callback_class.callback('/database/game-details/1711979685.758767')
+        response = callback_class.callback(
+            '/database/game-details/1711979685.758767', {}
+        )
 
         # Assert
-        self.assertEqual(len(response), 1)
+        self.assertEqual(len(response), 2)
         self.assertTrue(isinstance(response[0], html.Div))
 
     def test_load_game_details_statistics_call_on_other_page(self) -> None:
@@ -78,22 +89,24 @@ class GameDetailsPageCallbacksTest(CallbacksBaseTests):
 
         # Act & Assert
         with self.assertRaises(PreventUpdate):
-            callback_class.callback('/scoreboard')
+            callback_class.callback('/scoreboard', {})
 
     def test_load_game_details_statistics_of_finished_game(self) -> None:
         # Arrange
         game_simulation = self.simulation(self.simulation_data)
         simulated_game = game_simulation.run()
-        simulated_game.winner = Player(name = 'John Doe')
+        simulated_game.winner = Player(name='John Doe')
         callback_class = LoadGameDetailsStatistics(self.dependency_mock)
         callback_class.get_last_version_of_game_key = Mock()
         callback_class.get_last_version_of_game_key.return_value = simulated_game
 
         # Act
-        response = callback_class.callback('/database/game-details/1711979685.758767')
+        response = callback_class.callback(
+            '/database/game-details/1711979685.758767', {}
+        )
 
         # Assert
-        self.assertEqual(len(response), 1)
+        self.assertEqual(len(response), 2)
         self.assertTrue(isinstance(response[0], html.Div))
 
     def test_load_game_details_statistics_of_game_in_progress(self) -> None:
@@ -107,8 +120,60 @@ class GameDetailsPageCallbacksTest(CallbacksBaseTests):
         callback_class.get_last_version_of_game_key.return_value = simulated_game
 
         # Act
-        response = callback_class.callback('/database/game-details/1711979685.758767')
+        response = callback_class.callback(
+            '/database/game-details/1711979685.758767', {}
+        )
 
         # Assert
-        self.assertEqual(len(response), 1)
+        self.assertEqual(len(response), 2)
         self.assertTrue(isinstance(response[0], html.Div))
+
+
+class GameDetailsPlayersCallbackTests(CallbacksBaseTests):
+    def setUp(self) -> None:
+        super().setUp()
+        self.game_simulation = self.simulation(self.simulation_data)
+
+    def test_load_game_details_players(self) -> None:
+        self.callback_class = LoadGameDetailsPlayers(self.dependency_mock)
+        self.callback_class.get_last_version_of_game_key = Mock()
+        self.callback_class.get_last_version_of_game_key.return_value = (
+            self.game_simulation.run()
+        )
+
+        response = self.callback_class.callback(
+            '/database/game-details/1711979685.758767', {}
+        )
+
+        self.assertEqual(len(response), 2)
+        self.assertTrue(isinstance(response[0][0], dbc.Card))
+
+    @patch('Callbacks.GameDetailsPage.LoadGameDetailsPlayerModal.callback_context')
+    def test_load_game_details_player_modals(self, ctx_mock: Mock) -> None:
+        self.callback_class = LoadGameDetailsPlayerModal(self.dependency_mock)
+        self.callback_class.get_last_version_of_game_key = Mock()
+        self.callback_class.get_last_version_of_game_key.return_value = (
+            self.game_simulation.run()
+        )
+
+        ctx_mock.triggered = [
+            {
+                'prop_id': f'{{"index":"{self.game_simulation.game.players[0].id}","type":"game-details-player-button"}}.n_clicks'
+            }
+        ]
+
+        response = self.callback_class.callback(
+            '/database/game-details/1711979685.758767', [0, 1]
+        )
+
+        print(response)
+
+    @parameterized.expand(
+        [
+            (LoadGameDetailsPlayers,),
+            (LoadGameDetailsPlayerModal,),
+        ]
+    )
+    def test_call_on_other_page(self, callback_class: CallbackBase) -> None:
+        with self.assertRaises(PreventUpdate):
+            callback_class(self.dependency_mock).callback('/scoreboard', Mock())

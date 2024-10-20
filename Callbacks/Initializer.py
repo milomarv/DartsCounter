@@ -2,7 +2,13 @@ from Callbacks.DatabasePage.ContinueGameModal import ContinueGameModal
 from Callbacks.DatabasePage.DeleteGameModal import DeleteGameModal
 from Callbacks.DatabasePage.LoadGames import LoadGames
 from Callbacks.GameDetailsPage.LoadGameDetailsGraph import LoadGameDetailsGraph
-from Callbacks.GameDetailsPage.LoadGameDetailsStatistics import LoadGameDetailsStatistics
+from Callbacks.GameDetailsPage.LoadGameDetailsPlayerModal import (
+    LoadGameDetailsPlayerModal,
+)
+from Callbacks.GameDetailsPage.LoadGameDetailsPlayers import LoadGameDetailsPlayers
+from Callbacks.GameDetailsPage.LoadGameDetailsStatistics import (
+    LoadGameDetailsStatistics,
+)
 from Callbacks.GameDetailsPage.LoadGameDetailsTitle import LoadGameDetailsTitle
 from Callbacks.HomePage.AddPlayer import AddPlayer
 from Callbacks.HomePage.InitializeFields import InitializeFields
@@ -45,3 +51,5 @@ class Initializer:
         LoadGameDetailsGraph(self.dependency_container).register()
         LoadGameDetailsTitle(self.dependency_container).register()
         LoadGameDetailsStatistics(self.dependency_container).register()
+        LoadGameDetailsPlayers(self.dependency_container).register()
+        LoadGameDetailsPlayerModal(self.dependency_container).register()

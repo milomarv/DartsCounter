@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="RuffConfigService">
-    <option name="disableOnSaveOutsideOfProject" value="false" />
-    <option name="globalRuffExecutablePath" value="C:\Users\marvi\AppData\Local\Programs\Python\Python312\Scripts\ruff.exe" />
-    <option name="ruffConfigPath" value="C:\Users\marvi\OneDrive\Projects\ruff.toml" />
-    <option name="runRuffOnSave" value="true" />
-  </component>
-</project>

@@ -8,14 +8,16 @@ class PlaceholderText:
     @staticmethod
     def build(text: str, identifier: str, height: str = '100%') -> html.Div:
         return html.Div(
-            html.H3(text),
-            id = identifier,
-            style = {
+            text,
+            id=identifier,
+            style={
                 'height': height,
                 'display': 'flex',
-                'flex-wrap': 'wrap',
+                'flex-wrap': 'nowrap',
                 'align-content': 'center',
                 'justify-content': 'center',
-                'text-align': 'center'
-            }
+                'text-align': 'center',
+                'flex-direction': 'column',
+                'font-size': '4vh',
+            },
         )

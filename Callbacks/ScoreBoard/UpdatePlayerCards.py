@@ -18,19 +18,19 @@ class UpdatePlayerCards(CallbackBase):
         self.inputs = [
             Input('scoreboard-update-interval', 'n_intervals'),
         ]
-        self.outputs = [
-            Output('scoreboard-player-area', 'children')
-        ]
+        self.outputs = [Output('scoreboard-player-area', 'children')]
         self.states = [
             State('game-filter-button', 'className'),
             State('current-set-filter-button', 'className'),
-            State('current-leg-filter-button', 'className')
+            State('current-leg-filter-button', 'className'),
         ]
         self.logger.info('Initialized Callback Template')
-        self.playerCard = PlayerCard()
-        self.emptyDartIcon = self.playerCard.dartIcon.build()
+        self.player_card = PlayerCard()
+        self.emptyDartIcon = self.player_card.dartIcon.build()
 
-    def callback(self, _n_intervals: int, game_filter: str, set_filter: str, leg_filter: str) -> list:
+    def callback(
+        self, _n_intervals: int, game_filter: str, set_filter: str, leg_filter: str
+    ) -> list:
         que_on = None
         try:
             if game_filter == 'btn btn-primary':
@@ -49,7 +49,12 @@ class UpdatePlayerCards(CallbackBase):
 
             # Get If Player is on current turn
             try:
-                current_turn = self.game.get_current_set().get_current_leg().get_current_round().get_current_turn()
+                current_turn = (
+                    self.game.get_current_set()
+                    .get_current_leg()
+                    .get_current_round()
+                    .get_current_turn()
+                )
                 if current_turn.player == player:
                     active = True
                 else:
@@ -118,7 +123,7 @@ class UpdatePlayerCards(CallbackBase):
                 single_perc, double_perc, triple_perc, miss_perc = 0, 0, 0, 0
 
             # Get N Hits on Numbers
-            numbers = self.playerCard.polarVals
+            numbers = self.player_card.player_stats.polarVals
             if que_on:
                 n_hits = []
                 for n in numbers:
@@ -128,40 +133,69 @@ class UpdatePlayerCards(CallbackBase):
 
             # Get Players Last 3 Darts
             try:
-                last_turn = self.game.get_current_set().get_current_leg().get_last_turn(player)
+                last_turn = (
+                    self.game.get_current_set().get_current_leg().get_last_turn(player)
+                )
                 if last_turn:
                     dart_icons = []
                     total_score = 0
                     for dart in last_turn.scores.values():
                         if dart and not dart.no_dart:
-                            dart_icons.append(self.playerCard.dartIcon.build(dart))
+                            dart_icons.append(self.player_card.dartIcon.build(dart))
                             total_score += dart.total
                         else:
                             dart_icons.append(self.emptyDartIcon)
                 else:
-                    dart_icons = [self.emptyDartIcon, self.emptyDartIcon, self.emptyDartIcon]
+                    dart_icons = [
+                        self.emptyDartIcon,
+                        self.emptyDartIcon,
+                        self.emptyDartIcon,
+                    ]
                     total_score = 0
             except NoSetCreatedError:
-                dart_icons = [self.emptyDartIcon, self.emptyDartIcon, self.emptyDartIcon]
+                dart_icons = [
+                    self.emptyDartIcon,
+                    self.emptyDartIcon,
+                    self.emptyDartIcon,
+                ]
                 total_score = 0
 
             # Get Possible Checkouts
             if que_on:
-                n_possible_checkouts, n_successful_checkouts = que_on.get_possible_and_successful_checkouts(player)
+                n_possible_checkouts, n_successful_checkouts = (
+                    que_on.get_possible_and_successful_checkouts(player)
+                )
             else:
                 n_possible_checkouts, n_successful_checkouts = None, None
             if n_possible_checkouts or n_successful_checkouts:
-                checkout_rate = f'{round(n_successful_checkouts / n_possible_checkouts * 100, 2)} %'
+                checkout_rate = (
+                    f'{round(n_successful_checkouts / n_possible_checkouts * 100, 2)} %'
+                )
                 checkout_count = f'{n_successful_checkouts}/{n_possible_checkouts}'
             else:
                 checkout_rate, checkout_count = 'N/A', 'N/A'
 
-            player_stats_card = self.playerCard.build(
-                active, player_name, player_points_left, player_avg, player_darts, set_wins, leg_wins,
-                single, double, triple, miss,
-                single_perc, double_perc, triple_perc, miss_perc, n_hits,
-                total_score, checkout_rate, checkout_count,
-                *dart_icons
+            player_stats_card = self.player_card.build(
+                active,
+                player_name,
+                player_points_left,
+                player_avg,
+                player_darts,
+                set_wins,
+                leg_wins,
+                single,
+                double,
+                triple,
+                miss,
+                single_perc,
+                double_perc,
+                triple_perc,
+                miss_perc,
+                n_hits,
+                total_score,
+                checkout_rate,
+                checkout_count,
+                *dart_icons,
             )
             return_cols.append(player_stats_card)
         return [return_cols]
