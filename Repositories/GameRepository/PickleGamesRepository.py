@@ -22,12 +22,11 @@ class PickleGamesRepository(AbstractGamesRepository):
         self.logger = Logger(__name__)
         self.folderPath = './Repositories/pickle_databases/games/'
         self.deleteAfterNDays = int(os.getenv('DELETE_GAME_AFTER_N_DAYS'))
-        self.maxEntries = int(os.getenv('MAX_DB_ENTRIES'))
 
     @staticmethod
     def __create_folder_if_not_exists_decorator__(func: Callable) -> Callable:
         def wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
-            Path(self.folderPath).mkdir(parents = True, exist_ok = True)
+            Path(self.folderPath).mkdir(parents=True, exist_ok=True)
             return func(self, *args, **kwargs)
 
         return wrapper
@@ -35,38 +34,18 @@ class PickleGamesRepository(AbstractGamesRepository):
     @staticmethod
     def __delete_old_games_decorator__(func: Callable) -> Callable:
         def wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
-            games = self.list_games(suppress_logger = True)
+            games = self.list_games(suppress_logger=True)
             for game in games:
                 game_ts = dt.datetime.fromtimestamp(float(game))
                 # noinspection PyChainedComparisons
-                if self.deleteAfterNDays > 0 and (dt.datetime.now() - game_ts).days > self.deleteAfterNDays:
-                    self.logger.info(f"Game '{game}' is older than {self.deleteAfterNDays} days")
+                if (
+                    self.deleteAfterNDays > 0
+                    and (dt.datetime.now() - game_ts).days > self.deleteAfterNDays
+                ):
+                    self.logger.info(
+                        f"Game '{game}' is older than {self.deleteAfterNDays} days"
+                    )
                     self.delete_game(game)
-            return func(self, *args, **kwargs)
-
-        return wrapper
-
-    @staticmethod
-    def __delete_to_many_entries_decorator__(func: Callable) -> Callable:
-        def wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
-            games = self.list_games(suppress_logger = True)
-            games.reverse()
-            n_entries = 0
-            for game in games:
-                game_versions = self.list_versions(game, suppress_logger = True)
-                game_versions.reverse()
-                for entry in game_versions:
-                    n_entries += 1
-                    # noinspection PyChainedComparisons
-                    if self.maxEntries > 0 and n_entries > self.maxEntries:
-                        self.logger.info(
-                            f"Deleting version '{entry}' from database,\
-because it exceeds the maximum number of entries ({self.maxEntries})")
-                        self.delete_version(game, entry, suppress_logger = True)
-                n_versions = self.list_versions(game, suppress_logger = True)
-                if len(n_versions) == 0:
-                    self.logger.info(f"Deleting game '{game}' from database, because it has no versions left")
-                    self.delete_game(game, suppress_logger = True)
             return func(self, *args, **kwargs)
 
         return wrapper
@@ -88,7 +67,6 @@ because it exceeds the maximum number of entries ({self.maxEntries})")
 
     @__create_folder_if_not_exists_decorator__
     @__delete_old_games_decorator__
-    @__delete_to_many_entries_decorator__
     def save(self, game: Game) -> bool:
         self.logger.info(f"Saving game '{game.ts}.{game.version}' to database")
         folder_name, file_name, folder_path, game_path = self.__get_paths__(game)
@@ -98,7 +76,7 @@ because it exceeds the maximum number of entries ({self.maxEntries})")
             self.logger.error(error_msg)
             raise DBEntryAlreadyExistsError(error_msg)
 
-        Path(folder_path).mkdir(parents = True, exist_ok = True)
+        Path(folder_path).mkdir(parents=True, exist_ok=True)
 
         with open(game_path, 'wb') as f:
             pickle.dump(game, f)
@@ -107,7 +85,6 @@ because it exceeds the maximum number of entries ({self.maxEntries})")
 
     @__create_folder_if_not_exists_decorator__
     @__delete_old_games_decorator__
-    @__delete_to_many_entries_decorator__
     def load(self, game_ts: str, game_version: str) -> Game:
         self.logger.info(f"Loading game '{game_ts}.{game_version}' from database")
         game_path = Path(self.folderPath) / game_ts / f'{game_version}.pkl'
@@ -129,7 +106,9 @@ because it exceeds the maximum number of entries ({self.maxEntries})")
         folder_path = Path(self.folderPath) / game_ts
 
         if not Path(folder_path).exists():
-            error_msg = f"Game '{game_ts}' does not exist in database. Game can not be deleted!"
+            error_msg = (
+                f"Game '{game_ts}' does not exist in database. Game can not be deleted!"
+            )
             self.logger.error(error_msg)
             raise DBEntryDoesNotExistError(error_msg)
 
@@ -141,9 +120,13 @@ because it exceeds the maximum number of entries ({self.maxEntries})")
 
     @__create_folder_if_not_exists_decorator__
     @__delete_old_games_decorator__
-    def delete_version(self, game_ts: str, game_version: str, suppress_logger: bool = False) -> bool:
+    def delete_version(
+        self, game_ts: str, game_version: str, suppress_logger: bool = False
+    ) -> bool:
         if not suppress_logger:
-            self.logger.info(f"Deleting version '{game_ts}.{game_version}' from database")
+            self.logger.info(
+                f"Deleting version '{game_ts}.{game_version}' from database"
+            )
         game_path = Path(self.folderPath) / str(game_ts) / f'{game_version}.pkl'
 
         if not Path(game_path).exists():
