@@ -5,6 +5,7 @@ from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
 
 from Callbacks.CallbackBase import CallbackBase
+from Callbacks.GameDetailsPage import GAME_DETAILS_PATH
 from DependencyContainer import DependencyContainer
 from Logging.Logger import Logger
 
@@ -15,12 +16,8 @@ class LoadGameDetailsGraph(CallbackBase):
         super().__init__(dependency_container)
         self.logger = Logger(__name__)
         self.app = dependency_container.app
-        self.inputs = [
-            Input('url', 'pathname')
-        ]
-        self.outputs = [
-            Output('game-details-graph-div', 'children')
-        ]
+        self.inputs = [Input('url', 'pathname')]
+        self.outputs = [Output('game-details-graph-div', 'children')]
         self.states = []
 
         self.logger.info('Initialized Load Game Details Graph Callback')
@@ -28,7 +25,7 @@ class LoadGameDetailsGraph(CallbackBase):
     # TODO uncomplex this method
     # TODO check if switch between legs and sets is displayed rightly
     def callback(self, url: str) -> list[dcc.Graph]:
-        if url.startswith('/database/game-details/'):
+        if url.startswith(GAME_DETAILS_PATH):
             game_key = url.split('/')[-1]
             game = self.get_last_version_of_game_key(game_key)
 
@@ -70,23 +67,20 @@ class LoadGameDetailsGraph(CallbackBase):
             for i, p in enumerate(reversed(players_leg_wins.keys())):
                 data.append(
                     go.Scatter(
-                        x = list(range(len(players_leg_wins[p]))),
-                        y = players_leg_wins[p],
-                        name = p,
-                        marker = {
-                            'color': adjusted_color_palette[i]
-                        },
-                        line = {
-                            'dash': 'dash'
-                        },
-                        legendgroup = 'leg',
-                        legendgrouptitle = {'text': 'Leg Wins'},
-                        hovertemplate =
-                        'Leg Wins: <b>%{y}</b>' +
-                        '<br>Leg Num: <b>%{x}</b>' +
-                        '<br>Win Rate: <b>%{text}%</b>',
-                        text = [round((wins / num) * 100, 1) if num else 0 for num, wins in
-                                enumerate(players_leg_wins[p])]
+                        x=list(range(len(players_leg_wins[p]))),
+                        y=players_leg_wins[p],
+                        name=p,
+                        marker={'color': adjusted_color_palette[i]},
+                        line={'dash': 'dash'},
+                        legendgroup='leg',
+                        legendgrouptitle={'text': 'Leg Wins'},
+                        hovertemplate='Leg Wins: <b>%{y}</b>'
+                        + '<br>Leg Num: <b>%{x}</b>'
+                        + '<br>Win Rate: <b>%{text}%</b>',
+                        text=[
+                            round((wins / num) * 100, 1) if num else 0
+                            for num, wins in enumerate(players_leg_wins[p])
+                        ],
                     )
                 )
 
@@ -99,52 +93,44 @@ class LoadGameDetailsGraph(CallbackBase):
                         win_rate = round((player_set_wins / set_num) * 100, 1)
                     else:
                         win_rate = '0.0'
-                    hover_text = f'Set Wins: <b>{player_set_wins}</b>' + \
-                                 f'<br>Set Num: <b>{set_num}</b>' + \
-                                 f'<br>Win Rate: <b>{win_rate} %</b>'
+                    hover_text = (
+                        f'Set Wins: <b>{player_set_wins}</b>'
+                        + f'<br>Set Num: <b>{set_num}</b>'
+                        + f'<br>Win Rate: <b>{win_rate} %</b>'
+                    )
                     hover_texts.append(hover_text)
 
                 data.append(
                     go.Scatter(
-                        x = list(range(len(players_set_wins[p]))),
-                        y = players_set_wins[p],
-                        name = p,
-                        marker = {
-                            'color': adjusted_color_palette[i]
-                        },
-                        legendgroup = 'set',
-                        legendgrouptitle = {'text': 'Set Wins'},
-                        hovertemplate = '%{text}',
-                        text = hover_texts
+                        x=list(range(len(players_set_wins[p]))),
+                        y=players_set_wins[p],
+                        name=p,
+                        marker={'color': adjusted_color_palette[i]},
+                        legendgroup='set',
+                        legendgrouptitle={'text': 'Set Wins'},
+                        hovertemplate='%{text}',
+                        text=hover_texts,
                     )
                 )
 
             graph = dcc.Graph(
-                figure = {
+                figure={
                     'data': data,
                     'layout': go.Layout(
-                        paper_bgcolor = '#303030',
-                        plot_bgcolor = '#303030',
-                        font = {
-                            'color': 'white'
-                        },
-                        xaxis = {
+                        paper_bgcolor='#303030',
+                        plot_bgcolor='#303030',
+                        font={'color': 'white'},
+                        xaxis={
                             'gridcolor': '#444444',
                             'title': 'Leg Number',
-                            'dtick': 1
+                            'dtick': 1,
                         },
-                        yaxis = {
-                            'gridcolor': '#444444',
-                            'title': 'Amount'
-                        },
-                        margin = {'t': 40, 'b': 80, 'l': 60, 'r': 40},
-                        legend = {'traceorder': 'reversed+grouped'}
-                    )
+                        yaxis={'gridcolor': '#444444', 'title': 'Amount'},
+                        margin={'t': 40, 'b': 80, 'l': 60, 'r': 40},
+                        legend={'traceorder': 'reversed+grouped'},
+                    ),
                 },
-                style = {
-                    'height': '100%',
-                    'width': '100%'
-                }
+                style={'height': '100%', 'width': '100%'},
             )
 
             return [graph]

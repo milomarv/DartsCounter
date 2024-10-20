@@ -6,9 +6,6 @@ class ValueBadge:
         pass
 
     @staticmethod
-    def build(value) -> dbc.Badge:
-        badge = dbc.Badge(
-            value,
-            style = {'fontSize': '1rem'}
-        )
+    def build(value: str) -> dbc.Badge:
+        badge = dbc.Badge(value, style={'fontSize': '2vh'})
         return badge

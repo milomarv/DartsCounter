@@ -9,11 +9,8 @@ from Logging.Logger import Logger
 from Pages.ScoreboardPage.ScoreBoardEditLabelField import ScoreBoardEditLabelField
 from Pages.ScoreboardPage.ScoreBoardLabelText import ScoreBoardLabelText
 
-
-# TODO CONTINUE HERE
 #   - write unit tests
-#   - runt two games at once block each other
-
+#   - run two games at once block each other
 class EditScoreboardLabelCallback(CallbackBase):
     def __init__(self, dependency_container: DependencyContainer) -> None:
         super().__init__(dependency_container)

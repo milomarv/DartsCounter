@@ -26,69 +26,61 @@ class GameStatistics:
         total_sets: int,
         set_mode: TypeSetLeg,
     ) -> html.Div:
-        progress_badge = self.progress_badge.build(finished)
+        progress_badge = self.progress_badge.build(
+            finished, additional_text_style={'fontSize': '2vh'}
+        )
 
         statistics_div = html.Div(
             [
                 dbc.Row(
-                    children = [
+                    children=[
                         dbc.Col(
-                            children = [
+                            children=[
                                 self.game_value.build(
-                                    value_name = 'Progress',
-                                    content = progress_badge
+                                    value_name='Progress', content=progress_badge
                                 ),
                                 self.game_value.build(
-                                    value_name = 'Points',
-                                    content = points,
+                                    value_name='Points',
+                                    content=points,
                                 ),
                                 self.game_value.build(
-                                    value_name = 'Checkout',
-                                    content = self.value_badge.build(str(out)),
-                                )
+                                    value_name='Checkout',
+                                    content=self.value_badge.build(str(out)),
+                                ),
                             ]
                         ),
                         dbc.Col(
-                            children = [
+                            children=[
                                 self.game_value.build(
-                                    value_name = 'Legs to Set Win',
-                                    content = legs
+                                    value_name='Legs to Set Win', content=legs
                                 ),
                                 self.game_value.build(
-                                    value_name = 'Total Legs played',
-                                    content = total_legs
+                                    value_name='Total Legs played', content=total_legs
                                 ),
                                 self.game_value.build(
-                                    value_name = 'Leg Mode',
-                                    content = self.value_badge.build(str(leg_mode)),
-                                )
+                                    value_name='Leg Mode',
+                                    content=self.value_badge.build(str(leg_mode)),
+                                ),
                             ]
                         ),
                         dbc.Col(
-                            children = [
+                            children=[
                                 self.game_value.build(
-                                    value_name = 'Sets to Game Win',
-                                    content = sets
+                                    value_name='Sets to Game Win', content=sets
                                 ),
                                 self.game_value.build(
-                                    value_name = 'Total Sets played',
-                                    content = total_sets
+                                    value_name='Total Sets played', content=total_sets
                                 ),
                                 self.game_value.build(
-                                    value_name = 'Set Mode',
-                                    content = self.value_badge.build(str(set_mode)),
-                                )
+                                    value_name='Set Mode',
+                                    content=self.value_badge.build(str(set_mode)),
+                                ),
                             ]
                         ),
                     ],
-                    style = {
-                        'width': '100%'
-                    }
+                    style={'width': '100%'},
                 )
             ],
-            style = {
-                'width': '100%',
-                'padding-left': '1vw'
-            }
+            style={'width': '100%', 'padding-left': '1vw'},
         )
         return statistics_div

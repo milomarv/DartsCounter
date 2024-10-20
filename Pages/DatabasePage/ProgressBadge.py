@@ -1,3 +1,4 @@
+from typing import Optional
 import dash_bootstrap_components as dbc
 
 
@@ -6,7 +7,10 @@ class ProgressBadge:
         pass
 
     @staticmethod
-    def build(finished: str) -> dbc.Badge:
+    def build(finished: str, additional_text_style: Optional[dict] = None) -> dbc.Badge:
+        if not additional_text_style:
+            additional_text_style = {}
+
         if finished == 'finished':
             progress_badge_color = 'success'
             progress_badge_text = 'Finished'
@@ -19,8 +23,8 @@ class ProgressBadge:
 
         progress_badge = dbc.Badge(
             progress_badge_text,
-            color = progress_badge_color,
-            style = {'font-size': '1rem'},
+            color=progress_badge_color,
+            style={'font-size': '1rem', **additional_text_style},
         )
 
         return progress_badge
