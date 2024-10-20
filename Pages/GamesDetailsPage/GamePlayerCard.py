@@ -5,7 +5,6 @@ from dash import html
 from Pages.GamesDetailsPage.GameValue import GameValue
 
 
-# TODO continue here in callback LoadGameDetailsPlayerModal -> RELEASE
 class GamePlayerCard:
     def __init__(self) -> None:
         pass

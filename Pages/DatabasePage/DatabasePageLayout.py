@@ -57,6 +57,7 @@ class DatabasePageLayout:
                                 title='🧑🏽 Players Database',
                                 children=[
                                     html.Div(
+                                        # TODO Coming Soon
                                         html.H3('⌛ Coming Soon!'),
                                         style={
                                             'height': '30rem',
