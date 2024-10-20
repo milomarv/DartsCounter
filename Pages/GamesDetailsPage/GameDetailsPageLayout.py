@@ -68,6 +68,7 @@ class GamesDetailsPageLayout:
                                                 title='Operations',
                                                 content=[
                                                     self.placeholder_text.build(
+                                                        # TODO Coming Soon
                                                         '⌛ Coming soon!',
                                                         'game-details-operations-div',
                                                     )
@@ -89,6 +90,7 @@ class GamesDetailsPageLayout:
                                 title='Set Details',
                                 content=[
                                     self.placeholder_text.build(
+                                        # TODO Coming Soon
                                         '⌛ Coming soon!',
                                         'game-details-set-leg-throw-details',
                                     )
@@ -104,7 +106,9 @@ class GamesDetailsPageLayout:
                                 title='Player Details',
                                 content=[
                                     self.placeholder_text.build(
-                                        '⌛ Coming soon!', 'game-details-player-details'
+                                        # TODO Coming Soon
+                                        '⌛ Coming soon!',
+                                        'game-details-player-details',
                                     )
                                 ],
                                 height='87.25vh',

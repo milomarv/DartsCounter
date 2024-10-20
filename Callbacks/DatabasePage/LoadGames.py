@@ -10,7 +10,6 @@ from Logging.Logger import Logger
 from Pages.DatabasePage.GameEntry import GameEntry
 
 
-# TODO add go to scoreboard button if in progress
 class LoadGames(CallbackBase):
     def __init__(self, dependency_container: DependencyContainer) -> None:
         super().__init__(dependency_container)
@@ -19,16 +18,14 @@ class LoadGames(CallbackBase):
         self.inputs = [
             Input('url', 'pathname'),
             Input('delete-game-confirm-button', 'n_clicks'),
-            Input('continue-game-confirm-button', 'n_clicks')
+            Input('continue-game-confirm-button', 'n_clicks'),
         ]
         self.outputs = [
             Output('games-db-list', 'children'),
             Output('games-db-list-frame', 'style'),
-            Output('games-db-list', 'style')
+            Output('games-db-list', 'style'),
         ]
-        self.states = [
-            State('games-db-list-frame', 'style')
-        ]
+        self.states = [State('games-db-list-frame', 'style')]
 
         self.games_repository = dependency_container.games_repository
         self.current_game = dependency_container.game
@@ -37,8 +34,13 @@ class LoadGames(CallbackBase):
 
         self.logger.info('Initialized Callback Load Games')
 
-    def callback(self, url: str, _confirm_delete_clicks: int | None, _confirm_continue_clicks: int | None,
-                 frame_style: dict) -> list[list[Card] | dict | dict]:
+    def callback(
+        self,
+        url: str,
+        _confirm_delete_clicks: int | None,
+        _confirm_continue_clicks: int | None,
+        frame_style: dict,
+    ) -> list[list[Card] | dict | dict]:
         if url == '/database':
             self.logger.info('Triggered loading games for frontend')
             time.sleep(1)
@@ -50,7 +52,9 @@ class LoadGames(CallbackBase):
                 game_ts_pretty = self.format_game_ts_pretty(game_key)
 
                 try:
-                    last_game_version = self.games_repository.list_versions(game_key)[-1]
+                    last_game_version = self.games_repository.list_versions(game_key)[
+                        -1
+                    ]
                 except (ValueError, FileNotFoundError):
                     continue
                 game = self.games_repository.load(game_key, last_game_version)
@@ -81,7 +85,7 @@ class LoadGames(CallbackBase):
                     game_winner,
                     finished_sets,
                     finished_legs,
-                    players
+                    players,
                 )
                 game_entries.append(game_entry)
 
