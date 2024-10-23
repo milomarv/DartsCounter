@@ -12,9 +12,11 @@ from Callbacks.GameDetailsPage.LoadGameDetailsStatistics import (
 from Callbacks.GameDetailsPage.LoadGameDetailsTitle import LoadGameDetailsTitle
 from Callbacks.HomePage.AddPlayer import AddPlayer
 from Callbacks.HomePage.InitializeFields import InitializeFields
+from Callbacks.HomePage.LoadVersion import LoadVersion
 from Callbacks.HomePage.SetOnllineMode import SetOnlineMode
 from Callbacks.HomePage.StartStopGame import StartStopGame
-from Callbacks.Router import Router
+from Callbacks.ReleaseNotesPage.LoadReleaseNotes import LoadReleaseNotes
+from Callbacks.Router.Router import Router
 from Callbacks.ScoreBoard.EditScoreboardLabel import EditScoreboardLabelCallback
 from Callbacks.ScoreBoard.SelectFilter import SelectFilter
 from Callbacks.ScoreBoard.UpdatePlayerCards import UpdatePlayerCards
@@ -36,6 +38,7 @@ class Initializer:
         StartStopGame(self.dependency_container).register()
         SetOnlineMode(self.dependency_container).register()
         InitializeFields(self.dependency_container).register()
+        LoadVersion(self.dependency_container).register()
 
         ThrowDart(self.dependency_container).register()
         ActivateMultiplier(self.dependency_container).register()
@@ -53,3 +56,5 @@ class Initializer:
         LoadGameDetailsStatistics(self.dependency_container).register()
         LoadGameDetailsPlayers(self.dependency_container).register()
         LoadGameDetailsPlayerModal(self.dependency_container).register()
+
+        LoadReleaseNotes(self.dependency_container).register()
