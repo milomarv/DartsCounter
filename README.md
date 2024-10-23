@@ -26,6 +26,10 @@ Scores entered by the users are instantly reflected on the Scoreboard page. Here
 along with other relevant statistics. Additionally, the scoreboard page offers graphical representations of the game
 progress for each player.
 
+## Release Notes
+
+For detailed release notes, please refer to the [Release Notes](RELEASENOTES.md).
+
 ## Prerequisites
 
 Before getting started, ensure that the following prerequisites are met:
