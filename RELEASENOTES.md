@@ -1,3 +1,14 @@
+## Version 1.0.2 - 2024-10-24
+
+#### Fixed
+- Resolved routing issue to the database page.
+- Fixed bug where the graph on the details database game page was not updated at leg or set win until the first dart of the next leg was thrown.
+- Corrected buggy view of thrown darts on the scoreboard page.
+
+#### Added
+- Introduced router configuration class in the backend for better management.
+
+
 ## Version 1.0.1 - 2024-10-23
 
 #### Added

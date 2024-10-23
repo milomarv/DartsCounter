@@ -75,10 +75,12 @@ class PlayerStatsContentDiv:
         else:
             points_left_style = {}
 
-        if not total_score:
+        if isinstance(total_score, type(None)):
             dart_scores_div_style = {'display': 'none'}
+            polar_graph_width = 'auto'
         else:
             dart_scores_div_style = {}
+            polar_graph_width = 7
 
         return html.Div(
             children=[
@@ -227,7 +229,8 @@ class PlayerStatsContentDiv:
                                     'height': '25vh',
                                     'margin-bottom': '1vh',
                                 },
-                            )
+                            ),
+                            width=polar_graph_width,
                         ),
                         dbc.Col(
                             children=[

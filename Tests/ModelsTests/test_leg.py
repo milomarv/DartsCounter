@@ -1,19 +1,28 @@
+from unittest.mock import Mock
 from parameterized import parameterized
 
 from Models.DartScore import DOUBLE, SINGLE, TRIPLE
+from Models.Leg import Leg
+from Models.Player import Player
+from Models.Set import Set
+from Models.TypeSetLeg import FIRST_TO, TypeSetLeg
 from ModelsTests.ModelsBaseTests import ModelsBaseTests
 
 
 class LegTest(ModelsBaseTests):
-    @parameterized.expand([
-        ['multiplier', 'Player1', SINGLE, 3],
-        ['multiplier', 'Player2', DOUBLE, 3],
-        ['multiplier', 'Player3', TRIPLE, 3],
-        ['score', 'Player1', 2, 1],
-        ['score', 'Player2', 4, 1],
-        ['score', 'Player3', 6, 1]
-    ])
-    def test_score_count(self, attribute: str, player: str, desired_val: int, counted_val: int) -> None:
+    @parameterized.expand(
+        [
+            ['multiplier', 'Player1', SINGLE, 3],
+            ['multiplier', 'Player2', DOUBLE, 3],
+            ['multiplier', 'Player3', TRIPLE, 3],
+            ['score', 'Player1', 2, 1],
+            ['score', 'Player2', 4, 1],
+            ['score', 'Player3', 6, 1],
+        ]
+    )
+    def test_score_count(
+        self, attribute: str, player: str, desired_val: int, counted_val: int
+    ) -> None:
         # Arrange
         game_simulation = self.simulation(self.simulation_data)
         player_instance = game_simulation.players[player]
@@ -22,18 +31,20 @@ class LegTest(ModelsBaseTests):
         leg_instance = set_instance.get_current_leg()
 
         # Act
-        score_count = leg_instance.get_score_count(attribute, desired_val, player_instance)
+        score_count = leg_instance.get_score_count(
+            attribute, desired_val, player_instance
+        )
 
         # Assert
         self.assertEqual(score_count, counted_val)
 
-    @parameterized.expand([
-        ['Player1', 2, 0],
-        ['Player2', 2, 0],
-        ['Player3', 4, 1]
-    ])
-    def test_get_possible_and_successful_checkouts(self, player_name: str, actual_possible_checkouts: int,
-                                                   actual_successful_checkouts: int) -> None:
+    @parameterized.expand([['Player1', 2, 0], ['Player2', 2, 0], ['Player3', 4, 1]])
+    def test_get_possible_and_successful_checkouts(
+        self,
+        player_name: str,
+        actual_possible_checkouts: int,
+        actual_successful_checkouts: int,
+    ) -> None:
         # Arrange
         game_simulation = self.simulation(self.simulation_checkout_data)
         player = game_simulation.players[player_name]
@@ -42,17 +53,15 @@ class LegTest(ModelsBaseTests):
         leg_instance = set_instance.get_current_leg()
 
         # Act
-        possible_checkouts, successful_checkouts = leg_instance.get_possible_and_successful_checkouts(player)
+        possible_checkouts, successful_checkouts = (
+            leg_instance.get_possible_and_successful_checkouts(player)
+        )
 
         # Assert
         self.assertEqual(possible_checkouts, actual_possible_checkouts)
         self.assertEqual(successful_checkouts, actual_successful_checkouts)
 
-    @parameterized.expand([
-        ['Player1', 79],
-        ['Player2', 34],
-        ['Player3', 49]
-    ])
+    @parameterized.expand([['Player1', 79], ['Player2', 34], ['Player3', 49]])
     def test_get_avg_score(self, player_name: str, actual_avg: int) -> None:
         # Arrange
         game_simulation = self.simulation(self.simulation_avg_data)
@@ -78,3 +87,25 @@ class LegTest(ModelsBaseTests):
 
         # Assert
         self.assertEqual(avg_score, None)
+
+    def test_save_when_starting_new_round(self) -> None:
+        player = Player('Player1')
+        set = Set(
+            players=[player],
+            game=Mock(),
+            set_type=TypeSetLeg(FIRST_TO),
+            n_legs=3,
+            leg_type=TypeSetLeg(FIRST_TO),
+            points=501,
+        )
+        leg = Leg(
+            players=[player],
+            set_instance=set,
+            leg_type=TypeSetLeg(FIRST_TO),
+            points=501,
+            out=DOUBLE,
+        )
+
+        leg.begin_new_round()
+
+        set.game.save.assert_called_once()

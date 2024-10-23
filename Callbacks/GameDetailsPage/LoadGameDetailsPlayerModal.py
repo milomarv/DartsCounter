@@ -4,7 +4,6 @@ from dash.exceptions import PreventUpdate
 from dash import callback_context
 
 from Callbacks.CallbackBase import CallbackBase
-from Callbacks.GameDetailsPage import GAME_DETAILS_PATH
 from Models.DartScore import DOUBLE, MISS, SINGLE, TRIPLE
 from Pages.PlayerStatsContentDiv import PlayerStatsContentDiv
 from Pages.GamesDetailsPage.GameDetailsPlayerDetailsModal import (
@@ -14,11 +13,13 @@ from DependencyContainer import DependencyContainer
 from Logging.Logger import Logger
 
 
+# TODO Devision by zero if no darts in game thrown
 class LoadGameDetailsPlayerModal(CallbackBase):
     def __init__(self, dependency_container: DependencyContainer) -> None:
         super().__init__(dependency_container)
         self.logger = Logger(__name__)
         self.app = dependency_container.app
+        self.router_config = dependency_container.router_config
         self.inputs = [
             Input('url', 'pathname'),
             Input({'type': 'game-details-player-button', 'index': ALL}, 'n_clicks'),
@@ -31,7 +32,13 @@ class LoadGameDetailsPlayerModal(CallbackBase):
 
     def callback(self, url: str, n_clicks: int) -> object:
         ctx = callback_context
-        if url.startswith(GAME_DETAILS_PATH) and any(n_clicks) and ctx.triggered:
+        if (
+            self.router_config.startswith_route(
+                url, self.router_config.database_game_details
+            )
+            and any(n_clicks)
+            and ctx.triggered
+        ):
             button_id = ctx.triggered[0]['prop_id'].split('.')[0]
             button_id_dict = json.loads(button_id)
             player_id = button_id_dict['index']

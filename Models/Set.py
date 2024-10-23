@@ -11,15 +11,15 @@ from .TypeSetLeg import BEST_OF, FIRST_TO, TypeSetLeg
 
 class Set(AbstractGamePart):
     def __init__(
-            self,
-            players: List[Player],
-            game,
-            set_type: TypeSetLeg,
-            n_legs: int,
-            leg_type: TypeSetLeg,
-            points: int,
-            out: Out = 2
-    ):
+        self,
+        players: List[Player],
+        game,  # * cannot be imported from Game due to circular import  # noqa: ANN001
+        set_type: TypeSetLeg,
+        n_legs: int,
+        leg_type: TypeSetLeg,
+        points: int,
+        out: Out = 2,
+    ) -> None:
         super().__init__()
         self.logger = Logger(__name__)
         self.players = players
@@ -58,8 +58,10 @@ class Set(AbstractGamePart):
         try:
             return self.legs[-1]
         except IndexError:
-            error_msg = 'Tried to get Information about current Leg. No leg has been created yet.\
+            error_msg = (
+                'Tried to get Information about current Leg. No leg has been created yet.\
 Use createNewLeg() to create a leg.'
+            )
             if not suppress_logger:
                 self.logger.error(error_msg)
             raise NoLegCreatedError(error_msg)
@@ -86,7 +88,7 @@ Use createNewLeg() to create a leg.'
                 set_instance=self,
                 leg_type=self.legType,
                 points=self.points,
-                out=self.out
+                out=self.out,
             )
             self.legs.append(leg)
 
@@ -133,12 +135,16 @@ Use createNewLeg() to create a leg.'
         return n_counts
 
     def get_n_hits_on_numbers(self) -> None:
-        raise NotImplementedError('removed method -> use get_score_count instead with attribute: score')
+        raise NotImplementedError(
+            'removed method -> use get_score_count instead with attribute: score'
+        )
 
     def get_possible_and_successful_checkouts(self, player: Player) -> tuple[int, int]:
         n_possible_checkouts, n_successful_checkouts = 0, 0
         for i_leg in self.legs:
-            leg_possible_checkouts, leg_successful_checkouts = i_leg.get_possible_and_successful_checkouts(player)
+            leg_possible_checkouts, leg_successful_checkouts = (
+                i_leg.get_possible_and_successful_checkouts(player)
+            )
             n_possible_checkouts += leg_possible_checkouts
             n_successful_checkouts += leg_successful_checkouts
         return n_possible_checkouts, n_successful_checkouts
@@ -150,7 +156,12 @@ Use createNewLeg() to create a leg.'
             raise AlreadyFinishedError(error_msg)
         self.logger.info(f'Set finished - Winner: {self.winner}')
         for player in self.players:
-            if self.game.get_set_wins(player) == self.game.get_n_set_wins_for_game_win():
-                self.logger.info(f'Set has been finished. Winner of the set: {player.name}')
+            if (
+                self.game.get_set_wins(player)
+                == self.game.get_n_set_wins_for_game_win()
+            ):
+                self.logger.info(
+                    f'Set has been finished. Winner of the set: {player.name}'
+                )
                 self.game.winner = player
                 break

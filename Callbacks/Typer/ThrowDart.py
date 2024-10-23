@@ -2,12 +2,18 @@ from dash.dependencies import Input, Output, State
 
 from Callbacks.CallbackBase import CallbackBase
 from DependencyContainer import DependencyContainer
-from Errors import AllLegsFinishedError, AllTurnsFinishedError, AlreadyFinishedError, GameAlreadyFinishedError, \
-    GameNotStartedError, \
-    GameRollBackNotPossibleError, \
-    NoLegCreatedError, \
-    NoRoundCreatedError, \
-    NoSetCreatedError, NoTurnCreatedError
+from Errors import (
+    AllLegsFinishedError,
+    AllTurnsFinishedError,
+    AlreadyFinishedError,
+    GameAlreadyFinishedError,
+    GameNotStartedError,
+    GameRollBackNotPossibleError,
+    NoLegCreatedError,
+    NoRoundCreatedError,
+    NoSetCreatedError,
+    NoTurnCreatedError,
+)
 from Logging.Logger import Logger
 from Models import Leg, Player, Set, Turn
 from Models.DartScore import DOUBLE, DartScore, MISS, SINGLE, TRIPLE
@@ -55,7 +61,7 @@ class ThrowDart(CallbackBase):
             Input('leg-win-confirm-button', 'n_clicks'),
             Input('set-win-confirm-button', 'n_clicks'),
             Input('rollback-not-possible-confirm-button', 'n_clicks'),
-            Input('typer-interval', 'n_intervals')
+            Input('typer-interval', 'n_intervals'),
         ]
         self.outputs = [
             Output('typer-score', 'children'),
@@ -76,15 +82,19 @@ class ThrowDart(CallbackBase):
             Output('game-win-confirm-modal-body', 'children'),
             Output('rollback-not-possible-confirm-modal', 'is_open'),
             Output('typer-interval', 'disabled'),
-            Output('typer-interval', 'interval')
+            Output('typer-interval', 'interval'),
         ]
         self.states = [
             State('x2-score-button', 'active'),
             State('x3-score-button', 'active'),
-            State('score-confirm-modal', 'is_open')
+            State('score-confirm-modal', 'is_open'),
         ]
         self.emptyDartIcon = DartIcon().build()
-        self.emptyAllDartsIcon = [self.emptyDartIcon, self.emptyDartIcon, self.emptyDartIcon]
+        self.emptyAllDartsIcon = [
+            self.emptyDartIcon,
+            self.emptyDartIcon,
+            self.emptyDartIcon,
+        ]
         self.ScoreConfirmationContent = ScoreConfirmationContent()
         self.OvershootConfirmationContent = OvershootConfirmationContent()
         self.LegWinConfirmationContent = LegWinConfirmationContent()
@@ -95,29 +105,86 @@ class ThrowDart(CallbackBase):
 
     def callback(
         self,
-        _s0: int, _s1: int, _s2: int, _s3: int, _s4: int, _s5: int, _s6: int, _s7: int, _s8: int, _s9: int,
-        _s10: int, _s11: int, _s12: int, _s13: int, _s14: int, _s15: int, _s16: int, _s17: int, _s18: int,
-        _s19: int, _s20: int, _s25: int, _s50: int, _go_back: int,
-        _score_confirm: int, _leg_win_confirm: int, _set_win_confirm: int, _roll_back_not_possible_confirm: int,
-        _n_update_interval: int, x2_active: bool, x3_active: bool, score_confirm_modal_is_open: bool
+        _s0: int,
+        _s1: int,
+        _s2: int,
+        _s3: int,
+        _s4: int,
+        _s5: int,
+        _s6: int,
+        _s7: int,
+        _s8: int,
+        _s9: int,
+        _s10: int,
+        _s11: int,
+        _s12: int,
+        _s13: int,
+        _s14: int,
+        _s15: int,
+        _s16: int,
+        _s17: int,
+        _s18: int,
+        _s19: int,
+        _s20: int,
+        _s25: int,
+        _s50: int,
+        _go_back: int,
+        _score_confirm: int,
+        _leg_win_confirm: int,
+        _set_win_confirm: int,
+        _roll_back_not_possible_confirm: int,
+        _n_update_interval: int,
+        x2_active: bool,
+        x3_active: bool,
+        score_confirm_modal_is_open: bool,
     ) -> list:
-        prop_id = self.get_prop_from_context(block_initial = False)
+        prop_id = self.get_prop_from_context(block_initial=False)
 
         if prop_id == 'go-back-score-button':
             try:
                 self.game.rollback()
             except GameRollBackNotPossibleError:
                 return [
-                    'N/A', *self.emptyAllDartsIcon, 'Player', '0',
-                    False, None, False, None, False, None, False, None, False, None, True, True, self.UpdateInterval
+                    'N/A',
+                    *self.emptyAllDartsIcon,
+                    'Player',
+                    '0',
+                    False,
+                    None,
+                    False,
+                    None,
+                    False,
+                    None,
+                    False,
+                    None,
+                    False,
+                    None,
+                    True,
+                    True,
+                    self.UpdateInterval,
                 ]
 
         try:
             current_set = self.game.get_current_set()
         except GameNotStartedError as e:
             return [
-                'N/A', *self.emptyAllDartsIcon, 'Player', '0',
-                True, str(e), False, None, False, None, False, None, False, None, False, True, self.UpdateInterval
+                'N/A',
+                *self.emptyAllDartsIcon,
+                'Player',
+                '0',
+                True,
+                str(e),
+                False,
+                None,
+                False,
+                None,
+                False,
+                None,
+                False,
+                None,
+                False,
+                True,
+                self.UpdateInterval,
             ]
         except NoSetCreatedError:
             self.game.begin_new_set()
@@ -162,18 +229,32 @@ class ThrowDart(CallbackBase):
 
         avg_leg_score = self.calculate_avg(current_leg, current_turn.player)
 
-        if prop_id == 'score-confirm-button' or (prop_id == 'typer-interval' and score_confirm_modal_is_open):
+        if prop_id == 'score-confirm-button' or (
+            prop_id == 'typer-interval' and score_confirm_modal_is_open
+        ):
             if current_leg.winner:
                 leg_win_confirm_modal_body = self.LegWinConfirmationContent.build(
                     current_leg.winner.name,
-                    current_leg.get_thrown_darts(current_leg.winner)
+                    current_leg.get_thrown_darts(current_leg.winner),
                 )
                 return [
                     str(current_leg.get_points_left(current_turn.player)),
                     *dart_icons,
-                    current_turn.player.name, 0,
-                    False, None, False, None, True, leg_win_confirm_modal_body, False, None, False, None, False, True,
-                    self.UpdateInterval
+                    current_turn.player.name,
+                    0,
+                    False,
+                    None,
+                    False,
+                    None,
+                    True,
+                    leg_win_confirm_modal_body,
+                    False,
+                    None,
+                    False,
+                    None,
+                    False,
+                    True,
+                    self.UpdateInterval,
                 ]
             try:
                 try:
@@ -195,8 +276,9 @@ class ThrowDart(CallbackBase):
             try:
                 try:
                     current_leg.finish()
-                    avg_leg_score, current_turn, current_leg, dart_icons = self.begin_new_leg(
-                        current_set)
+                    avg_leg_score, current_turn, current_leg, dart_icons = (
+                        self.begin_new_leg(current_set)
+                    )
                 except AlreadyFinishedError:
                     pass
             except AllLegsFinishedError:
@@ -207,9 +289,21 @@ class ThrowDart(CallbackBase):
                 return [
                     str(current_leg.get_points_left(current_turn.player)),
                     *dart_icons,
-                    current_turn.player.name, avg_leg_score,
-                    False, None, False, None, False, None, True, set_win_confirm_modal_body, False, None, False, True,
-                    self.UpdateInterval
+                    current_turn.player.name,
+                    avg_leg_score,
+                    False,
+                    None,
+                    False,
+                    None,
+                    False,
+                    None,
+                    True,
+                    set_win_confirm_modal_body,
+                    False,
+                    None,
+                    False,
+                    True,
+                    self.UpdateInterval,
                 ]
 
         if prop_id == 'set-win-confirm-button':
@@ -217,21 +311,34 @@ class ThrowDart(CallbackBase):
                 current_set.finish()
                 self.game.begin_new_set()
                 current_set = self.game.get_current_set()
-                avg_leg_score, current_turn, current_leg, dart_icons = self.begin_new_leg(
-                    current_set)
+                avg_leg_score, current_turn, current_leg, dart_icons = (
+                    self.begin_new_leg(current_set)
+                )
             except GameAlreadyFinishedError:
                 game_win_confirm_modal_body = self.GameWinConfirmationContent.build(
                     self.game.winner.name,
-                    round(self.game.get_avg_score(self.game.winner), 2)
+                    round(self.game.get_avg_score(self.game.winner), 2),
                 )
                 self.game.started = False
                 self.game.save()
                 return [
                     str(current_leg.get_points_left(current_turn.player)),
                     *dart_icons,
-                    current_turn.player.name, avg_leg_score,
-                    False, None, False, None, False, None, False, None, True, game_win_confirm_modal_body, False, True,
-                    self.UpdateInterval
+                    current_turn.player.name,
+                    avg_leg_score,
+                    False,
+                    None,
+                    False,
+                    None,
+                    False,
+                    None,
+                    False,
+                    None,
+                    True,
+                    game_win_confirm_modal_body,
+                    False,
+                    True,
+                    self.UpdateInterval,
                 ]
             except AlreadyFinishedError:
                 pass
@@ -244,13 +351,11 @@ class ThrowDart(CallbackBase):
             open_score_confirm_modal = True
             if current_turn.overshot:
                 score_confirm_modal_body = self.OvershootConfirmationContent.build(
-                    current_turn.player.name,
-                    current_turn.get_score()
+                    current_turn.player.name, current_turn.get_score()
                 )
             else:
                 score_confirm_modal_body = self.ScoreConfirmationContent.build(
-                    current_turn.player.name,
-                    current_turn.get_score()
+                    current_turn.player.name, current_turn.get_score()
                 )
             update_interval = 5000
             interval_is_disabled = False
@@ -263,10 +368,21 @@ class ThrowDart(CallbackBase):
         return [
             str(current_leg.get_points_left(current_turn.player)),
             *dart_icons,
-            current_turn.player.name, avg_leg_score,
-            False, None, open_score_confirm_modal, score_confirm_modal_body,
-            False, None, False, None, False, None, False,
-            interval_is_disabled, update_interval
+            current_turn.player.name,
+            avg_leg_score,
+            False,
+            None,
+            open_score_confirm_modal,
+            score_confirm_modal_body,
+            False,
+            None,
+            False,
+            None,
+            False,
+            None,
+            False,
+            interval_is_disabled,
+            update_interval,
         ]
 
     def begin_new_leg(self, current_set: Set) -> tuple:
@@ -297,13 +413,15 @@ class ThrowDart(CallbackBase):
 
     @staticmethod
     def check_for_darts_throw(prop_id: str) -> bool:
-        if prop_id \
-                and not prop_id.startswith('score-confirm') \
-                and not prop_id.startswith('leg-win-confirm') \
-                and not prop_id.startswith('set-win-confirm') \
-                and not prop_id.startswith('rollback-not-possible') \
-                and not prop_id.startswith('go-back') \
-                and not prop_id.startswith('typer-interval'):
+        if (
+            prop_id
+            and not prop_id.startswith('score-confirm')
+            and not prop_id.startswith('leg-win-confirm')
+            and not prop_id.startswith('set-win-confirm')
+            and not prop_id.startswith('rollback-not-possible')
+            and not prop_id.startswith('go-back')
+            and not prop_id.startswith('typer-interval')
+        ):
             return True
         else:
             return False

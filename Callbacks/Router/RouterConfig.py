@@ -7,10 +7,14 @@ class RouterConfig:
     release_notes: str = '/release-notes'
 
     @staticmethod
-    def is_route(pathname: str, route: list[str]) -> bool:
+    def is_route(pathname: str, route: list[str] | str) -> bool:
         if isinstance(route, list):
             return pathname in route
         elif isinstance(route, str):
             return pathname == route
         else:
             raise ValueError('Route must be a string or list of strings')
+
+    @staticmethod
+    def startswith_route(pathname: str, route: str) -> bool:
+        return pathname.startswith(route)

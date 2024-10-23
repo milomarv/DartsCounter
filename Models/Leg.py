@@ -12,13 +12,13 @@ from .TypeSetLeg import TypeSetLeg
 
 class Leg(AbstractGamePart):
     def __init__(
-            self,
-            players: List[Player],
-            set_instance,
-            leg_type: TypeSetLeg,
-            points: int,
-            out: Out = 2
-    ):
+        self,
+        players: List[Player],
+        set_instance,  # * cannot be imported from Set due to circular import  # noqa: ANN001
+        leg_type: TypeSetLeg,
+        points: int,
+        out: Out = 2,
+    ) -> None:
         super().__init__()
         self.logger = Logger(__name__)
         self.players = players
@@ -65,8 +65,10 @@ class Leg(AbstractGamePart):
         try:
             return self.rounds[-1]
         except IndexError:
-            error_msg = 'Tried to get Information about current Round. No round has been created yet. \
+            error_msg = (
+                'Tried to get Information about current Round. No round has been created yet. \
 Use createNewRound() to create a round.'
+            )
             if not suppress_logger:
                 self.logger.error(error_msg)
             raise NoRoundCreatedError(error_msg)
@@ -75,8 +77,10 @@ Use createNewRound() to create a round.'
         if len(self.rounds):
             return len(self.rounds)
         else:
-            error_msg = 'Tried to get Information about current Round. No round has been created yet. \
+            error_msg = (
+                'Tried to get Information about current Round. No round has been created yet. \
 Use createNewRound() to create a round.'
+            )
             self.logger.error(error_msg)
             raise ValueError(error_msg)
 
@@ -129,7 +133,9 @@ Use createNewRound() to create a round.'
         return n_counts
 
     def get_n_hits_on_numbers(self) -> None:
-        raise NotImplementedError('removed method -> use get_score_count instead with attribute: score')
+        raise NotImplementedError(
+            'removed method -> use get_score_count instead with attribute: score'
+        )
 
     def get_possible_and_successful_checkouts(self, player: Player) -> tuple[int, int]:
         n_possible_checkouts, n_successful_checkouts = 0, 0
@@ -150,7 +156,9 @@ Use createNewRound() to create a round.'
         except NoRoundCreatedError:
             current_round = None
         if current_round and not current_round.finished:
-            error_msg = 'Tried to begin new round. Current round has not been finished yet.'
+            error_msg = (
+                'Tried to begin new round. Current round has not been finished yet.'
+            )
             self.logger.error(error_msg)
             raise ValueError(error_msg)
         elif self.winner:
@@ -161,6 +169,7 @@ Use createNewRound() to create a round.'
             i_round = Round(self.players, self)
             self.rounds.append(i_round)
             self.logger.info(f'Round {len(self.rounds)} started')
+            self.set.game.save()
 
     def finish(self) -> None:
         if not self.winner:
@@ -170,6 +179,8 @@ Use createNewRound() to create a round.'
         self.logger.info(f'Leg finished with winner: {self.winner.name}')
         for player in self.players:
             if self.set.get_leg_wins(player) == self.set.get_n_leg_wins_for_set_win():
-                self.logger.info(f'Set has been finished. Winner of the set: {player.name}')
+                self.logger.info(
+                    f'Set has been finished. Winner of the set: {player.name}'
+                )
                 self.set.winner = player
                 break
