@@ -48,7 +48,7 @@ class Router(CallbackBase):
             self.logger.info('Routing to DatabasePage')
             return [DatabasePageLayout().build()]
 
-        elif self.dependency_container.router_config.is_route(
+        elif self.dependency_container.router_config.startswith_route(
             pathname, self.dependency_container.router_config.database_game_details
         ):
             self.logger.info('Routing to Game Details')

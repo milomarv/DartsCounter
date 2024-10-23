@@ -9,6 +9,7 @@ from Models.DartScore import DOUBLE, MISS, SINGLE, TRIPLE
 from Pages.ScoreboardPage.PlayerCard import PlayerCard
 
 
+# TODO last thrown darts missing on cards
 class UpdatePlayerCards(CallbackBase):
     def __init__(self, dependency_container: DependencyContainer) -> None:
         super().__init__(dependency_container)

@@ -5,7 +5,6 @@ from Callbacks.CallbackBase import CallbackBase
 from DependencyContainer import DependencyContainer
 from Logging.Logger import Logger
 
-from Callbacks.GameDetailsPage import GAME_DETAILS_PATH
 from Pages.GamesDetailsPage.GamePlayerCard import GamePlayerCard
 
 
@@ -14,6 +13,7 @@ class LoadGameDetailsPlayers(CallbackBase):
         super().__init__(dependency_container)
         self.logger = Logger(__name__)
         self.app = dependency_container.app
+        self.router_config = dependency_container.router_config
         self.inputs = [
             Input('url', 'pathname'),
         ]
@@ -25,7 +25,9 @@ class LoadGameDetailsPlayers(CallbackBase):
         self.logger.info('Initialized Load Game Details Players Callback')
 
     def callback(self, url: str, style: dict) -> list[GamePlayerCard]:
-        if url.startswith(GAME_DETAILS_PATH):
+        if self.router_config.startswith_route(
+            url, self.router_config.database_game_details
+        ):
             game_key = url.split('/')[-1]
             game = self.get_last_version_of_game_key(game_key)
 

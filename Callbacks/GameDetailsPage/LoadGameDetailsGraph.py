@@ -5,27 +5,27 @@ from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
 
 from Callbacks.CallbackBase import CallbackBase
-from Callbacks.GameDetailsPage import GAME_DETAILS_PATH
 from DependencyContainer import DependencyContainer
 from Logging.Logger import Logger
 
 
-# TODO only updates set and leg wins when first dart of next leg is thrown
+# TODO remove last/current leg from graph
 class LoadGameDetailsGraph(CallbackBase):
     def __init__(self, dependency_container: DependencyContainer) -> None:
         super().__init__(dependency_container)
         self.logger = Logger(__name__)
         self.app = dependency_container.app
+        self.router_config = dependency_container.router_config
         self.inputs = [Input('url', 'pathname')]
         self.outputs = [Output('game-details-graph-div', 'children')]
         self.states = []
 
         self.logger.info('Initialized Load Game Details Graph Callback')
 
-    # TODO uncomplex this method
-    # TODO check if switch between legs and sets is displayed rightly
     def callback(self, url: str) -> list[dcc.Graph]:
-        if url.startswith(GAME_DETAILS_PATH):
+        if self.router_config.startswith_route(
+            url, self.router_config.database_game_details
+        ):
             game_key = url.split('/')[-1]
             game = self.get_last_version_of_game_key(game_key)
 
