@@ -18,6 +18,6 @@ class PlaceholderText:
                 'justify-content': 'center',
                 'text-align': 'center',
                 'flex-direction': 'column',
-                'font-size': '4vh',
+                'font-size': '3vh',
             },
         )

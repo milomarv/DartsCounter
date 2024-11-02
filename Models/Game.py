@@ -217,7 +217,6 @@ No previous version exists."
                 set_wins += 1
         return set_wins
 
-    # TODO unit test
     def get_leg_wins(self, player: Player) -> int:
         leg_wins = 0
         for gameSet in self.sets:
@@ -269,7 +268,6 @@ No previous version exists."
             'removed method -> use get_score_count instead with attribute: score'
         )
 
-    # TODO adapt down till leg with unit test
     def get_possible_and_successful_checkouts(self, player: Player) -> tuple[int, int]:
         n_possible_checkouts, n_successful_checkouts = 0, 0
         for i_set in self.sets:
@@ -280,7 +278,6 @@ No previous version exists."
             n_successful_checkouts += set_successful_checkouts
         return n_possible_checkouts, n_successful_checkouts
 
-    # TODO unit test
     def get_checkout_rate(self, player: Player) -> str:
         n_possible_checkouts, n_successful_checkouts = (
             self.get_possible_and_successful_checkouts(player)
@@ -290,7 +287,7 @@ No previous version exists."
                 f'{round((n_successful_checkouts / n_possible_checkouts) * 100, 2)} %'
             )
         except ZeroDivisionError:
-            return '0 %'
+            return 'N/A'
 
     def get_n_total_legs(self) -> int:
         n_total_legs = 0

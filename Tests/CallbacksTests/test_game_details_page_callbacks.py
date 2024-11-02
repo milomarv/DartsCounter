@@ -16,7 +16,11 @@ from Callbacks.GameDetailsPage.LoadGameDetailsStatistics import (
 )
 from Callbacks.GameDetailsPage.LoadGameDetailsTitle import LoadGameDetailsTitle
 from CallbacksTests.CallbacksBaseTests import CallbacksBaseTests
+from Models.DartScore import DOUBLE
+from Models.Game import Game
+from Models.Leg import Leg
 from Models.Player import Player
+from Models.TypeSetLeg import FIRST_TO, TypeSetLeg
 
 
 class GameDetailsPageCallbacksTest(CallbacksBaseTests):
@@ -24,6 +28,30 @@ class GameDetailsPageCallbacksTest(CallbacksBaseTests):
         super().setUp()
 
     def test_load_game_details_graph(self) -> None:
+        # Arrange
+        game_simulation = self.simulation(self.simulation_data)
+        callback_class = LoadGameDetailsGraph(self.dependency_mock)
+        game = game_simulation.run()
+        game.sets[0].legs.append(
+            Leg(
+                players=[Player('Player1')],
+                set_instance=set,
+                leg_type=TypeSetLeg(FIRST_TO),
+                points=501,
+                out=DOUBLE,
+            )
+        )
+        callback_class.get_last_version_of_game_key = Mock()
+        callback_class.get_last_version_of_game_key.return_value = game
+
+        # Act
+        response = callback_class.callback('/database/game-details/1711979685.758767')
+
+        # Assert
+        self.assertEqual(len(response), 1)
+        self.assertTrue(isinstance(response[0], dcc.Graph))
+
+    def test_load_game_details_graph_no_leg_finished(self) -> None:
         # Arrange
         game_simulation = self.simulation(self.simulation_data)
         callback_class = LoadGameDetailsGraph(self.dependency_mock)
@@ -35,7 +63,7 @@ class GameDetailsPageCallbacksTest(CallbacksBaseTests):
 
         # Assert
         self.assertEqual(len(response), 1)
-        self.assertTrue(isinstance(response[0], dcc.Graph))
+        self.assertTrue(response[0].children == '📈 No Legs finished in this Game!')
 
     def test_load_game_details_graph_call_on_other_page(self) -> None:
         # Arrange
@@ -166,7 +194,28 @@ class GameDetailsPlayersCallbackTests(CallbacksBaseTests):
             '/database/game-details/1711979685.758767', [0, 1]
         )
 
-        print(response)
+        assert isinstance(response[0], dbc.Modal)
+
+    @patch('Callbacks.GameDetailsPage.LoadGameDetailsPlayerModal.callback_context')
+    def test_load_game_details_player_modal_no_dart_thrown(
+        self, ctx_mock: Mock
+    ) -> None:
+        game = Game(players=[Player('Player1'), Player('Player2')])
+        self.callback_class = LoadGameDetailsPlayerModal(self.dependency_mock)
+        self.callback_class.get_last_version_of_game_key = Mock()
+        self.callback_class.get_last_version_of_game_key.return_value = game
+
+        ctx_mock.triggered = [
+            {
+                'prop_id': f'{{"index":"{game.players[0].id}","type":"game-details-player-button"}}.n_clicks'
+            }
+        ]
+
+        response = self.callback_class.callback(
+            '/database/game-details/1711979685.758767', [0, 1]
+        )
+
+        assert isinstance(response[0], dbc.Modal)
 
     @parameterized.expand(
         [

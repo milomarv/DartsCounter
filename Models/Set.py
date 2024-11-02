@@ -116,7 +116,6 @@ Use createNewLeg() to create a leg.'
         except ZeroDivisionError:
             return None
 
-    # TODO insert function into thrown darts Game
     def get_thrown_darts(self, player: Player) -> int:
         thrownDarts = 0
         for leg in self.legs:

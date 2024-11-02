@@ -1,0 +1,5 @@
+- graph dont show current leg or set
+- show no data available if no leg finished
+- change checkou text to N/A instead of 0% if no checkout dart was thrown 
+- fixed ugly view of checkout rate in Player Modal in Database Details Pages
+- display no games in database is no games are in datebase instead of displaying nothing

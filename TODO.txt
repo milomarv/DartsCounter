@@ -10,4 +10,6 @@ TODO Master Out not working when playing single out
 TODO Firefox Home Page Layout Error
 TODO first to one set beendet game nicht
 TODO Navigation Bar
-TODO Rename Game over Scoreboard
+TODO Links some stuff of Github in Release Notes
+TODO horizontal line for game win in graph
+TODO preview finish if possible

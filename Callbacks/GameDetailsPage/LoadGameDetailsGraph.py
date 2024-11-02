@@ -7,9 +7,9 @@ from dash.exceptions import PreventUpdate
 from Callbacks.CallbackBase import CallbackBase
 from DependencyContainer import DependencyContainer
 from Logging.Logger import Logger
+from Pages.GamesDetailsPage.PlaceholderText import PlaceholderText
 
 
-# TODO remove last/current leg from graph
 class LoadGameDetailsGraph(CallbackBase):
     def __init__(self, dependency_container: DependencyContainer) -> None:
         super().__init__(dependency_container)
@@ -19,6 +19,8 @@ class LoadGameDetailsGraph(CallbackBase):
         self.inputs = [Input('url', 'pathname')]
         self.outputs = [Output('game-details-graph-div', 'children')]
         self.states = []
+
+        self.place_holder_text = PlaceholderText()
 
         self.logger.info('Initialized Load Game Details Graph Callback')
 
@@ -36,6 +38,8 @@ class LoadGameDetailsGraph(CallbackBase):
                     for p in players_set_wins:
                         players_set_wins[p].append(players_set_wins[p][-1])
                         n_sets[p].append(n_sets[p][-1])
+                if not i_set.winner:
+                    break
                 for p in players_set_wins:
                     last_wins_num = players_set_wins[p][-1]
                     if i_set.winner and i_set.winner.name == p:
@@ -48,6 +52,8 @@ class LoadGameDetailsGraph(CallbackBase):
             players_leg_wins = {p.name: [0] for p in game.initial_player_alignment}
             for i_set in game.sets:
                 for i_leg in i_set.legs:
+                    if not i_leg.winner:
+                        break
                     for p in players_leg_wins:
                         last_wins_num = players_leg_wins[p][-1]
                         if i_leg.winner and i_leg.winner.name == p:
@@ -55,6 +61,15 @@ class LoadGameDetailsGraph(CallbackBase):
                         else:
                             next_wins_num = last_wins_num
                         players_leg_wins[p].append(next_wins_num)
+
+            if len(players_leg_wins[game.initial_player_alignment[0].name]) == 1:
+                return [
+                    self.place_holder_text.build(
+                        '📈 No Legs finished in this Game!',
+                        'game-details-graph-div',
+                        height='100%',
+                    )
+                ]
 
             data = list()
             color_palette = list(reversed(plotly.colors.qualitative.T10))

@@ -8,7 +8,6 @@ from Pages.DatabasePage.PlayerBadge import PlayerBadge
 from Pages.DatabasePage.ProgressBadge import ProgressBadge
 
 
-# TODO add more Setting of Game
 class GameEntry:
     def __init__(self) -> None:
         self.player_badge = PlayerBadge()
