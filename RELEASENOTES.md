@@ -1,3 +1,14 @@
+## Version 1.0.3 - 2024-11-03
+
+#### Fixed
+- The game details graph now only displays completed legs or sets, omitting the current ones.
+- Improved the display of the checkout rate in the Player Modal on the Database Details Pages.
+
+#### Added
+- A message indicating "No data available" is now shown if no leg is finished in the game details graph.
+- The checkout text now displays "N/A" instead of "0%" if no checkout dart was thrown.
+- A message indicating "No games in database" is now shown if there are no games in the database.
+
 ## Version 1.0.2 - 2024-10-24
 
 #### Fixed

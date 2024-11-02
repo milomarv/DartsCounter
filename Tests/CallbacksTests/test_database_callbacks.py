@@ -15,7 +15,8 @@ class DatabaseCallbacksTest(CallbacksBaseTests):
     def setUp(self) -> None:
         super().setUp()
         self.url = '/database'
-        self.frame_style = {
+        self.frame_style = {'width': '30rem', 'padding': '15px', 'height': '30rem'}
+        self.game_list_style = {
             'height': '30rem',
             'display': 'flex',
             'flex-wrap': 'wrap',
@@ -43,8 +44,22 @@ class DatabaseCallbacksTest(CallbacksBaseTests):
         ]
         callback_class = LoadGames(self.dependency_mock)
 
-        response = callback_class.callback(self.url, 0, 0, self.frame_style)
+        response = callback_class.callback(
+            self.url, 0, 0, self.frame_style, self.game_list_style
+        )
         assert response
+
+    def test_load_games_no_games_in_database(self) -> None:
+        self.dependency_mock.games_repository.list_games.return_value = []
+        callback_class = LoadGames(self.dependency_mock)
+
+        response = callback_class.callback(
+            self.url, 0, 0, self.frame_style, self.game_list_style
+        )
+
+        self.assertTrue(len(response) == 3)
+        self.assertTrue(len(response[0]) == 1)
+        self.assertTrue(response[0][0].children == '💾 No games in database')
 
     def test_load_games_currently_running(self) -> None:
         # Arrange
@@ -68,7 +83,9 @@ class DatabaseCallbacksTest(CallbacksBaseTests):
         callback_class = LoadGames(self.dependency_mock)
 
         # Act
-        response = callback_class.callback(self.url, 0, 0, self.frame_style)
+        response = callback_class.callback(
+            self.url, 0, 0, self.frame_style, self.game_list_style
+        )
 
         progress_content = response[0][0].children[1].children[0].children[0]
         assert progress_content.children.children[1].children.children == 'In Progress'
@@ -86,7 +103,9 @@ class DatabaseCallbacksTest(CallbacksBaseTests):
         callback_class = LoadGames(self.dependency_mock)
 
         # Act
-        response = callback_class.callback(self.url, 0, 0, self.frame_style)
+        response = callback_class.callback(
+            self.url, 0, 0, self.frame_style, self.game_list_style
+        )
 
         # Assert
         self.assertTrue(len(response) == 3)
@@ -116,7 +135,9 @@ class DatabaseCallbacksTest(CallbacksBaseTests):
         ]
         callback_class = LoadGames(self.dependency_mock)
 
-        response = callback_class.callback(self.url, 0, 0, self.frame_style)
+        response = callback_class.callback(
+            self.url, 0, 0, self.frame_style, self.game_list_style
+        )
 
         winner_content = response[0][0].children[1].children[0].children[1]
         assert winner_content.children.children[1].children.children == 'Player1'
@@ -127,7 +148,9 @@ class DatabaseCallbacksTest(CallbacksBaseTests):
 
         # Act & Assert
         with self.assertRaises(PreventUpdate):
-            callback_class.callback('/other_url', 0, 0, self.frame_style)
+            callback_class.callback(
+                '/other_url', 0, 0, self.frame_style, self.game_list_style
+            )
 
     def test_open_delete_game_modal(self) -> None:
         # Arrange

@@ -15,7 +15,7 @@ class State:
 
 class DependencyContainer:
     def __init__(self, app: dash.Dash) -> None:
-        self.version = 'v1.0.1'
+        self.version = 'v1.0.3'
         self.app = app
         self.online_mode = State(False)
         self.router_config = RouterConfig()

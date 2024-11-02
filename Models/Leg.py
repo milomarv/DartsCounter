@@ -84,7 +84,6 @@ Use createNewRound() to create a round.'
             self.logger.error(error_msg)
             raise ValueError(error_msg)
 
-    # TODO insert into Set function get_thrown darts
     def get_thrown_darts(self, player: Player) -> int:
         thrown_darts = 0
         for i_round in self.rounds:

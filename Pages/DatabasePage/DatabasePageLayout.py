@@ -5,7 +5,6 @@ from Pages.MenuCard import MenuCard
 from Pages.Modals.ConfirmModal import ConfirmModal
 
 
-# TODO if no games existing show something like 'No games found' instead of nothing
 class DatabasePageLayout:
     def __init__(self) -> None:
         self.card = MenuCard()

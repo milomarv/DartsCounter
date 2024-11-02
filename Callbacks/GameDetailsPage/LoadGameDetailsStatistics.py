@@ -8,7 +8,6 @@ from Logging.Logger import Logger
 from Pages.GamesDetailsPage.GameStatistics import GameStatistics
 
 
-# TODO total sets and legs played one to much maybe total legs started etc
 class LoadGameDetailsStatistics(CallbackBase):
     def __init__(self, dependency_container: DependencyContainer) -> None:
         super().__init__(dependency_container)
@@ -49,10 +48,10 @@ class LoadGameDetailsStatistics(CallbackBase):
                 points=game.points,
                 out=game.out,
                 legs=game.n_legs,
-                total_legs=game.get_n_total_legs(),
+                total_legs=game.get_n_total_finished_legs(),
                 leg_mode=game.leg_type,
                 sets=game.n_sets,
-                total_sets=len(game.sets),
+                total_sets=game.get_n_total_finished_sets(),
                 set_mode=game.set_type,
             )
             return [statistics_div, style]

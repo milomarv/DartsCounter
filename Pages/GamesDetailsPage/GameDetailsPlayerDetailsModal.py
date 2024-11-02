@@ -19,4 +19,5 @@ class GameDetailsPlayerDetailsModal:
             id='game-details-player-details-modal',
             is_open=True,
             centered=True,
+            size='lg',
         )

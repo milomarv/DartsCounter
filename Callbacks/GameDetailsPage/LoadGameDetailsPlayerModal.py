@@ -13,7 +13,6 @@ from DependencyContainer import DependencyContainer
 from Logging.Logger import Logger
 
 
-# TODO Devision by zero if no darts in game thrown
 class LoadGameDetailsPlayerModal(CallbackBase):
     def __init__(self, dependency_container: DependencyContainer) -> None:
         super().__init__(dependency_container)
@@ -55,14 +54,24 @@ class LoadGameDetailsPlayerModal(CallbackBase):
             checkout_counter_str = f'{successful_checkouts}/{possible_checkouts}'
 
             thrown_darts = game.get_thrown_darts(player)
-            single = game.get_score_count('multiplier', SINGLE, player)
-            single_perc = single / thrown_darts
-            double = game.get_score_count('multiplier', DOUBLE, player)
-            double_perc = double / thrown_darts
-            triple = game.get_score_count('multiplier', TRIPLE, player)
-            triple_perc = triple / thrown_darts
-            miss = game.get_score_count('multiplier', MISS, player)
-            miss_perc = miss / thrown_darts
+            if thrown_darts:
+                single = game.get_score_count('multiplier', SINGLE, player)
+                single_perc = single / thrown_darts
+                double = game.get_score_count('multiplier', DOUBLE, player)
+                double_perc = double / thrown_darts
+                triple = game.get_score_count('multiplier', TRIPLE, player)
+                triple_perc = triple / thrown_darts
+                miss = game.get_score_count('multiplier', MISS, player)
+                miss_perc = miss / thrown_darts
+            else:
+                single = 0
+                single_perc = 0
+                double = 0
+                double_perc = 0
+                triple = 0
+                triple_perc = 0
+                miss = 0
+                miss_perc = 0
 
             numbers = self.player_card.polarVals
             n_hits = []

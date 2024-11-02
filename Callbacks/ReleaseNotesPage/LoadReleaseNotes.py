@@ -26,7 +26,6 @@ class LoadReleaseNotes(CallbackBase):
         self.states = []
         self.logger.info('Initialized Load Release Notes Callback')
 
-    # TODO test this
     def callback(self, url: str, style: dict) -> object:
         if url == '/release-notes':
             self.logger.info('Loading Release Notes')

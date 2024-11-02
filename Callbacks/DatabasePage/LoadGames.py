@@ -8,6 +8,7 @@ from Callbacks.CallbackBase import CallbackBase
 from DependencyContainer import DependencyContainer
 from Logging.Logger import Logger
 from Pages.DatabasePage.GameEntry import GameEntry
+from Pages.GamesDetailsPage.PlaceholderText import PlaceholderText
 
 
 class LoadGames(CallbackBase):
@@ -25,12 +26,16 @@ class LoadGames(CallbackBase):
             Output('games-db-list-frame', 'style'),
             Output('games-db-list', 'style'),
         ]
-        self.states = [State('games-db-list-frame', 'style')]
+        self.states = [
+            State('games-db-list-frame', 'style'),
+            State('games-db-list', 'style'),
+        ]
 
         self.games_repository = dependency_container.games_repository
         self.current_game = dependency_container.game
 
         self.game_entry = GameEntry()
+        self.place_holder_text = PlaceholderText()
 
         self.logger.info('Initialized Callback Load Games')
 
@@ -40,11 +45,24 @@ class LoadGames(CallbackBase):
         _confirm_delete_clicks: int | None,
         _confirm_continue_clicks: int | None,
         frame_style: dict,
+        games_list_style: dict,
     ) -> list[list[Card] | dict | dict]:
         if url == '/database':
             self.logger.info('Triggered loading games for frontend')
             time.sleep(1)
             game_keys = self.games_repository.list_games()
+
+            if not len(game_keys):
+                return [
+                    [
+                        self.place_holder_text.build(
+                            '💾 No games in database', 'games-db-list'
+                        )
+                    ],
+                    frame_style,
+                    games_list_style,
+                ]
+
             game_keys = reversed(sorted(game_keys))
 
             game_entries = list()
